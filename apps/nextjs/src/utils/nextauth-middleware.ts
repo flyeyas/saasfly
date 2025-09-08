@@ -56,7 +56,7 @@ export const middleware = withAuth(
 
     // Check if user is authenticated
     const token = req.nextauth.token;
-    const isAuthPage = /^\/[a-zA-Z]{2,}\/(login|register|login-clerk)/.test(
+    const isAuthPage = /^\/[a-zA-Z]{2,}\/(login|register)/.test(
       req.nextUrl.pathname,
     );
 

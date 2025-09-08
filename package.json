@@ -35,7 +35,5 @@
     "tooling/*"
   ],
   "packageManager": "bun@v1.1.10",
-  "dependencies": {
-    "@clerk/nextjs": "^6.20.0"
-  }
+  "dependencies": {}
 }
