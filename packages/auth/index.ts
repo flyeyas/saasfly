@@ -1,27 +1,15 @@
-import { getSessionUser } from "./clerk";
+// Export NextAuth configuration and utilities
+export { authOptions, auth, getCurrentUser } from "./nextauth";
 
+// Export types
 export interface User {
   id: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  isAdmin?: boolean;
 }
 
-declare global {
-  interface CustomJwtSessionClaims {
-    user?: User & {
-      id: string;
-      isAdmin: boolean;
-    }
-  }
-}
-
-export const authOptions = {
-  pages: {
-    signIn: "/login-clerk",
-  },
-}
-
-export async function getCurrentUser() {
-  return await getSessionUser();
-}
+// Re-export NextAuth types for convenience
+export type { Session } from "next-auth";
+export type { JWT } from "next-auth/jwt";

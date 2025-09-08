@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { SignIn, useUser } from "@clerk/nextjs";
 
-import { cn } from "@saasfly/ui";
+import { UserNextAuthForm } from "~/components/user-nextauth-form";
 
 type Dictionary = Record<string, string>;
 
@@ -17,16 +17,21 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
 export function UserClerkAuthForm({
   className,
   lang,
+  dict,
   ...props
 }: UserAuthFormProps) {
-  const { user } = useUser()
-  if (user) {
-    redirect(`/${lang}/dashboard`)
+  const { data: session } = useSession();
+  
+  if (session?.user) {
+    redirect(`/${lang}/dashboard`);
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
-      <SignIn withSignUp={false} fallbackRedirectUrl={`/${lang}/dashboard`} />
-    </div>
+    <UserNextAuthForm 
+      className={className}
+      lang={lang}
+      dict={dict}
+      {...props}
+    />
   );
 }

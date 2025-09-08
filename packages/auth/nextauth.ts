@@ -1,5 +1,4 @@
 import { getServerSession, NextAuthOptions, User } from "next-auth";
-import { KyselyAdapter } from "@auth/kysely-adapter";
 import GitHubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
 
@@ -7,8 +6,9 @@ import { MagicLinkEmail, resend, siteConfig } from "@saasfly/common";
 
 import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 
-import { db } from "./db";
+import { db } from "@saasfly/db";
 import { env } from "./env.mjs";
+import { createNextAuthAdapter } from "./adapter";
 
 type UserId = string;
 type IsAdmin = boolean;
@@ -31,13 +31,12 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: "/login",
   },
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  adapter: KyselyAdapter(db),
+  adapter: createNextAuthAdapter(),
 
   providers: [
     GitHubProvider({
