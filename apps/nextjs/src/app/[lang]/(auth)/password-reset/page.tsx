@@ -7,16 +7,16 @@ import { cn } from "@saasfly/ui";
 import { buttonVariants } from "@saasfly/ui/button";
 import * as Icons from "@saasfly/ui/icons";
 
-import { UserLoginForm } from "~/components/user-login-form";
+import { PasswordResetForm } from "~/components/password-reset-form";
 import type { Locale } from "~/config/i18n-config";
 import { getDictionary } from "~/lib/get-dictionary";
 
 export const metadata: Metadata = {
-  title: "Login",
-  description: "Login to your account",
+  title: "Password Reset",
+  description: "Reset your password",
 };
 
-export default async function LoginPage({
+export default async function PasswordResetPage({
   params: { lang },
 }: {
   params: {
@@ -27,7 +27,7 @@ export default async function LoginPage({
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Link
-        href={`/${lang}`}
+        href={`/${lang}/login`}
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "absolute left-4 top-4 md:left-8 md:top-8",
@@ -35,7 +35,7 @@ export default async function LoginPage({
       >
         <>
           <Icons.ChevronLeft className="mr-2 h-4 w-4" />
-          {dict.login.back}
+          返回登录
         </>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -48,21 +48,22 @@ export default async function LoginPage({
             alt=""
           />
           <h1 className="text-2xl font-semibold tracking-tight">
-            {dict.login.welcome_back}
+            重置密码
           </h1>
           <p className="text-sm text-muted-foreground">
-            {dict.login.signin_title}
+            输入您的邮箱地址，我们将发送重置验证码
           </p>
         </div>
-        <UserLoginForm lang={lang} dict={dict.login} />
-        {/* <p className="px-8 text-center text-sm text-muted-foreground">
+        <PasswordResetForm lang={lang} dict={dict.login} />
+        <p className="px-8 text-center text-sm text-muted-foreground">
+          记起密码了？{" "}
           <Link
-            href={`/${lang}/register`}
+            href={`/${lang}/login`}
             className="hover:text-brand underline underline-offset-4"
           >
-            {dict.login.singup_title}
+            返回登录
           </Link>
-        </p> */}
+        </p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import type { ColumnType } from "kysely";
 
-import type { Status, SubscriptionPlan } from "./enums";
+import type { Status, SubscriptionPlan, VerificationCodeType } from "./enums";
 
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
@@ -21,6 +21,16 @@ export type Account = {
   scope: string | null;
   id_token: string | null;
   session_state: string | null;
+};
+export type Authenticator = {
+  credentialID: string;
+  userId: string;
+  providerAccountId: string;
+  credentialPublicKey: string;
+  counter: number;
+  credentialDeviceType: string;
+  credentialBackedUp: boolean;
+  transports: string | null;
 };
 export type Customer = {
   id: Generated<number>;
@@ -53,11 +63,30 @@ export type Session = {
   expires: Timestamp;
 };
 export type User = {
-  id: Generated<string>;
+  id: string;
   name: string | null;
-  email: string | null;
+  email: string;
   emailVerified: Timestamp | null;
   image: string | null;
+  password: string | null;
+  loginAttempts: Generated<number>;
+  lockedUntil: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Timestamp;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
+  stripe_current_period_end: Timestamp | null;
+};
+export type VerificationCode = {
+  id: string;
+  email: string;
+  code: string;
+  type: VerificationCodeType;
+  expiresAt: Timestamp;
+  used: Generated<boolean>;
+  userId: string | null;
+  createdAt: Generated<Timestamp>;
 };
 export type VerificationToken = {
   identifier: string;
@@ -66,9 +95,11 @@ export type VerificationToken = {
 };
 export type DB = {
   Account: Account;
+  Authenticator: Authenticator;
   Customer: Customer;
   K8sClusterConfig: K8sClusterConfig;
   Session: Session;
-  User: User;
+  users: User;
+  verification_codes: VerificationCode;
   VerificationToken: VerificationToken;
 };

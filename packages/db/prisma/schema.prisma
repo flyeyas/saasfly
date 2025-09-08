@@ -63,13 +63,30 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(dbgenerated("gen_random_uuid()"))
+  id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
+  password      String?   // 加密后的密码
+  loginAttempts Int       @default(0) // 登录失败次数
+  lockedUntil   DateTime? // 账户锁定到期时间
   accounts      Account[]
   sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+  // 验证码关联
+  verificationCodes VerificationCode[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+
+  @@map(name: "users")
 }
 
 model VerificationToken {
@@ -103,4 +120,41 @@ enum Status {
   RUNNING
   STOPPED
   DELETED
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+// 验证码模型
+model VerificationCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  type      VerificationCodeType
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map(name: "verification_codes")
+}
+
+// 验证码类型枚举
+enum VerificationCodeType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  LOGIN_VERIFICATION
 }

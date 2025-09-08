@@ -14,3 +14,10 @@ export const Status = {
   DELETED: "DELETED",
 } as const;
 export type Status = (typeof Status)[keyof typeof Status];
+export const VerificationCodeType = {
+  EMAIL_VERIFICATION: "EMAIL_VERIFICATION",
+  PASSWORD_RESET: "PASSWORD_RESET",
+  LOGIN_VERIFICATION: "LOGIN_VERIFICATION",
+} as const;
+export type VerificationCodeType =
+  (typeof VerificationCodeType)[keyof typeof VerificationCodeType];

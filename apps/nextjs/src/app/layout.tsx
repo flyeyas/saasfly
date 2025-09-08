@@ -22,6 +22,8 @@ import { siteConfig } from "~/config/site";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+  fallback: ["system-ui", "arial"],
+  display: "swap",
 });
 
 // Font files can be colocated inside of `pages`
