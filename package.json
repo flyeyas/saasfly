@@ -34,7 +34,7 @@
     "packages/*",
     "tooling/*"
   ],
-  "packageManager": "bun@v1.1.10",
+  "packageManager": "bun@1.1.10",
   "dependencies": {
     "caniuse-lite": "^1.0.30001741"
   }
