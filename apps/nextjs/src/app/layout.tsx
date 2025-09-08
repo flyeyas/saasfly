@@ -1,5 +1,4 @@
-import { Inter as FontSans } from "next/font/google";
-import localFont from "next/font/local";
+import { fontSans, fontHeading } from "~/lib/fonts";
 
 import "~/styles/globals.css";
 
@@ -19,18 +18,7 @@ import { siteConfig } from "~/config/site";
 // import { Suspense } from "react";
 // import { PostHogPageview } from "~/config/providers";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  fallback: ["system-ui", "arial"],
-  display: "swap",
-});
-
-// Font files can be colocated inside of `pages`
-const fontHeading = localFont({
-  src: "../styles/fonts/CalSans-SemiBold.woff2",
-  variable: "--font-heading",
-});
+// Font configurations are now imported from ~/lib/fonts
 
 export function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
