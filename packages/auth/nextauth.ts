@@ -1,6 +1,8 @@
 import { getServerSession, NextAuthOptions, User } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 import { MagicLinkEmail, resend, siteConfig } from "@saasfly/common";
 
@@ -39,6 +41,41 @@ export const authOptions: NextAuthOptions = {
   adapter: createNextAuthAdapter(),
 
   providers: [
+    CredentialsProvider({
+      id: "credentials",
+      name: "Email and Password",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const user = await db
+          .selectFrom("users")
+          .select(["id", "email", "name", "password", "emailVerified"])
+          .where("email", "=", credentials.email)
+          .executeTakeFirst();
+
+        if (!user || !user.password) {
+          return null;
+        }
+
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isPasswordValid) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          emailVerified: user.emailVerified,
+        };
+      },
+    }),
     GitHubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,

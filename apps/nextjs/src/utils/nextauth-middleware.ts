@@ -8,7 +8,7 @@ import { i18n } from "~/config/i18n-config";
 
 const noNeedProcessRoute = [".*\\.png", ".*\\.jpg", ".*\\.opengraph-image.png"];
 
-const noRedirectRoute = ["/api(.*)", "/trpc(.*)", "/admin"];
+const noRedirectRoute = ["/api(.*)", "/trpc(.*)", "/admin(.*)"];
 
 // 速率限制存储
 interface AttemptRecord {
@@ -181,8 +181,8 @@ export const middleware = withAuth(
       (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
     );
 
-    // Redirect if there is no locale
-    if (pathnameIsMissingLocale) {
+    // Redirect if there is no locale (but skip admin routes)
+    if (pathnameIsMissingLocale && !isNoRedirect(req)) {
       const locale = getLocale(req);
       return NextResponse.redirect(
         new URL(`/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`, req.url),
@@ -201,6 +201,20 @@ export const middleware = withAuth(
         return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
       }
       return NextResponse.next();
+    }
+
+    // Admin routes protection
+    const isAdminRoute = /^\/admin/.test(req.nextUrl.pathname);
+    if (isAdminRoute && req.nextUrl.pathname !== "/admin/login") {
+      if (!token) {
+        return NextResponse.redirect(new URL("/admin/login", req.url));
+      }
+      
+      // Check if user is admin
+      const adminEmails = process.env.ADMIN_EMAIL?.split(",") || [];
+      if (!adminEmails.includes(token.email || "")) {
+        return NextResponse.redirect(new URL("/admin/login", req.url));
+      }
     }
 
     // Protected routes
@@ -230,6 +244,7 @@ export const config = {
     "/((?!.*\\..*|_next).*)",
     "/",
     "/(api|trpc)(.*)",
+    "/admin/:path*",
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)"
   ],
 };
