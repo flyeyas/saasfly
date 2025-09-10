@@ -2,28 +2,17 @@ import { notFound } from "next/navigation";
 
 import { getCurrentUser } from "@saasfly/auth";
 
-import { SiteFooter } from "~/components/site-footer";
-import { i18n, type Locale } from "~/config/i18n-config";
-import { getDictionary } from "~/lib/get-dictionary";
+
 import "~/styles/admin.css";
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
-  params: {
-    lang: Locale;
-  };
-}
-
-export function generateStaticParams() {
-  return i18n.locales.map((locale) => ({ lang: locale }));
 }
 
 export default async function DashboardLayout({
   children,
-  params: { lang },
 }: DashboardLayoutProps) {
   const user = await getCurrentUser();
-  const dict = await getDictionary(lang);
   if (!user) {
     return notFound();
   }
@@ -66,11 +55,7 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
-      <SiteFooter
-        className="border-t"
-        params={{ lang: `${lang}` }}
-        dict={dict.common}
-      />
+
     </div>
   );
 }
