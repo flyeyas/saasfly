@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 /**
- * CSRF Token 配置
+ * CSRF Token configuration
  */
 const CSRF_CONFIG = {
   tokenLength: 32,
@@ -11,25 +11,25 @@ const CSRF_CONFIG = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict' as const,
-    maxAge: 60 * 60 * 24, // 24小时
+    maxAge: 60 * 60 * 24, // 24 hours
   },
 } as const;
 
 /**
- * 生成CSRF Token
+ * Generate CSRF Token
  */
 function generateCSRFToken(): string {
   return crypto.randomBytes(CSRF_CONFIG.tokenLength).toString('hex');
 }
 
 /**
- * 获取CSRF Token
+ * Get CSRF Token
  */
 export async function GET(request: NextRequest) {
   const cookies = request.cookies;
   let token = cookies.get(CSRF_CONFIG.cookieName)?.value;
   
-  // 如果没有token，生成一个新的
+  // If no token exists, generate a new one
   if (!token) {
     token = generateCSRFToken();
   }
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * 刷新CSRF Token
+ * Refresh CSRF Token
  */
 export async function POST(request: NextRequest) {
   const newToken = generateCSRFToken();

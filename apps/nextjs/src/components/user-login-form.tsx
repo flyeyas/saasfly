@@ -21,13 +21,13 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const loginSchema = z.object({
-  email: z.string().email("请输入有效的邮箱地址"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().optional(),
   verificationCode: z.string().optional(),
 }).refine((data) => {
   return data.password || data.verificationCode;
 }, {
-  message: "请输入密码或验证码",
+  message: "Please enter password or verification code",
   path: ["password"],
 });
 
@@ -58,7 +58,7 @@ export function UserLoginForm({
   
   const watchedEmail = watch("email");
 
-  // 倒计时效果
+  // Countdown effect
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -67,12 +67,12 @@ export function UserLoginForm({
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  // 发送登录验证码
+  // Send login verification code
   const sendLoginCode = async () => {
     if (!watchedEmail || !z.string().email().safeParse(watchedEmail).success) {
       toast({
-        title: "错误",
-        description: "请先输入有效的邮箱地址",
+        title: "Error",
+        description: "Please enter a valid email address first",
         variant: "destructive",
       });
       return;
@@ -91,21 +91,21 @@ export function UserLoginForm({
         setCodeSent(true);
         setCountdown(60);
         toast({
-          title: "验证码已发送",
-          description: "请查收邮箱中的验证码",
+          title: "Verification code sent",
+        description: "Please check your email for the verification code",
         });
       } else {
         toast({
-          title: "发送失败",
-          description: data.error || "验证码发送失败，请稍后重试",
+          title: "Send failed",
+        description: data.error || "Failed to send verification code, please try again later",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send login code error:", error);
       toast({
-        title: "发送失败",
-        description: "网络错误，请稍后重试",
+        title: "Send failed",
+      description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -113,7 +113,7 @@ export function UserLoginForm({
     }
   };
 
-  // 提交登录
+  // Submit login
   async function onSubmit(data: FormData) {
     setIsLoading(true);
     try {
@@ -130,24 +130,24 @@ export function UserLoginForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "登录成功",
-          description: "欢迎回来！正在跳转...",
+          title: "Login successful",
+        description: "Welcome back! Redirecting...",
         });
         setTimeout(() => {
           router.push(`/${lang}/dashboard`);
         }, 1500);
       } else {
         toast({
-          title: "登录失败",
-          description: result.error || "登录失败，请检查邮箱和密码",
+          title: "Login failed",
+        description: result.error || "Login failed, please check your email and password",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: "登录失败",
-        description: "网络错误，请稍后重试",
+        title: "Login failed",
+      description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -159,9 +159,9 @@ export function UserLoginForm({
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
-          {/* 邮箱输入 */}
+          {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">邮箱</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               placeholder="name@example.com"
@@ -177,7 +177,7 @@ export function UserLoginForm({
             )}
           </div>
 
-          {/* 登录方式切换 */}
+          {/* Login method toggle */}
           <div className="flex space-x-2">
             <Button
               type="button"
@@ -186,7 +186,7 @@ export function UserLoginForm({
               onClick={() => setLoginMode('password')}
               disabled={isLoading}
             >
-              密码登录
+              Password Login
             </Button>
             <Button
               type="button"
@@ -195,25 +195,25 @@ export function UserLoginForm({
               onClick={() => setLoginMode('code')}
               disabled={isLoading}
             >
-              验证码登录
+              Code Login
             </Button>
           </div>
 
-          {/* 密码登录 */}
+          {/* Password login */}
           {loginMode === 'password' && (
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">密码</Label>
+                <Label htmlFor="password">Password</Label>
                 <a
                   href={`/${lang}/password-reset`}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  忘记密码？
+                  Forgot password?
                 </a>
               </div>
               <Input
                 id="password"
-                placeholder="请输入密码"
+                placeholder="Enter password"
                 type="password"
                 autoComplete="current-password"
                 disabled={isLoading}
@@ -225,14 +225,14 @@ export function UserLoginForm({
             </div>
           )}
 
-          {/* 验证码登录 */}
+          {/* Verification code login */}
           {loginMode === 'code' && (
             <div className="grid gap-2">
-              <Label htmlFor="verificationCode">验证码</Label>
+              <Label htmlFor="verificationCode">Verification Code</Label>
               <div className="flex space-x-2">
                 <Input
                   id="verificationCode"
-                  placeholder="请输入验证码"
+                  placeholder="Enter verification code"
                   disabled={isLoading}
                   {...register("verificationCode")}
                 />
@@ -245,7 +245,7 @@ export function UserLoginForm({
                   {isCodeSending && (
                     <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {countdown > 0 ? `${countdown}s` : codeSent ? "重新发送" : "发送验证码"}
+                  {countdown > 0 ? `${countdown}s` : codeSent ? "Resend" : "Send Code"}
                 </Button>
               </div>
               {errors?.verificationCode && (
@@ -258,7 +258,7 @@ export function UserLoginForm({
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            登录
+            Login
           </Button>
         </div>
       </form>

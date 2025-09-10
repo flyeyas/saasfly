@@ -10,7 +10,6 @@ const createContext = async (req: NextRequest) => {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     return createTRPCContext({
         headers: req.headers,
-        auth: { userId: token?.sub || null, sessionClaims: token } as any,
     });
 };
 

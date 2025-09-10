@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问统计 - HTML5游戏网站后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-brand {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .admin-brand h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .admin-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin: 0.25rem 1rem;
+        }
+        
+        .nav-link {
+            color: #4a5568;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-content {
+            padding: 2rem;
+        }
+        
+        .page-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+        
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.visitors {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .stat-icon.pageviews {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .stat-icon.bounce {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .stat-icon.duration {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive {
+            color: #10b981;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .time-btn {
+            background: none;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .time-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        
+        .time-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .data-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-header {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table th {
+            background: #f8fafc;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .table td {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .page-url {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .page-url:hover {
+            text-decoration: underline;
+        }
+        
+        .traffic-source {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .source-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .source-icon.google {
+            background: #4285f4;
+        }
+        
+        .source-icon.direct {
+            background: #34d399;
+        }
+        
+        .source-icon.social {
+            background: #f59e0b;
+        }
+        
+        .source-icon.referral {
+            background: #8b5cf6;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+        
+        .realtime-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .realtime-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .analytics-card {
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .time-filter {
+                flex-wrap: wrap;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <nav class="admin-sidebar" id="sidebar">
+            <div class="admin-brand">
+                <h3><i class="fas fa-gamepad me-2"></i>游戏后台</h3>
+            </div>
+            <div class="admin-nav">
+                <div class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        仪表盘
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-games.html" class="nav-link">
+                        <i class="fas fa-gamepad"></i>
+                        游戏管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-categories.html" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        分类管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-users.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        用户管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-ads.html" class="nav-link">
+                        <i class="fas fa-ad"></i>
+                        广告管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-adsense.html" class="nav-link">
+                        <i class="fab fa-google"></i>
+                        AdSense配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-seo.html" class="nav-link">
+                        <i class="fas fa-search"></i>
+                        SEO设置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-multilang.html" class="nav-link">
+                        <i class="fas fa-globe"></i>
+                        多语言管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-config.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        系统配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-analytics.html" class="nav-link active">
+                        <i class="fas fa-chart-bar"></i>
+                        数据统计
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="mobile-menu-btn" id="mobileMenuBtn">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h4 class="mb-0">访问统计</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="realtime-indicator">
+                            <div class="realtime-dot"></div>
+                            实时数据
+                        </div>
+                        <span class="text-muted">管理员</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>Admin
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>个人资料</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>设置</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="admin-content">
+                <div class="page-title">访问统计分析</div>
+                <div class="page-subtitle">网站流量分析和用户行为统计数据</div>
+                
+                <!-- 统计概览 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon visitors">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number">12,847</div>
+                        <div class="stat-label">总访问用户</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>+15.3%
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon pageviews">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-number">45,692</div>
+                        <div class="stat-label">页面浏览量</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>+8.7%
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon bounce">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-number">32.4%</div>
+                        <div class="stat-label">跳出率</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down me-1"></i>-2.1%
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon duration">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number">4:32</div>
+                        <div class="stat-label">平均停留时间</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>+12.5%
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 访问趋势图表 -->
+                <div class="analytics-card">
+                    <div class="chart-header">
+                        <h5 class="chart-title">访问趋势</h5>
+                        <div class="time-filter">
+                            <button class="time-btn" data-period="7d">7天</button>
+                            <button class="time-btn active" data-period="30d">30天</button>
+                            <button class="time-btn" data-period="90d">90天</button>
+                            <button class="time-btn" data-period="1y">1年</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- 流量来源 -->
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <h5 class="chart-title mb-3">流量来源</h5>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="sourceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 设备统计 -->
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <h5 class="chart-title mb-3">设备分布</h5>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="deviceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 热门页面 -->
+                <div class="analytics-card">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h5 class="table-title">热门页面</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>页面</th>
+                                        <th>浏览量</th>
+                                        <th>独立访客</th>
+                                        <th>平均停留时间</th>
+                                        <th>跳出率</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><a href="#" class="page-url">/</a></td>
+                                        <td>8,542</td>
+                                        <td>6,234</td>
+                                        <td>3:45</td>
+                                        <td>28.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="page-url">/games</a></td>
+                                        <td>6,789</td>
+                                        <td>4,567</td>
+                                        <td>5:12</td>
+                                        <td>22.1%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="page-url">/ranking</a></td>
+                                        <td>4,321</td>
+                                        <td>3,456</td>
+                                        <td>2:34</td>
+                                        <td>35.7%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="page-url">/categories</a></td>
+                                        <td>3,654</td>
+                                        <td>2,789</td>
+                                        <td>4:18</td>
+                                        <td>31.2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="page-url">/profile</a></td>
+                                        <td>2,987</td>
+                                        <td>2,456</td>
+                                        <td>6:23</td>
+                                        <td>18.9%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 流量来源详情 -->
+                <div class="analytics-card">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h5 class="table-title">流量来源详情</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>来源</th>
+                                        <th>访问量</th>
+                                        <th>占比</th>
+                                        <th>新用户率</th>
+                                        <th>转化率</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="traffic-source">
+                                                <div class="source-icon google">
+                                                    <i class="fab fa-google"></i>
+                                                </div>
+                                                Google搜索
+                                            </div>
+                                        </td>
+                                        <td>18,456</td>
+                                        <td>42.3%</td>
+                                        <td>68.5%</td>
+                                        <td>3.2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="traffic-source">
+                                                <div class="source-icon direct">
+                                                    <i class="fas fa-link"></i>
+                                                </div>
+                                                直接访问
+                                            </div>
+                                        </td>
+                                        <td>12,789</td>
+                                        <td>29.3%</td>
+                                        <td>34.2%</td>
+                                        <td>5.8%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="traffic-source">
+                                                <div class="source-icon social">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </div>
+                                                社交媒体
+                                            </div>
+                                        </td>
+                                        <td>8,234</td>
+                                        <td>18.9%</td>
+                                        <td>72.1%</td>
+                                        <td>2.1%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="traffic-source">
+                                                <div class="source-icon referral">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </div>
+                                                外部链接
+                                            </div>
+                                        </td>
+                                        <td>4,123</td>
+                                        <td>9.5%</td>
+                                        <td>81.3%</td>
+                                        <td>1.7%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        
+        // 时间筛选按钮
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 更新图表数据
+                updateTrafficChart(this.dataset.period);
+            });
+        });
+        
+        // 访问趋势图表
+        const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        let trafficChart = new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                datasets: [{
+                    label: '访问量',
+                    data: [1200, 1900, 3000, 5000, 4200, 6300, 7800, 8500, 7200, 9100, 8800, 9500],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: '独立访客',
+                    data: [800, 1200, 2100, 3500, 2800, 4200, 5200, 5800, 4900, 6200, 6000, 6800],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 流量来源饼图
+        const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+        const sourceChart = new Chart(sourceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Google搜索', '直接访问', '社交媒体', '外部链接'],
+                datasets: [{
+                    data: [42.3, 29.3, 18.9, 9.5],
+                    backgroundColor: [
+                        '#4285f4',
+                        '#34d399',
+                        '#f59e0b',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 设备分布图表
+        const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+        const deviceChart = new Chart(deviceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['桌面端', '移动端', '平板'],
+                datasets: [{
+                    label: '访问量',
+                    data: [15420, 28340, 3890],
+                    backgroundColor: [
+                        '#667eea',
+                        '#10b981',
+                        '#f59e0b'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 更新流量图表数据
+        function updateTrafficChart(period) {
+            let newData, newLabels;
+            
+            switch(period) {
+                case '7d':
+                    newLabels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                    newData = {
+                        visits: [1200, 1500, 1800, 2100, 1900, 2300, 2000],
+                        unique: [800, 1000, 1200, 1400, 1300, 1600, 1350]
+                    };
+                    break;
+                case '30d':
+                    newLabels = Array.from({length: 30}, (_, i) => `${i + 1}日`);
+                    newData = {
+                        visits: Array.from({length: 30}, () => Math.floor(Math.random() * 1000) + 500),
+                        unique: Array.from({length: 30}, () => Math.floor(Math.random() * 700) + 300)
+                    };
+                    break;
+                case '90d':
+                    newLabels = ['1-30日', '31-60日', '61-90日'];
+                    newData = {
+                        visits: [45000, 52000, 48000],
+                        unique: [32000, 38000, 35000]
+                    };
+                    break;
+                case '1y':
+                    newLabels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+                    newData = {
+                        visits: [1200, 1900, 3000, 5000, 4200, 6300, 7800, 8500, 7200, 9100, 8800, 9500],
+                        unique: [800, 1200, 2100, 3500, 2800, 4200, 5200, 5800, 4900, 6200, 6000, 6800]
+                    };
+                    break;
+            }
+            
+            trafficChart.data.labels = newLabels;
+            trafficChart.data.datasets[0].data = newData.visits;
+            trafficChart.data.datasets[1].data = newData.unique;
+            trafficChart.update();
+        }
+        
+        // 实时数据更新模拟
+        function updateRealTimeStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(stat => {
+                const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
+                const change = Math.floor(Math.random() * 10) - 5; // -5 到 +5 的随机变化
+                const newValue = Math.max(0, currentValue + change);
+                
+                if (change !== 0) {
+                    stat.textContent = newValue.toLocaleString();
+                }
+            });
+        }
+        
+        // 每30秒更新一次实时数据
+        setInterval(updateRealTimeStats, 30000);
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('访问统计页面加载完成');
+        });
+    </script>
+</body>
+</html>

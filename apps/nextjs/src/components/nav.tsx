@@ -17,6 +17,14 @@ interface DashboardNavProps {
 
 const iconMapObj = new Map([
   ["clusters", Icons.Cluster],
+  ["dashboard", Icons.Dashboard],
+  ["games", Icons.Gamepad2],
+  ["categories", Icons.Blocks],
+  ["users", Icons.User],
+  ["reviews", Icons.Heart],
+  ["comments", Icons.Post],
+  ["reports", Icons.Warning],
+  ["analytics", Icons.Dashboard],
   ["billing", Icons.Billing],
   ["settings", Icons.Settings],
 ]);

@@ -13,6 +13,7 @@ import { LocaleChange } from "~/components/locale-change";
 import { GitHubStar } from "~/components/github-star";
 import { useSigninModal } from "~/hooks/use-signin-modal";
 import { UserAccountNav } from "./user-account-nav";
+import GameSearch from "~/components/search/GameSearch";
 
 import useScroll from "~/hooks/use-scroll";
 import type { MainNavItem } from "~/types";
@@ -77,6 +78,11 @@ export function NavBar({
           ) : null}
 
           <div className="w-[1px] h-8 bg-accent"></div>
+
+          {/* Search Component */}
+          <div className="hidden md:block w-64">
+            <GameSearch lang={lang} placeholder="Search games..." className="w-full" />
+          </div>
 
           {rightElements}
 

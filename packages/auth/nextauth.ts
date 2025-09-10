@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       sendVerificationRequest: async ({ identifier, url }) => {
         const user = await db
-          .selectFrom("User")
+          .selectFrom("users")
           .select(["name", "emailVerified"])
           .where("email", "=", identifier)
           .executeTakeFirst();
@@ -95,7 +95,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       const email = token?.email ?? "";
       const dbUser = await db
-        .selectFrom("User")
+        .selectFrom("users")
         .where("email", "=", email)
         .selectAll()
         .executeTakeFirst();

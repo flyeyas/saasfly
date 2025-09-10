@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏评论 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 评论页面特定样式 */
+        .comments-hero {
+            background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+            padding: var(--space-16) 0 var(--space-12);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .comments-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .comments-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .game-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .game-thumbnail {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius-xl);
+            object-fit: cover;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .game-details h1 {
+            font-family: var(--font-game);
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+        
+        .game-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            font-size: var(--text-sm);
+            opacity: 0.9;
+        }
+        
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .stars {
+            display: flex;
+            gap: var(--space-1);
+        }
+        
+        .star {
+            color: var(--warning-400);
+        }
+        
+        .comments-main {
+            padding: var(--space-12) 0;
+            background: var(--gray-50);
+        }
+        
+        .comments-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+        
+        .comments-header {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .comments-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .stats-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-6);
+        }
+        
+        .total-comments {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .avg-rating {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+        }
+        
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+        
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+        }
+        
+        .rating-bar {
+            width: 100px;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .rating-fill {
+            height: 100%;
+            background: var(--warning-400);
+            border-radius: var(--radius-full);
+        }
+        
+        .sort-controls {
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        .sort-btn {
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid var(--gray-300);
+            background: white;
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .sort-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        .sort-btn:hover {
+            background: var(--primary-50);
+            border-color: var(--primary-300);
+        }
+        
+        .write-comment {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .write-comment-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .rating-input {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: var(--space-1);
+        }
+        
+        .rating-star {
+            font-size: var(--text-xl);
+            color: var(--gray-300);
+            cursor: pointer;
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .rating-star:hover,
+        .rating-star.active {
+            color: var(--warning-400);
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: var(--space-4);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .comment-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .comment-options {
+            display: flex;
+            gap: var(--space-4);
+        }
+        
+        .option-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .submit-btn {
+            padding: var(--space-3) var(--space-6);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: background var(--duration-fast) var(--ease-out);
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-600);
+        }
+        
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .comment-item {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+        
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .comment-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .comment-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .comment-username {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+        }
+        
+        .comment-date {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        .comment-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .comment-content {
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+        
+        .comment-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .comment-likes {
+            display: flex;
+            gap: var(--space-4);
+        }
+        
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            background: none;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .like-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .like-btn.liked {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            border-color: var(--primary-300);
+        }
+        
+        .reply-btn {
+            padding: var(--space-2) var(--space-3);
+            background: none;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .reply-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .replies {
+            margin-top: var(--space-4);
+            padding-left: var(--space-8);
+            border-left: 2px solid var(--gray-200);
+        }
+        
+        .reply-item {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+        
+        .load-more {
+            text-align: center;
+            margin-top: var(--space-8);
+        }
+        
+        .load-more-btn {
+            padding: var(--space-3) var(--space-8);
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .load-more-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary-300);
+        }
+        
+        @media (max-width: 768px) {
+            .game-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .game-thumbnail {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .comments-stats {
+                flex-direction: column;
+                gap: var(--space-4);
+                align-items: flex-start;
+            }
+            
+            .stats-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+            
+            .rating-summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .comment-header {
+                flex-direction: column;
+                gap: var(--space-3);
+            }
+            
+            .comment-actions-bar {
+                flex-direction: column;
+                gap: var(--space-3);
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="categories.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="tags.html" class="nav-link">
+                    <i class="fas fa-tags"></i>
+                    <span>标签</span>
+                </a>
+                <a href="comments.html" class="nav-link active">
+                    <i class="fas fa-comments"></i>
+                    <span>评论</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏...">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn-register">
+                        <i class="fas fa-user-plus"></i>
+                        <span>注册</span>
+                    </button>
+                    <button class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 评论页面主体 -->
+    <main>
+        <!-- Hero 区域 -->
+        <section class="comments-hero">
+            <div class="container">
+                <div class="comments-hero-content">
+                    <div class="game-info">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=120&h=120&fit=crop" alt="游戏封面" class="game-thumbnail">
+                        <div class="game-details">
+                            <h1>超级马里奥冒险</h1>
+                            <div class="game-meta">
+                                <div class="rating-display">
+                                    <div class="stars">
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star-half-alt star"></i>
+                                    </div>
+                                    <span>4.5</span>
+                                </div>
+                                <span>•</span>
+                                <span>动作冒险</span>
+                                <span>•</span>
+                                <span>已玩 12,345 次</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 评论内容 -->
+        <section class="comments-main">
+            <div class="comments-container">
+                <!-- 评论统计 -->
+                <div class="comments-header">
+                    <div class="comments-stats">
+                        <div class="stats-left">
+                            <div class="total-comments">156 条评论</div>
+                            <div class="rating-summary">
+                                <div class="avg-rating">4.5</div>
+                                <div class="rating-breakdown">
+                                    <div class="rating-row">
+                                        <span>5星</span>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: 75%;"></div>
+                                        </div>
+                                        <span>75%</span>
+                                    </div>
+                                    <div class="rating-row">
+                                        <span>4星</span>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: 15%;"></div>
+                                        </div>
+                                        <span>15%</span>
+                                    </div>
+                                    <div class="rating-row">
+                                        <span>3星</span>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: 7%;"></div>
+                                        </div>
+                                        <span>7%</span>
+                                    </div>
+                                    <div class="rating-row">
+                                        <span>2星</span>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: 2%;"></div>
+                                        </div>
+                                        <span>2%</span>
+                                    </div>
+                                    <div class="rating-row">
+                                        <span>1星</span>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: 1%;"></div>
+                                        </div>
+                                        <span>1%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sort-controls">
+                            <button class="sort-btn active">最新</button>
+                            <button class="sort-btn">最热</button>
+                            <button class="sort-btn">评分</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 写评论 -->
+                <div class="write-comment">
+                    <div class="write-comment-header">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="用户头像" class="user-avatar">
+                        <div>
+                            <h3>写下你的评论</h3>
+                            <p style="color: var(--gray-600); font-size: var(--text-sm);">分享你的游戏体验</p>
+                        </div>
+                    </div>
+                    
+                    <form class="comment-form">
+                        <div class="rating-input">
+                            <span>评分：</span>
+                            <div class="rating-stars">
+                                <i class="fas fa-star rating-star" data-rating="1"></i>
+                                <i class="fas fa-star rating-star" data-rating="2"></i>
+                                <i class="fas fa-star rating-star" data-rating="3"></i>
+                                <i class="fas fa-star rating-star" data-rating="4"></i>
+                                <i class="fas fa-star rating-star" data-rating="5"></i>
+                            </div>
+                            <span id="ratingText">请选择评分</span>
+                        </div>
+                        
+                        <textarea class="comment-textarea" placeholder="写下你对这个游戏的看法..." rows="4"></textarea>
+                        
+                        <div class="comment-actions">
+                            <div class="comment-options">
+                                <label class="option-checkbox">
+                                    <input type="checkbox">
+                                    <span>匿名评论</span>
+                                </label>
+                                <label class="option-checkbox">
+                                    <input type="checkbox">
+                                    <span>推荐给朋友</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                发布评论
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 评论列表 -->
+                <div class="comments-list">
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-user">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" alt="用户头像" class="comment-user-avatar">
+                                <div class="comment-user-info">
+                                    <div class="comment-username">游戏达人</div>
+                                    <div class="comment-date">2小时前</div>
+                                </div>
+                            </div>
+                            <div class="comment-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                </div>
+                                <span>5.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="comment-content">
+                            这个游戏真的太棒了！画面精美，操作流畅，关卡设计也很有创意。特别是音效和背景音乐，营造出了很好的游戏氛围。强烈推荐给所有喜欢冒险游戏的朋友！
+                        </div>
+                        
+                        <div class="comment-actions-bar">
+                            <div class="comment-likes">
+                                <button class="like-btn liked">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>24</span>
+                                </button>
+                                <button class="like-btn">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <span>2</span>
+                                </button>
+                            </div>
+                            <button class="reply-btn">
+                                <i class="fas fa-reply"></i>
+                                回复
+                            </button>
+                        </div>
+                        
+                        <div class="replies">
+                            <div class="reply-item">
+                                <div class="comment-header">
+                                    <div class="comment-user">
+                                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face" alt="用户头像" class="comment-user-avatar">
+                                        <div class="comment-user-info">
+                                            <div class="comment-username">小玩家</div>
+                                            <div class="comment-date">1小时前</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    完全同意！我也觉得这个游戏的音效做得特别好。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-user">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face" alt="用户头像" class="comment-user-avatar">
+                                <div class="comment-user-info">
+                                    <div class="comment-username">冒险王</div>
+                                    <div class="comment-date">5小时前</div>
+                                </div>
+                            </div>
+                            <div class="comment-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="far fa-star" style="color: var(--gray-300);"></i>
+                                </div>
+                                <span>4.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="comment-content">
+                            游戏整体不错，但是有些关卡的难度设置不太合理，希望能够优化一下。不过总的来说还是值得一玩的。
+                        </div>
+                        
+                        <div class="comment-actions-bar">
+                            <div class="comment-likes">
+                                <button class="like-btn">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>12</span>
+                                </button>
+                                <button class="like-btn">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <span>1</span>
+                                </button>
+                            </div>
+                            <button class="reply-btn">
+                                <i class="fas fa-reply"></i>
+                                回复
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-user">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" alt="用户头像" class="comment-user-avatar">
+                                <div class="comment-user-info">
+                                    <div class="comment-username">游戏新手</div>
+                                    <div class="comment-date">1天前</div>
+                                </div>
+                            </div>
+                            <div class="comment-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star star"></i>
+                                    <i class="fas fa-star-half-alt star"></i>
+                                </div>
+                                <span>4.5</span>
+                            </div>
+                        </div>
+                        
+                        <div class="comment-content">
+                            作为一个游戏新手，我觉得这个游戏很适合入门。教程做得很详细，上手很容易。画面也很可爱，玩起来很有趣！
+                        </div>
+                        
+                        <div class="comment-actions-bar">
+                            <div class="comment-likes">
+                                <button class="like-btn">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>8</span>
+                                </button>
+                                <button class="like-btn">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <span>0</span>
+                                </button>
+                            </div>
+                            <button class="reply-btn">
+                                <i class="fas fa-reply"></i>
+                                回复
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 加载更多 -->
+                <div class="load-more">
+                    <button class="load-more-btn">
+                        <i class="fas fa-chevron-down"></i>
+                        加载更多评论
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-gamepad"></i>
+                        <span class="footer-brand-text">GameHub</span>
+                    </div>
+                    <p class="footer-description">
+                        最好的HTML5游戏平台，为您提供丰富多样的在线游戏体验。
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">游戏分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">动作游戏</a></li>
+                        <li><a href="#">益智游戏</a></li>
+                        <li><a href="#">竞速游戏</a></li>
+                        <li><a href="#">体育游戏</a></li>
+                        <li><a href="#">休闲游戏</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">用户中心</h3>
+                    <ul class="footer-links">
+                        <li><a href="profile.html">个人中心</a></li>
+                        <li><a href="favorites.html">我的收藏</a></li>
+                        <li><a href="#">游戏历史</a></li>
+                        <li><a href="#">成就系统</a></li>
+                        <li><a href="#">设置</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">帮助支持</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">使用帮助</a></li>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">意见反馈</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 GameHub. 保留所有权利。</p>
+                <div class="footer-bottom-links">
+                    <a href="#">服务条款</a>
+                    <a href="#">隐私政策</a>
+                    <a href="#">Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 评分功能
+        function initRatingSystem() {
+            const ratingStars = document.querySelectorAll('.rating-star');
+            const ratingText = document.getElementById('ratingText');
+            let currentRating = 0;
+            
+            ratingStars.forEach((star, index) => {
+                star.addEventListener('mouseenter', function() {
+                    highlightStars(index + 1);
+                });
+                
+                star.addEventListener('mouseleave', function() {
+                    highlightStars(currentRating);
+                });
+                
+                star.addEventListener('click', function() {
+                    currentRating = index + 1;
+                    highlightStars(currentRating);
+                    updateRatingText(currentRating);
+                });
+            });
+            
+            function highlightStars(rating) {
+                ratingStars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+            
+            function updateRatingText(rating) {
+                const texts = {
+                    1: '很差',
+                    2: '一般',
+                    3: '还行',
+                    4: '不错',
+                    5: '很棒'
+                };
+                ratingText.textContent = texts[rating] || '请选择评分';
+            }
+        }
+        
+        // 排序功能
+        function initSortControls() {
+            const sortBtns = document.querySelectorAll('.sort-btn');
+            
+            sortBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    sortBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const sortType = this.textContent;
+                    console.log('排序方式:', sortType);
+                    // 这里可以实现实际的排序逻辑
+                });
+            });
+        }
+        
+        // 点赞功能
+        function initLikeSystem() {
+            const likeBtns = document.querySelectorAll('.like-btn');
+            
+            likeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.querySelector('.fa-thumbs-up')) {
+                        this.classList.toggle('liked');
+                        const count = this.querySelector('span');
+                        let currentCount = parseInt(count.textContent);
+                        
+                        if (this.classList.contains('liked')) {
+                            count.textContent = currentCount + 1;
+                        } else {
+                            count.textContent = Math.max(0, currentCount - 1);
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 回复功能
+        function initReplySystem() {
+            const replyBtns = document.querySelectorAll('.reply-btn');
+            
+            replyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    console.log('回复评论');
+                    // 这里可以实现回复功能
+                });
+            });
+        }
+        
+        // 评论表单提交
+        function initCommentForm() {
+            const commentForm = document.querySelector('.comment-form');
+            
+            if (commentForm) {
+                commentForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const textarea = this.querySelector('.comment-textarea');
+                    const content = textarea.value.trim();
+                    
+                    if (content && currentRating > 0) {
+                        console.log('提交评论:', {
+                            content: content,
+                            rating: currentRating
+                        });
+                        
+                        // 清空表单
+                        textarea.value = '';
+                        currentRating = 0;
+                        document.querySelectorAll('.rating-star').forEach(star => {
+                            star.classList.remove('active');
+                        });
+                        document.getElementById('ratingText').textContent = '请选择评分';
+                        
+                        alert('评论提交成功！');
+                    } else {
+                        alert('请填写评论内容并选择评分！');
+                    }
+                });
+            }
+        }
+        
+        // 加载更多
+        function initLoadMore() {
+            const loadMoreBtn = document.querySelector('.load-more-btn');
+            
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    console.log('加载更多评论');
+                    // 这里可以实现加载更多评论的逻辑
+                });
+            }
+        }
+        
+        // 用户菜单切换
+        function initUserMenu() {
+            const userBtn = document.querySelector('.user-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+            
+            if (userBtn && userDropdown) {
+                userBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', function() {
+                    userDropdown.classList.remove('active');
+                });
+            }
+        }
+        
+        // 搜索功能
+        function initSearch() {
+            const searchBtn = document.querySelector('.search-btn');
+            const searchInput = document.querySelector('.search-input');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', function() {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        console.log('搜索:', query);
+                        // 这里可以实现搜索逻辑
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+            }
+        }
+        
+        // 初始化所有功能
+        document.addEventListener('DOMContentLoaded', function() {
+            initRatingSystem();
+            initSortControls();
+            initLikeSystem();
+            initReplySystem();
+            initCommentForm();
+            initLoadMore();
+            initUserMenu();
+            initSearch();
+        });
+    </script>
+</body>
+</html>

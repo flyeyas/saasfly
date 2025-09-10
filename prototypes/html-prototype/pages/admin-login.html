@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员登录 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 管理员登录页面特定样式 */
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+
+        
+        .admin-login-container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .admin-login-header {
+            background: #64748b;
+            padding: var(--space-6) var(--space-6) var(--space-4);
+            text-align: center;
+        }
+        
+
+        
+        .admin-brand {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-3);
+        }
+        
+        .brand-icon i {
+            font-size: var(--text-4xl);
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .brand-title {
+            font-family: var(--font-game);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: white;
+            margin-bottom: var(--space-2);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .brand-subtitle {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: var(--font-medium);
+            text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+        }
+        
+        .admin-login-form {
+            padding: var(--space-8) var(--space-6) var(--space-6);
+        }
+        
+        .form-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            text-align: center;
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-subtitle {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-input-wrapper {
+            position: relative;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            transition: all var(--duration-fast) var(--ease-out);
+            background: var(--gray-50);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #64748b;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+        }
+        
+        .form-input-icon {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: var(--text-lg);
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .form-input:focus + .form-input-icon {
+            color: #64748b;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: var(--text-lg);
+            transition: color var(--duration-fast) var(--ease-out);
+            padding: var(--space-1);
+        }
+        
+        .password-toggle:hover {
+            color: var(--gray-600);
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            accent-color: #64748b;
+        }
+        
+        .remember-me label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .forgot-password {
+            font-size: var(--text-sm);
+            color: #64748b;
+            text-decoration: none;
+            font-weight: var(--font-medium);
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .forgot-password:hover {
+            color: #475569;
+            text-decoration: underline;
+        }
+        
+        .admin-login-btn {
+            width: 100%;
+            padding: var(--space-4);
+            background: #64748b;
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--space-base);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: background-color var(--duration-fast) var(--ease-out);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+        
+        .admin-login-btn:hover {
+            background: #475569;
+        }
+        
+        .admin-login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .admin-login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .admin-login-footer {
+            padding: var(--space-4) var(--space-6);
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+        }
+        
+        .footer-text {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-3);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            text-decoration: none;
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .footer-link:hover {
+            color: #64748b;
+        }
+        
+        .security-notice {
+            background: linear-gradient(135deg, var(--info-100) 0%, var(--info-50) 100%);
+            border: 1px solid var(--info-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-5);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+        }
+        
+        .security-notice i {
+            color: var(--info-600);
+            font-size: var(--text-lg);
+            margin-top: var(--space-1);
+        }
+        
+        .security-notice-content {
+            flex: 1;
+        }
+        
+        .security-notice-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--info-800);
+            margin-bottom: var(--space-1);
+        }
+        
+        .security-notice-text {
+            font-size: var(--text-xs);
+            color: var(--info-700);
+            line-height: 1.4;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid #64748b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: linear-gradient(135deg, var(--error-100) 0%, var(--error-50) 100%);
+            border: 1px solid var(--error-300);
+            color: var(--error-700);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-5);
+            display: none;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .error-message i {
+            color: var(--error-500);
+            font-size: var(--text-lg);
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, var(--success-100) 0%, var(--success-50) 100%);
+            border: 1px solid var(--success-300);
+            color: var(--success-700);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-5);
+            display: none;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .success-message i {
+            color: var(--success-500);
+            font-size: var(--text-lg);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            body {
+                padding: var(--space-2);
+            }
+            
+            .admin-login-container {
+                margin: 0;
+            }
+            
+            .admin-login-header {
+                padding: var(--space-6) var(--space-4) var(--space-4);
+            }
+            
+            .admin-login-form {
+                padding: var(--space-6) var(--space-4) var(--space-4);
+            }
+            
+            .brand-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .brand-icon i {
+                font-size: var(--text-3xl);
+            }
+            
+            .brand-title {
+                font-size: var(--text-xl);
+            }
+            
+            .form-options {
+                flex-direction: column;
+                gap: var(--space-3);
+                align-items: flex-start;
+            }
+            
+            .footer-links {
+                gap: var(--space-2);
+            }
+        }
+        
+        /* 动画效果 */
+        .admin-login-container {
+            animation: slideUp 0.8s var(--ease-out);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .form-group {
+            animation: fadeInUp 0.6s var(--ease-out) forwards;
+            opacity: 0;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 震动动画 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        
+        .shake {
+            animation: shake 0.6s ease-in-out;
+        }
+        
+        /* 输入验证样式 */
+        .form-input.invalid {
+            border-color: var(--error-500);
+            background: var(--error-50);
+        }
+        
+        .form-input.valid {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .validation-message {
+            font-size: var(--text-xs);
+            margin-top: var(--space-1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .validation-message.error {
+            color: var(--error-600);
+        }
+        
+        .validation-message.success {
+            color: var(--success-600);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <!-- 登录头部 -->
+        <div class="admin-login-header">
+            <div class="admin-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="brand-title">GameHub Admin</h1>
+                <p class="brand-subtitle">管理员控制台</p>
+            </div>
+        </div>
+        
+        <!-- 登录表单 -->
+        <div class="admin-login-form">
+            <h2 class="form-title">管理员登录</h2>
+            <p class="form-subtitle">请使用管理员账户登录系统</p>
+            
+
+            
+            <!-- 成功消息 -->
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText">登录成功，正在跳转...</span>
+            </div>
+            
+            <!-- 错误消息 -->
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorText">用户名或密码错误，请重试</span>
+            </div>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername" class="form-label">
+                        <i class="fas fa-user" style="margin-right: var(--space-1);"></i>
+                        管理员用户名
+                    </label>
+                    <div class="form-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="adminUsername" 
+                            name="username" 
+                            class="form-input" 
+                            placeholder="请输入管理员用户名"
+                            required
+                            autocomplete="username"
+                        >
+                        <i class="fas fa-user-shield form-input-icon"></i>
+                    </div>
+                    <div class="validation-message" id="usernameValidation"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminPassword" class="form-label">
+                        <i class="fas fa-lock" style="margin-right: var(--space-1);"></i>
+                        管理员密码
+                    </label>
+                    <div class="form-input-wrapper">
+                        <input 
+                            type="password" 
+                            id="adminPassword" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="请输入管理员密码"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="fas fa-key form-input-icon"></i>
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-message" id="passwordValidation"></div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberAdmin" name="remember">
+                            <label for="rememberAdmin">记住登录状态</label>
+                        </div>
+                        <a href="#" class="forgot-password" id="forgotPasswordLink">
+                            <i class="fas fa-question-circle" style="margin-right: var(--space-1);"></i>
+                            忘记密码？
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="admin-login-btn" id="loginButton">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录管理后台</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- 登录页脚 -->
+        <div class="admin-login-footer">
+            <p class="footer-text">
+                <i class="fas fa-gamepad" style="margin-right: var(--space-1);"></i>
+                HTML5游戏中心管理系统 v2.0
+            </p>
+            <div class="footer-links">
+                <a href="../index.html" class="footer-link">返回首页</a>
+            </div>
+        </div>
+        
+        <!-- 加载遮罩 -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 管理员登录表单处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('adminLoginForm');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const passwordInput = document.getElementById('adminPassword');
+            const usernameInput = document.getElementById('adminUsername');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const loginButton = document.getElementById('loginButton');
+            
+            // 预设的管理员账户（实际项目中应该从后端验证）
+            const adminCredentials = {
+                'admin': 'admin123',
+                'superadmin': 'super123',
+                'gameadmin': 'game123'
+            };
+            
+            // 密码显示/隐藏切换
+            passwordToggle.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+            
+            // 实时输入验证
+            usernameInput.addEventListener('input', function() {
+                validateUsername(this.value);
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                validatePassword(this.value);
+            });
+            
+            // 用户名验证
+            function validateUsername(username) {
+                const validation = document.getElementById('usernameValidation');
+                
+                if (username.length === 0) {
+                    usernameInput.classList.remove('valid', 'invalid');
+                    validation.innerHTML = '';
+                    return false;
+                }
+                
+                if (username.length < 3) {
+                    usernameInput.classList.remove('valid');
+                    usernameInput.classList.add('invalid');
+                    validation.innerHTML = '<i class="fas fa-times"></i> 用户名至少需要3个字符';
+                    validation.className = 'validation-message error';
+                    return false;
+                }
+                
+                if (adminCredentials.hasOwnProperty(username)) {
+                    usernameInput.classList.remove('invalid');
+                    usernameInput.classList.add('valid');
+                    validation.innerHTML = '<i class="fas fa-check"></i> 用户名有效';
+                    validation.className = 'validation-message success';
+                    return true;
+                } else {
+                    usernameInput.classList.remove('valid');
+                    usernameInput.classList.add('invalid');
+                    validation.innerHTML = '<i class="fas fa-times"></i> 用户名不存在';
+                    validation.className = 'validation-message error';
+                    return false;
+                }
+            }
+            
+            // 密码验证
+            function validatePassword(password) {
+                const validation = document.getElementById('passwordValidation');
+                
+                if (password.length === 0) {
+                    passwordInput.classList.remove('valid', 'invalid');
+                    validation.innerHTML = '';
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    passwordInput.classList.remove('valid');
+                    passwordInput.classList.add('invalid');
+                    validation.innerHTML = '<i class="fas fa-times"></i> 密码至少需要6个字符';
+                    validation.className = 'validation-message error';
+                    return false;
+                }
+                
+                passwordInput.classList.remove('invalid');
+                passwordInput.classList.add('valid');
+                validation.innerHTML = '<i class="fas fa-check"></i> 密码格式正确';
+                validation.className = 'validation-message success';
+                return true;
+            }
+            
+            // 表单提交处理
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                
+                // 隐藏之前的消息
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+                
+                // 验证输入
+                const isUsernameValid = validateUsername(username);
+                const isPasswordValid = validatePassword(password);
+                
+                if (!isUsernameValid || !isPasswordValid) {
+                    showError('请检查输入信息');
+                    shakeForm();
+                    return;
+                }
+                
+                // 显示加载状态
+                showLoading(true);
+                
+                // 模拟登录请求
+                setTimeout(() => {
+                    showLoading(false);
+                    
+                    // 验证管理员凭据
+                    if (adminCredentials[username] && adminCredentials[username] === password) {
+                        // 登录成功
+                        showSuccess('登录成功，正在跳转到管理后台...');
+                        
+                        // 保存登录状态（如果选择了记住我）
+                        if (document.getElementById('rememberAdmin').checked) {
+                            localStorage.setItem('adminLoggedIn', 'true');
+                            localStorage.setItem('adminUsername', username);
+                        }
+                        
+                        // 跳转到管理后台
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1500);
+                    } else {
+                        // 登录失败
+                        showError('用户名或密码错误，请重试');
+                        shakeForm();
+                        
+                        // 清空密码
+                        passwordInput.value = '';
+                        passwordInput.classList.remove('valid', 'invalid');
+                        document.getElementById('passwordValidation').innerHTML = '';
+                    }
+                }, 2000);
+            });
+            
+            // 显示加载状态
+            function showLoading(show) {
+                if (show) {
+                    loadingOverlay.style.display = 'flex';
+                    loginButton.disabled = true;
+                } else {
+                    loadingOverlay.style.display = 'none';
+                    loginButton.disabled = false;
+                }
+            }
+            
+            // 显示错误消息
+            function showError(message) {
+                document.getElementById('errorText').textContent = message;
+                errorMessage.style.display = 'flex';
+                successMessage.style.display = 'none';
+            }
+            
+            // 显示成功消息
+            function showSuccess(message) {
+                document.getElementById('successText').textContent = message;
+                successMessage.style.display = 'flex';
+                errorMessage.style.display = 'none';
+            }
+            
+            // 震动效果
+            function shakeForm() {
+                loginForm.classList.add('shake');
+                setTimeout(() => {
+                    loginForm.classList.remove('shake');
+                }, 600);
+            }
+            
+            // 忘记密码处理
+            document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('请联系系统管理员重置密码\n\n联系方式：\n邮箱：admin@gamehub.com\n电话：400-123-4567');
+            });
+            
+            // 检查是否已经登录
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                const savedUsername = localStorage.getItem('adminUsername');
+                if (savedUsername) {
+                    usernameInput.value = savedUsername;
+                    document.getElementById('rememberAdmin').checked = true;
+                }
+            }
+            
+            // 输入框焦点效果
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+            
+            // 键盘快捷键支持
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+Enter 快速登录
+                if (e.ctrlKey && e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+                
+                // ESC 清空表单
+                if (e.key === 'Escape') {
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    usernameInput.classList.remove('valid', 'invalid');
+                    passwordInput.classList.remove('valid', 'invalid');
+                    document.getElementById('usernameValidation').innerHTML = '';
+                    document.getElementById('passwordValidation').innerHTML = '';
+                    errorMessage.style.display = 'none';
+                    successMessage.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

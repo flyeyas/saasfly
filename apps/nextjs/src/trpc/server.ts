@@ -21,7 +21,7 @@ export const createTRPCContext = async (opts: {
 // eslint-disable-next-line @typescript-eslint/require-await
 }) => {
   return {
-    userId: opts.auth.userId,
+    userId: opts.auth?.user?.id || null,
     ...opts,
   };
 };

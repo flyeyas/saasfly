@@ -16,52 +16,52 @@ function checkPasswordStrength(password: string): PasswordStrength {
   const errors: string[] = [];
   const suggestions: string[] = [];
 
-  // 长度检查
+  // Length check
   if (password.length < 8) {
-    errors.push("密码长度至少需要8位");
-    suggestions.push("增加密码长度");
+    errors.push("Password must be at least 8 characters");
+    suggestions.push("Increase password length");
   } else if (password.length >= 8) {
     score += 1;
   }
 
-  // 包含小写字母
+  // Contains lowercase letters
   if (!/[a-z]/.test(password)) {
-    errors.push("缺少小写字母");
-    suggestions.push("添加小写字母");
+    errors.push("Missing lowercase letters");
+    suggestions.push("Add lowercase letters");
   } else {
     score += 1;
   }
 
-  // 包含大写字母
+  // Contains uppercase letters
   if (!/[A-Z]/.test(password)) {
-    errors.push("缺少大写字母");
-    suggestions.push("添加大写字母");
+    errors.push("Missing uppercase letters");
+    suggestions.push("Add uppercase letters");
   } else {
     score += 1;
   }
 
-  // 包含数字
+  // Contains numbers
   if (!/\d/.test(password)) {
-    errors.push("缺少数字");
-    suggestions.push("添加数字");
+    errors.push("Missing numbers");
+    suggestions.push("Add numbers");
   } else {
     score += 1;
   }
 
-  // 包含特殊字符
+  // Contains special characters
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push("缺少特殊字符");
-    suggestions.push("添加特殊字符如 !@#$%^&*");
+    errors.push("Missing special characters");
+    suggestions.push("Add special characters like !@#$%^&*");
   } else {
     score += 1;
   }
 
-  // 长度奖励
+  // Length bonus
   if (password.length >= 12) {
     score += 1;
   }
 
-  // 确保分数在0-4之间
+  // Ensure score is between 0-4
   score = Math.min(4, Math.max(0, score - 1));
 
   return {
@@ -82,14 +82,14 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "请求参数无效" },
+        { error: "Invalid request parameters" },
         { status: 400 }
       );
     }
 
     console.error("Password strength check error:", error);
     return NextResponse.json(
-      { error: "密码强度检查失败" },
+      { error: "Password strength check failed" },
       { status: 500 }
     );
   }

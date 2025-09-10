@@ -15,9 +15,9 @@ export function InfiniteMovingCardss() {
 const reviews = [
   {
     quote:
-      "这款 SaaS 服务简直是办公利器！它的功能非常强大，界面也十分友好。自从使用它以后，我的工作效率提高了很多。我真的很庆幸选择了这个服务。",
-    name: "王伟",
-    title: "高级用户",
+      "This SaaS service is truly an office powerhouse! Its features are incredibly robust and the interface is very user-friendly. Since using it, my work efficiency has improved significantly. I'm really glad I chose this service.",
+    name: "David Wang",
+    title: "Premium User",
   },
   {
     quote:
@@ -27,15 +27,15 @@ const reviews = [
   },
   {
     quote:
-      "このSaaSサービスには本当に感謝しています。おかげで業務の効率が大幅に向上しました。機能が豊富で、使いやすいインターフェースも魅力的です。これからもずっと使い続けたいと思います。",
-    name: "山田太郎",
-    title: "ゴールドユーザー",
+      "I'm truly grateful for this SaaS service. Thanks to it, my work efficiency has improved dramatically. It's feature-rich and has an attractive, easy-to-use interface. I want to continue using it forever.",
+    name: "Taro Yamada",
+    title: "Gold User",
   },
   {
     quote:
-      "저는 이 SaaS 서비스에 매우 만족하고 있습니다. 기능이 다양하고 강력할 뿐만 아니라, 고객 지원도 훌륭합니다. 이 서비스 덕분에 업무 성과가 크게 향상되었어요. 강력히 추천합니다!",
-    name: "김민수",
-    title: "VIP 사용자",
+      "I am very satisfied with this SaaS service. Not only are the features diverse and powerful, but the customer support is also excellent. Thanks to this service, my work performance has improved significantly. I highly recommend it!",
+    name: "Michael Kim",
+    title: "VIP User",
   },
   {
     quote:

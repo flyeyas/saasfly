@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签管理 - GameHub 后台管理</title>
+    <meta name="description" content="GameHub 后台管理系统 - 标签管理">
+    
+    <!-- 引入字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <style>
+        /* 后台管理布局样式 */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: transform var(--duration-normal) var(--ease-out);
+        }
+        
+        .admin-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-family: var(--font-game);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+        }
+        
+        .admin-brand i {
+            font-size: var(--text-2xl);
+        }
+        
+        .admin-nav {
+            flex: 1;
+            padding: var(--space-4) 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .nav-section-title {
+            padding: 0 var(--space-6) var(--space-2);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-6);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all var(--duration-normal) var(--ease-out);
+            position: relative;
+        }
+        
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--primary-600);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            border-right: 3px solid var(--primary-600);
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item-text {
+            flex: 1;
+            font-weight: var(--font-medium);
+        }
+        
+        .nav-item-badge {
+            background: var(--red-500);
+            color: white;
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .admin-user {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-500);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-bold);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            font-size: var(--text-sm);
+        }
+        
+        .user-role {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .page-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: var(--space-2);
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: var(--space-2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--red-500);
+            border-radius: 50%;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+        }
+        
+        /* 标签管理特定样式 */
+        .tags-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .tags-stats {
+            display: flex;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+        
+        .stat-item {
+            background: white;
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+            margin-bottom: var(--space-1);
+        }
+        
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .tags-filters {
+            background: white;
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-6);
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .filter-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+        }
+        
+        .form-select, .form-input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: white;
+        }
+        
+        .form-input {
+            min-width: 200px;
+        }
+        
+        .tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .tag-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: var(--space-4);
+            transition: all var(--duration-normal) var(--ease-out);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .tag-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .tag-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+        
+        .tag-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .tag-color {
+            width: 20px;
+            height: 20px;
+            border-radius: var(--radius-full);
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tag-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-3);
+            line-height: 1.4;
+        }
+        
+        .tag-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        .tag-actions {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: flex-end;
+        }
+        
+        .action-btn {
+            background: none;
+            border: 1px solid var(--gray-300);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .action-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .action-btn.edit {
+            color: var(--primary-600);
+            border-color: var(--primary-300);
+        }
+        
+        .action-btn.edit:hover {
+            background: var(--primary-50);
+        }
+        
+        .action-btn.delete {
+            color: var(--red-600);
+            border-color: var(--red-300);
+        }
+        
+        .action-btn.delete:hover {
+            background: var(--red-50);
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .modal-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: var(--space-1);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            transition: border-color var(--duration-normal) var(--ease-out);
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .color-picker-group {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+        }
+        
+        .color-input {
+            width: 50px;
+            height: 40px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        
+        .color-presets {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .color-preset {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            margin-top: var(--space-6);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .tags-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .tags-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tags-header {
+                flex-direction: column;
+                gap: var(--space-4);
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="admin-brand">
+                <i class="fas fa-gamepad"></i>
+                <span class="admin-brand-text">GameHub Admin</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <a href="admin.html" class="nav-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-item-text">仪表盘</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span class="nav-item-text">游戏管理</span>
+                        <span class="nav-item-badge">156</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-th-large"></i>
+                        <span class="nav-item-text">分类管理</span>
+                    </a>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-tags"></i>
+                        <span class="nav-item-text">标签管理</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-item-text">用户管理</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">内容管理</div>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span class="nav-item-text">评价管理</span>
+                        <span class="nav-item-badge">12</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-comments"></i>
+                        <span class="nav-item-text">评论管理</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-flag"></i>
+                        <span class="nav-item-text">举报管理</span>
+                        <span class="nav-item-badge">3</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">系统设置</div>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-item-text">数据分析</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-item-text">系统设置</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="admin-user">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name">管理员</div>
+                    <div class="user-role">超级管理员</div>
+                </div>
+                <button class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="admin-main">
+            <!-- 头部 -->
+            <header class="admin-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">标签管理</h1>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge"></div>
+                    </button>
+                    <button class="btn btn-primary" id="addTagBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>添加标签</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <main class="admin-content">
+                <!-- 统计信息 -->
+                <div class="tags-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">总标签数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">18</div>
+                        <div class="stat-label">活跃标签</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">未使用</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">标签使用次数</div>
+                    </div>
+                </div>
+                
+                <!-- 筛选器 -->
+                <div class="tags-filters">
+                    <div class="filter-group">
+                        <label class="filter-label">状态筛选：</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="all">全部状态</option>
+                            <option value="active">活跃</option>
+                            <option value="inactive">未使用</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">分类筛选：</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="all">全部分类</option>
+                            <option value="game-type">游戏类型</option>
+                            <option value="difficulty">难度等级</option>
+                            <option value="theme">主题风格</option>
+                            <option value="feature">游戏特色</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">搜索：</label>
+                        <input type="text" class="form-input" placeholder="搜索标签名称..." id="searchInput">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <button class="btn btn-outline" id="resetFilters">
+                            <i class="fas fa-refresh"></i>
+                            重置筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 标签网格 -->
+                <div class="tags-grid" id="tagsGrid">
+                    <!-- 标签卡片 -->
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">动作游戏</div>
+                                <div class="tag-color" style="background: #ef4444;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">包含快节奏战斗、跳跃、射击等动作元素的游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 45</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-10</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="1">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="1">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">益智解谜</div>
+                                <div class="tag-color" style="background: #3b82f6;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">需要逻辑思维和策略规划的智力挑战游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 32</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-08</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="2">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="2">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">休闲娱乐</div>
+                                <div class="tag-color" style="background: #10b981;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">轻松愉快，适合放松心情的休闲类游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 28</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-12</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="3">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="3">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">多人竞技</div>
+                                <div class="tag-color" style="background: #f59e0b;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">支持多人在线对战或合作的竞技类游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 19</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-05</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="4">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="4">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">像素风格</div>
+                                <div class="tag-color" style="background: #8b5cf6;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">采用复古像素艺术风格的游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 15</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-03</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="5">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="5">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-card">
+                        <div class="tag-header">
+                            <div>
+                                <div class="tag-name">高难度</div>
+                                <div class="tag-color" style="background: #dc2626;"></div>
+                            </div>
+                        </div>
+                        <div class="tag-description">具有挑战性，需要高超技巧的困难游戏</div>
+                        <div class="tag-stats">
+                            <span><i class="fas fa-gamepad"></i> 使用次数: 12</span>
+                            <span><i class="fas fa-calendar"></i> 最后更新: 2024-01-01</span>
+                        </div>
+                        <div class="tag-actions">
+                            <button class="action-btn edit" data-tag-id="6">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                            <button class="action-btn delete" data-tag-id="6">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- 添加/编辑标签模态框 -->
+    <div class="modal" id="tagModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">添加标签</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="tagForm">
+                <div class="form-group">
+                    <label class="form-label">标签名称 *</label>
+                    <input type="text" class="form-input" id="tagName" placeholder="请输入标签名称" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">标签描述</label>
+                    <textarea class="form-textarea" id="tagDescription" placeholder="请输入标签描述"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">标签颜色</label>
+                    <div class="color-picker-group">
+                        <input type="color" class="color-input" id="tagColor" value="#3b82f6">
+                        <div class="color-presets">
+                            <div class="color-preset" style="background: #ef4444;" data-color="#ef4444"></div>
+                            <div class="color-preset" style="background: #3b82f6;" data-color="#3b82f6"></div>
+                            <div class="color-preset" style="background: #10b981;" data-color="#10b981"></div>
+                            <div class="color-preset" style="background: #f59e0b;" data-color="#f59e0b"></div>
+                            <div class="color-preset" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
+                            <div class="color-preset" style="background: #ec4899;" data-color="#ec4899"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">标签分类</label>
+                    <select class="form-select" id="tagCategory">
+                        <option value="game-type">游戏类型</option>
+                        <option value="difficulty">难度等级</option>
+                        <option value="theme">主题风格</option>
+                        <option value="feature">游戏特色</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const adminSidebar = document.getElementById('adminSidebar');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            adminSidebar.classList.toggle('show');
+        });
+        
+        // 模态框控制
+        const tagModal = document.getElementById('tagModal');
+        const addTagBtn = document.getElementById('addTagBtn');
+        const modalClose = document.getElementById('modalClose');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        function showModal(title = '添加标签') {
+            modalTitle.textContent = title;
+            tagModal.classList.add('show');
+        }
+        
+        function hideModal() {
+            tagModal.classList.remove('show');
+            document.getElementById('tagForm').reset();
+        }
+        
+        addTagBtn.addEventListener('click', () => showModal('添加标签'));
+        modalClose.addEventListener('click', hideModal);
+        cancelBtn.addEventListener('click', hideModal);
+        
+        // 点击模态框外部关闭
+        tagModal.addEventListener('click', function(e) {
+            if (e.target === tagModal) {
+                hideModal();
+            }
+        });
+        
+        // 颜色预设选择
+        document.querySelectorAll('.color-preset').forEach(preset => {
+            preset.addEventListener('click', function() {
+                const color = this.dataset.color;
+                document.getElementById('tagColor').value = color;
+            });
+        });
+        
+        // 编辑标签
+        document.querySelectorAll('.action-btn.edit').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const tagId = this.dataset.tagId;
+                // 这里可以根据tagId获取标签数据并填充表单
+                showModal('编辑标签');
+            });
+        });
+        
+        // 删除标签
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const tagId = this.dataset.tagId;
+                if (confirm('确定要删除这个标签吗？删除后无法恢复。')) {
+                    console.log('删除标签:', tagId);
+                    // 这里添加删除逻辑
+                }
+            });
+        });
+        
+        // 表单提交
+        document.getElementById('tagForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('tagName').value,
+                description: document.getElementById('tagDescription').value,
+                color: document.getElementById('tagColor').value,
+                category: document.getElementById('tagCategory').value
+            };
+            
+            console.log('保存标签:', formData);
+            // 这里添加保存逻辑
+            
+            hideModal();
+        });
+        
+        // 筛选功能
+        const statusFilter = document.getElementById('statusFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchInput = document.getElementById('searchInput');
+        const resetFilters = document.getElementById('resetFilters');
+        
+        function applyFilters() {
+            const status = statusFilter.value;
+            const category = categoryFilter.value;
+            const search = searchInput.value.toLowerCase();
+            
+            console.log('应用筛选:', { status, category, search });
+            // 这里添加筛选逻辑
+        }
+        
+        statusFilter.addEventListener('change', applyFilters);
+        categoryFilter.addEventListener('change', applyFilters);
+        searchInput.addEventListener('input', applyFilters);
+        
+        resetFilters.addEventListener('click', function() {
+            statusFilter.value = 'all';
+            categoryFilter.value = 'all';
+            searchInput.value = '';
+            applyFilters();
+        });
+    </script>
+</body>
+</html>

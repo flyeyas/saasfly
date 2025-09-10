@@ -73,7 +73,7 @@ export async function sendPasswordResetCode(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.errors[0]?.message || '验证失败' },
         { status: 400 }
       );
     }
@@ -124,12 +124,6 @@ export async function resetPassword(request: NextRequest) {
     const hashedPassword = await hashPassword(newPassword);
 
     // 更新密码并重置登录失败次数
-    if (!user) {
-      return NextResponse.json(
-        { error: '用户不存在' },
-        { status: 404 }
-      );
-    }
 
     await db
       .updateTable('users')
@@ -149,7 +143,7 @@ export async function resetPassword(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.errors[0]?.message || '验证失败' },
         { status: 400 }
       );
     }
@@ -191,7 +185,7 @@ export async function verifyResetCode(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.errors[0]?.message || '验证失败' },
         { status: 400 }
       );
     }

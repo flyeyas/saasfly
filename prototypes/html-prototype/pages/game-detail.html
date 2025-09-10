@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太空探险者 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 游戏详情页特定样式 */
+        .game-header {
+            background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+            color: white;
+            padding: var(--space-8) 0;
+        }
+        
+        .game-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            gap: var(--space-6);
+            align-items: center;
+        }
+        
+        .game-icon {
+            width: 200px;
+            height: 200px;
+            border-radius: var(--radius-2xl);
+            background-size: cover;
+            background-position: center;
+            box-shadow: var(--shadow-2xl);
+            border: 4px solid rgba(255,255,255,0.2);
+        }
+        
+        .game-info {
+            flex: 1;
+        }
+        
+        .game-title {
+            font-family: var(--font-game);
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-3);
+        }
+        
+        .game-subtitle {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+            margin-bottom: var(--space-4);
+        }
+        
+        .game-meta {
+            display: flex;
+            gap: var(--space-6);
+            margin-bottom: var(--space-4);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .meta-icon {
+            font-size: var(--text-lg);
+        }
+        
+        .game-tags {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+        
+        .game-tag {
+            background: rgba(255,255,255,0.2);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .game-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .play-btn {
+            background: var(--success-500);
+            color: white;
+            border: none;
+            padding: var(--space-4) var(--space-8);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            justify-content: center;
+        }
+        
+        .play-btn:hover {
+            background: var(--success-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-8);
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: var(--space-8);
+        }
+        
+        .game-frame-header {
+            background: var(--gray-100);
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .frame-controls {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .frame-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .frame-dot.red { background: #ff5f57; }
+        .frame-dot.yellow { background: #ffbd2e; }
+        .frame-dot.green { background: #28ca42; }
+        
+        .frame-title {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            font-weight: var(--font-medium);
+        }
+        
+        .fullscreen-btn {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: var(--space-1);
+            border-radius: var(--radius-md);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .fullscreen-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .game-iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            background: var(--gray-900);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: var(--text-lg);
+        }
+        
+        .game-placeholder {
+            text-align: center;
+            padding: var(--space-16);
+        }
+        
+        .placeholder-icon {
+            font-size: var(--text-6xl);
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--space-6);
+        }
+        
+        .section-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .section-icon {
+            color: var(--primary-500);
+        }
+        
+        .game-description {
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--gray-700);
+            margin-bottom: var(--space-6);
+        }
+        
+        .game-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+        }
+        
+        .feature-icon {
+            color: var(--primary-500);
+            font-size: var(--text-lg);
+        }
+        
+        .feature-text {
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+        
+        .rating-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+        }
+        
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .rating-score {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+        }
+        
+        .rating-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+        
+        .rating-stars {
+            color: var(--warning-400);
+            font-size: var(--text-xl);
+        }
+        
+        .rating-count {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .rate-btn {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .rate-btn:hover {
+            background: var(--primary-600);
+        }
+        
+        .comments-section {
+            margin-top: var(--space-6);
+        }
+        
+        .comment-form {
+            background: var(--gray-50);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-6);
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: var(--space-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-family: inherit;
+            font-size: var(--text-sm);
+            resize: vertical;
+            margin-bottom: var(--space-3);
+        }
+        
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+        }
+        
+        .comment-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .comment-info {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .submit-comment {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .submit-comment:hover {
+            background: var(--primary-600);
+        }
+        
+        .comment-item {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-600);
+            font-weight: var(--font-bold);
+        }
+        
+        .comment-author {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+        }
+        
+        .comment-date {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .comment-rating {
+            color: var(--warning-400);
+            font-size: var(--text-sm);
+        }
+        
+        .comment-text {
+            font-size: var(--text-sm);
+            line-height: 1.5;
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .comment-actions-bar {
+            display: flex;
+            gap: var(--space-4);
+        }
+        
+        .comment-action {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .comment-action:hover {
+            color: var(--primary-500);
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .sidebar-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+        }
+        
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+            margin-top: var(--space-1);
+        }
+        
+        .related-games {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .related-game {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--duration-fast) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .related-game:hover {
+            background: var(--gray-50);
+        }
+        
+        .related-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+        
+        .related-info {
+            flex: 1;
+        }
+        
+        .related-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .related-category {
+            font-size: var(--text-xs);
+            color: var(--primary-600);
+            margin-bottom: var(--space-1);
+        }
+        
+        .related-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .related-stars {
+            color: var(--warning-400);
+            font-size: var(--text-xs);
+        }
+        
+        .related-score {
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+        }
+        
+        @media (max-width: 1024px) {
+            .game-header-content {
+                grid-template-columns: 150px 1fr;
+                gap: var(--space-4);
+            }
+            
+            .game-icon {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .game-actions {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                justify-content: center;
+                margin-top: var(--space-4);
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-header-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .game-icon {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto;
+            }
+            
+            .game-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .game-tags {
+                justify-content: center;
+            }
+            
+            .game-iframe {
+                height: 300px;
+            }
+            
+            .rating-section {
+                flex-direction: column;
+                gap: var(--space-4);
+                text-align: center;
+            }
+            
+            .game-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="category.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-fire"></i>
+                    <span>热门</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>最新</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏...">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn-register">
+                        <i class="fas fa-user-plus"></i>
+                        <span>注册</span>
+                    </button>
+                    <button class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 游戏头部 -->
+    <section class="game-header">
+        <div class="game-header-content">
+            <div class="game-icon" style="background-image: url('https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')"></div>
+            
+            <div class="game-info">
+                <h1 class="game-title">
+                    <i class="fas fa-rocket"></i>
+                    太空探险者
+                </h1>
+                <p class="game-subtitle">
+                    驾驶宇宙飞船探索神秘的太空世界，收集资源，解锁新的星球和装备
+                </p>
+                
+                <div class="game-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-tag meta-icon"></i>
+                        <span>冒险游戏</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar meta-icon"></i>
+                        <span>2024年1月</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users meta-icon"></i>
+                        <span>单人游戏</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-star meta-icon"></i>
+                        <span>4.8 评分</span>
+                    </div>
+                </div>
+                
+                <div class="game-tags">
+                    <span class="game-tag">太空</span>
+                    <span class="game-tag">探险</span>
+                    <span class="game-tag">收集</span>
+                    <span class="game-tag">升级</span>
+                    <span class="game-tag">HTML5</span>
+                </div>
+            </div>
+            
+            <div class="game-actions">
+                <button class="play-btn" onclick="startGame()">
+                    <i class="fas fa-play"></i>
+                    <span>开始游戏</span>
+                </button>
+                
+                <div class="action-buttons">
+                    <button class="action-btn" title="收藏游戏">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="action-btn" title="分享游戏">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button class="action-btn" title="举报游戏">
+                        <i class="fas fa-flag"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 左侧内容 -->
+        <div class="left-content">
+            <!-- 游戏容器 -->
+            <div class="game-container">
+                <div class="game-frame-header">
+                    <div class="frame-controls">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">太空探险者 - 游戏窗口</div>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+                
+                <div class="game-iframe" id="gameFrame">
+                    <div class="game-placeholder">
+                        <i class="fas fa-gamepad placeholder-icon"></i>
+                        <h3>点击"开始游戏"按钮开始体验</h3>
+                        <p>游戏将在此区域加载</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 游戏描述 -->
+            <div class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle section-icon"></i>
+                    游戏介绍
+                </h2>
+                
+                <p class="game-description">
+                    《太空探险者》是一款令人兴奋的太空冒险游戏。在这个游戏中，您将扮演一名勇敢的太空探险家，
+                    驾驶先进的宇宙飞船穿越浩瀚的宇宙。您的任务是探索未知的星球，收集珍贵的资源，
+                    升级您的飞船装备，并解锁新的星系。游戏采用精美的像素艺术风格，配合动感的音效，
+                    为您带来沉浸式的太空探险体验。
+                </p>
+                
+                <div class="game-features">
+                    <div class="feature-item">
+                        <i class="fas fa-rocket feature-icon"></i>
+                        <span class="feature-text">多种宇宙飞船可选择</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-globe feature-icon"></i>
+                        <span class="feature-text">50+ 个星球等待探索</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-gem feature-icon"></i>
+                        <span class="feature-text">丰富的资源收集系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-cog feature-icon"></i>
+                        <span class="feature-text">深度装备升级系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-trophy feature-icon"></i>
+                        <span class="feature-text">成就系统和排行榜</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-music feature-icon"></i>
+                        <span class="feature-text">沉浸式音效体验</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 评分和评论 -->
+            <div class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-star section-icon"></i>
+                    评分与评论
+                </h2>
+                
+                <div class="rating-section">
+                    <div class="rating-display">
+                        <span class="rating-score">4.8</span>
+                        <div class="rating-details">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="rating-count">基于 1,234 个评分</span>
+                        </div>
+                    </div>
+                    <button class="rate-btn" onclick="showRatingModal()">
+                        <i class="fas fa-star"></i>
+                        评分游戏
+                    </button>
+                </div>
+                
+                <div class="comments-section">
+                    <div class="comment-form">
+                        <textarea class="comment-textarea" placeholder="分享您的游戏体验..."></textarea>
+                        <div class="comment-actions">
+                            <span class="comment-info">请文明评论，共同维护良好的游戏环境</span>
+                            <button class="submit-comment">
+                                <i class="fas fa-paper-plane"></i>
+                                发表评论
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar">A</div>
+                            <div>
+                                <div class="comment-author">Alex_游戏达人</div>
+                                <div class="comment-date">2024年1月15日</div>
+                            </div>
+                            <div class="comment-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="comment-text">
+                            这款游戏真的太棒了！画面精美，操作流畅，太空探险的感觉非常真实。
+                            特别喜欢飞船升级系统，每次解锁新装备都让人兴奋不已。强烈推荐！
+                        </p>
+                        <div class="comment-actions-bar">
+                            <button class="comment-action">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>有用 (23)</span>
+                            </button>
+                            <button class="comment-action">
+                                <i class="fas fa-reply"></i>
+                                <span>回复</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar">M</div>
+                            <div>
+                                <div class="comment-author">Mike_太空迷</div>
+                                <div class="comment-date">2024年1月12日</div>
+                            </div>
+                            <div class="comment-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="comment-text">
+                            游戏整体不错，太空场景很震撼。不过希望能增加更多的星球类型，
+                            还有多人合作模式就更完美了。期待后续更新！
+                        </p>
+                        <div class="comment-actions-bar">
+                            <button class="comment-action">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>有用 (15)</span>
+                            </button>
+                            <button class="comment-action">
+                                <i class="fas fa-reply"></i>
+                                <span>回复</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar">S</div>
+                            <div>
+                                <div class="comment-author">Sarah_探险家</div>
+                                <div class="comment-date">2024年1月10日</div>
+                            </div>
+                            <div class="comment-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="comment-text">
+                            作为一个太空游戏爱好者，这款游戏完全满足了我的期待。
+                            资源收集很有策略性，每个决定都很重要。音效也很棒！
+                        </p>
+                        <div class="comment-actions-bar">
+                            <button class="comment-action">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>有用 (31)</span>
+                            </button>
+                            <button class="comment-action">
+                                <i class="fas fa-reply"></i>
+                                <span>回复</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧边栏 -->
+        <div class="sidebar">
+            <!-- 游戏统计 -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar section-icon"></i>
+                    游戏统计
+                </h3>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">15.2K</span>
+                        <span class="stat-label">总游戏次数</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">4.8</span>
+                        <span class="stat-label">平均评分</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">1.2K</span>
+                        <span class="stat-label">收藏次数</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">856</span>
+                        <span class="stat-label">分享次数</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 相关游戏推荐 -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-gamepad section-icon"></i>
+                    相关推荐
+                </h3>
+                
+                <div class="related-games">
+                    <div class="related-game" onclick="location.href='game-detail.html?id=2'">
+                        <div class="related-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="related-info">
+                            <div class="related-title">魔法消除</div>
+                            <div class="related-category">益智游戏</div>
+                            <div class="related-rating">
+                                <div class="related-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="related-score">4.6</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="related-game" onclick="location.href='game-detail.html?id=3'">
+                        <div class="related-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="related-info">
+                            <div class="related-title">极速赛车</div>
+                            <div class="related-category">竞速游戏</div>
+                            <div class="related-rating">
+                                <div class="related-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="related-score">4.9</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="related-game" onclick="location.href='game-detail.html?id=4'">
+                        <div class="related-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1556438064-2d7646166914?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="related-info">
+                            <div class="related-title">城堡守卫</div>
+                            <div class="related-category">策略游戏</div>
+                            <div class="related-rating">
+                                <div class="related-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="related-score">4.7</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="related-game" onclick="location.href='game-detail.html?id=5'">
+                        <div class="related-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="related-info">
+                            <div class="related-title">忍者跑酷</div>
+                            <div class="related-category">动作游戏</div>
+                            <div class="related-rating">
+                                <div class="related-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="related-score">4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 广告位 -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-bullhorn section-icon"></i>
+                    推广内容
+                </h3>
+                
+                <div style="background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; padding: var(--space-6); border-radius: var(--radius-xl); text-align: center;">
+                    <i class="fas fa-crown" style="font-size: var(--text-3xl); margin-bottom: var(--space-3); display: block;"></i>
+                    <h4 style="font-size: var(--text-lg); font-weight: var(--font-bold); margin-bottom: var(--space-2);">升级到VIP</h4>
+                    <p style="font-size: var(--text-sm); margin-bottom: var(--space-4); opacity: 0.9;">解锁更多游戏特权，享受无广告体验</p>
+                    <button class="btn btn-secondary" style="width: 100%;">
+                        <i class="fas fa-star"></i>
+                        <span>立即升级</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <p class="footer-description">
+                    最好的HTML5游戏聚合平台，为您提供优质的在线游戏体验。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">游戏分类</h4>
+                <ul class="footer-links">
+                    <li><a href="#">动作游戏</a></li>
+                    <li><a href="#">益智游戏</a></li>
+                    <li><a href="#">竞速游戏</a></li>
+                    <li><a href="#">策略游戏</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">帮助中心</h4>
+                <ul class="footer-links">
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">关于我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">开发者API</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 开始游戏功能
+        function startGame() {
+            const gameFrame = document.getElementById('gameFrame');
+            gameFrame.innerHTML = `
+                <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-rocket" style="font-size: 48px; margin-bottom: 20px; animation: bounce 2s infinite;"></i>
+                        <div>游戏加载中...</div>
+                        <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">在实际应用中，这里会嵌入真实的游戏iframe</div>
+                    </div>
+                </div>
+            `;
+            
+            // 模拟游戏加载
+            setTimeout(() => {
+                gameFrame.innerHTML = `
+                    <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #0f3460, #16537e); display: flex; align-items: center; justify-content: center; color: white; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 20px; left: 20px; font-size: 14px;">太空探险者 v1.0</div>
+                        <div style="position: absolute; top: 20px; right: 20px; font-size: 14px;">分数: 0</div>
+                        <div style="text-align: center;">
+                            <i class="fas fa-rocket" style="font-size: 64px; margin-bottom: 20px; color: #00d4ff; animation: float 3s ease-in-out infinite;"></i>
+                            <div style="font-size: 18px; margin-bottom: 10px;">🚀 太空探险者 🚀</div>
+                            <div style="font-size: 14px; opacity: 0.8;">使用方向键控制飞船</div>
+                            <div style="font-size: 14px; opacity: 0.8;">空格键发射激光</div>
+                            <button onclick="alert('游戏演示：在实际应用中，这里是完整的HTML5游戏')" style="margin-top: 20px; padding: 10px 20px; background: #00d4ff; color: #0f3460; border: none; border-radius: 20px; cursor: pointer; font-weight: bold;">开始探险</button>
+                        </div>
+                        <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 12px; opacity: 0.6;">按 ESC 退出全屏</div>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        // 全屏功能
+        function toggleFullscreen() {
+            const gameFrame = document.getElementById('gameFrame');
+            if (!document.fullscreenElement) {
+                gameFrame.requestFullscreen().catch(err => {
+                    alert('无法进入全屏模式');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // 评分模态框
+        function showRatingModal() {
+            alert('评分功能\n\n在实际应用中，这里会显示一个评分模态框，\n用户可以选择1-5星进行评分。');
+        }
+        
+        // 收藏功能
+        document.querySelector('.action-btn[title="收藏游戏"]').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fas')) {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                this.style.background = 'rgba(255,255,255,0.2)';
+                alert('已取消收藏');
+            } else {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                this.style.background = 'rgba(220, 38, 127, 0.8)';
+                alert('已添加到收藏');
+            }
+        });
+        
+        // 分享功能
+        document.querySelector('.action-btn[title="分享游戏"]').addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '太空探险者 - HTML5游戏',
+                    text: '快来体验这款精彩的太空探险游戏！',
+                    url: window.location.href
+                });
+            } else {
+                // 复制链接到剪贴板
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('游戏链接已复制到剪贴板！');
+                });
+            }
+        });
+        
+        // 评论功能
+        document.querySelector('.submit-comment').addEventListener('click', function() {
+            const textarea = document.querySelector('.comment-textarea');
+            const comment = textarea.value.trim();
+            
+            if (comment) {
+                alert(`评论提交成功！\n\n您的评论："${comment}"\n\n在实际应用中，评论会被保存到数据库并显示在评论列表中。`);
+                textarea.value = '';
+            } else {
+                alert('请输入评论内容');
+            }
+        });
+        
+        // 点赞功能
+        document.querySelectorAll('.comment-action').forEach(button => {
+            if (button.textContent.includes('有用')) {
+                button.addEventListener('click', function() {
+                    const countSpan = this.querySelector('span');
+                    const currentCount = parseInt(countSpan.textContent.match(/\d+/)[0]);
+                    countSpan.textContent = `有用 (${currentCount + 1})`;
+                    this.style.color = 'var(--primary-500)';
+                    this.disabled = true;
+                });
+            }
+        });
+        
+        // 搜索功能
+        document.querySelector('.search-box button').addEventListener('click', function(e) {
+            e.preventDefault();
+            const query = document.querySelector('.search-box input').value.trim();
+            if (query) {
+                alert(`搜索: "${query}"\n\n在实际应用中，这里会跳转到搜索结果页面。`);
+            }
+        });
+        
+        // 回车搜索
+        document.querySelector('.search-box input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.querySelector('.search-box button').click();
+            }
+        });
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {
+                    transform: translateY(0);
+                }
+                40% {
+                    transform: translateY(-10px);
+                }
+                60% {
+                    transform: translateY(-5px);
+                }
+            }
+            
+            @keyframes float {
+                0% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('游戏详情页加载完成');
+        });
+    </script>
+</body>
+</html>

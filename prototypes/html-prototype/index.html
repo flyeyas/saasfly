@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5游戏网站 - 高保真原型</title>
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .prototype-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .prototype-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+            padding: var(--space-8);
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+            border-radius: var(--radius-2xl);
+        }
+        
+        .prototype-title {
+            font-family: var(--font-game);
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+        }
+        
+        .prototype-description {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .prototype-section {
+            margin-bottom: var(--space-16);
+        }
+        
+        .section-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-3);
+            border-bottom: 3px solid var(--primary-500);
+            display: inline-block;
+        }
+        
+        .prototype-frame {
+            width: 100%;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-2xl);
+            background: white;
+            overflow: hidden;
+            margin-bottom: var(--space-8);
+        }
+        
+        .frame-header {
+            background: var(--gray-100);
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .frame-dots {
+            display: flex;
+            gap: var(--space-1);
+        }
+        
+        .frame-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .frame-dot.red { background: #ff5f57; }
+        .frame-dot.yellow { background: #ffbd2e; }
+        .frame-dot.green { background: #28ca42; }
+        
+        .frame-title {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-left: var(--space-4);
+        }
+        
+        .prototype-iframe {
+            width: 100%;
+            border: none;
+            display: block;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .prototype-iframe:hover {
+            box-shadow: var(--shadow-xl);
+        }
+        
+        /* 响应式iframe */
+        @media (max-width: 768px) {
+            .prototype-iframe {
+                height: 600px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .prototype-iframe {
+                height: 500px;
+            }
+        }
+        
+        .device-toggle {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            justify-content: center;
+        }
+        
+        .device-btn {
+            padding: var(--space-2) var(--space-4);
+            border: 2px solid var(--gray-300);
+            background: white;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .device-btn.active {
+            border-color: var(--primary-500);
+            background: var(--primary-50);
+            color: var(--primary-700);
+        }
+        
+        .device-btn:hover {
+            border-color: var(--primary-400);
+        }
+        
+        .desktop-view {
+            height: 800px;
+        }
+        
+        .mobile-view {
+            height: 600px;
+            max-width: 375px;
+            margin: 0 auto;
+        }
+        
+        .page-info {
+            background: var(--gray-50);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+        
+        .page-info h3 {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .page-info p {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+        
+        .feature-icon {
+            color: var(--primary-500);
+            font-size: var(--text-base);
+        }
+        
+        @media (max-width: 768px) {
+            .prototype-container {
+                padding: var(--space-4);
+            }
+            
+            .prototype-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .desktop-view {
+                height: 600px;
+            }
+            
+            .mobile-view {
+                height: 500px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-container">
+        <!-- 原型头部 -->
+        <div class="prototype-header">
+            <h1 class="prototype-title">
+                <i class="fas fa-gamepad"></i>
+                HTML5游戏网站高保真原型
+            </h1>
+            <p class="prototype-description">
+                基于现代化设计理念的HTML5游戏聚合平台原型，包含完整的前台用户界面和后台管理系统，
+                支持响应式设计，可直接用于开发实现。
+            </p>
+        </div>
+
+        <!-- 首页原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-home"></i>
+                首页 - Homepage
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>游戏网站的主入口页面，展示精选游戏、热门分类、搜索功能和用户导航。采用现代化卡片式布局，支持响应式设计。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-star feature-icon"></i>
+                        <span>精选游戏轮播展示</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-th-large feature-icon"></i>
+                        <span>游戏分类快速导航</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-search feature-icon"></i>
+                        <span>智能搜索功能</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-fire feature-icon"></i>
+                        <span>热门游戏推荐</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">homepage.html</div>
+                </div>
+                <iframe src="pages/homepage.html" class="prototype-iframe desktop-view" id="homepage-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 游戏详情页原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-gamepad"></i>
+                游戏详情页 - Game Detail
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>单个游戏的详细展示页面，包含游戏iframe嵌入、详细信息、评分评论、相关推荐等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-play feature-icon"></i>
+                        <span>游戏iframe嵌入播放</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-star feature-icon"></i>
+                        <span>评分和评论系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-share-alt feature-icon"></i>
+                        <span>社交分享功能</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-heart feature-icon"></i>
+                        <span>收藏和推荐</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">game-detail.html</div>
+                </div>
+                <iframe src="pages/game-detail.html" class="prototype-iframe desktop-view" id="game-detail-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 分类页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-th-list"></i>
+                分类页面 - Category
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>游戏分类展示页面，支持筛选、排序、分页等功能，帮助用户快速找到感兴趣的游戏类型。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-filter feature-icon"></i>
+                        <span>多维度筛选功能</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-sort feature-icon"></i>
+                        <span>排序和分页</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tags feature-icon"></i>
+                        <span>标签系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-th feature-icon"></i>
+                        <span>网格布局展示</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">category.html</div>
+                </div>
+                <iframe src="pages/category.html" class="prototype-iframe desktop-view" id="category-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 后台管理原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                后台管理 - Admin Dashboard
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>管理员后台界面，包含游戏管理、分类管理、用户管理、统计分析等核心管理功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-chart-bar feature-icon"></i>
+                        <span>数据统计面板</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-gamepad feature-icon"></i>
+                        <span>游戏管理系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-users feature-icon"></i>
+                        <span>用户管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-ad feature-icon"></i>
+                        <span>广告管理</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">admin-dashboard.html</div>
+                </div>
+                <iframe src="pages/admin.html" class="prototype-iframe desktop-view" id="admin-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 用户注册登录页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-plus"></i>
+                用户注册登录 - Auth
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>用户注册和登录页面，支持邮箱注册、社交登录、密码找回等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-envelope feature-icon"></i>
+                        <span>邮箱注册登录</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-share-alt feature-icon"></i>
+                        <span>社交账号登录</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-key feature-icon"></i>
+                        <span>密码找回功能</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <span>安全验证</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">auth.html</div>
+                </div>
+                <iframe src="pages/auth.html" class="prototype-iframe desktop-view" id="auth-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 用户个人中心页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i>
+                用户个人中心 - Profile
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>用户个人信息管理页面，包含个人资料、游戏记录、成就系统等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-id-card feature-icon"></i>
+                        <span>个人资料管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-gamepad feature-icon"></i>
+                        <span>游戏记录统计</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-trophy feature-icon"></i>
+                        <span>成就系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-heart feature-icon"></i>
+                        <span>收藏管理</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">profile.html</div>
+                </div>
+                <iframe src="pages/profile.html" class="prototype-iframe desktop-view" id="profile-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 游戏收藏页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-heart"></i>
+                游戏收藏 - Favorites
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>用户收藏的游戏管理页面，支持分类管理、批量操作、快速搜索等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-folder feature-icon"></i>
+                        <span>分类管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-square feature-icon"></i>
+                        <span>批量操作</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-search feature-icon"></i>
+                        <span>快速搜索</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-th-list feature-icon"></i>
+                        <span>多种视图模式</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">favorites.html</div>
+                </div>
+                <iframe src="pages/favorites.html" class="prototype-iframe desktop-view" id="favorites-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 游戏标签页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-tags"></i>
+                游戏标签 - Tags
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>游戏标签分类页面，帮助用户通过标签快速找到相关游戏，支持热门标签、字母导航等。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-fire feature-icon"></i>
+                        <span>热门标签展示</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-sort-alpha-down feature-icon"></i>
+                        <span>字母导航</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <span>趋势标签</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-filter feature-icon"></i>
+                        <span>标签筛选</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">tags.html</div>
+                </div>
+                <iframe src="pages/tags.html" class="prototype-iframe desktop-view" id="tags-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 游戏评论页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-comments"></i>
+                游戏评论 - Comments
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>游戏评论管理页面，支持评分、评论互动、排序筛选等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-star feature-icon"></i>
+                        <span>评分系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-reply feature-icon"></i>
+                        <span>评论回复</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-thumbs-up feature-icon"></i>
+                        <span>点赞互动</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-sort feature-icon"></i>
+                        <span>排序筛选</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">comments.html</div>
+                </div>
+                <iframe src="pages/comments.html" class="prototype-iframe desktop-view" id="comments-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 关于我们页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                关于我们 - About
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>网站介绍页面，展示公司信息、发展历程、团队介绍、联系方式等内容。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-building feature-icon"></i>
+                        <span>公司介绍</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-history feature-icon"></i>
+                        <span>发展历程</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-users feature-icon"></i>
+                        <span>团队介绍</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-envelope feature-icon"></i>
+                        <span>联系我们</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">about.html</div>
+                </div>
+                <iframe src="pages/about.html" class="prototype-iframe desktop-view" id="about-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 用户设置页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i>
+                用户设置 - Settings
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>用户个人设置页面，包含账户设置、隐私设置、通知设置、主题设置等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-user-cog feature-icon"></i>
+                        <span>账户设置</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <span>隐私安全</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-bell feature-icon"></i>
+                        <span>通知设置</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-palette feature-icon"></i>
+                        <span>主题设置</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">settings.html</div>
+                </div>
+                <iframe src="pages/settings.html" class="prototype-iframe desktop-view" id="settings-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 后台用户管理页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-users-cog"></i>
+                后台用户管理 - Admin Users
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>管理员用户管理页面，支持用户查询、编辑、权限管理、批量操作等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-search feature-icon"></i>
+                        <span>用户查询筛选</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-edit feature-icon"></i>
+                        <span>用户信息编辑</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-user-shield feature-icon"></i>
+                        <span>权限管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tasks feature-icon"></i>
+                        <span>批量操作</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">admin-users.html</div>
+                </div>
+                <iframe src="pages/admin-users.html" class="prototype-iframe desktop-view" id="admin-users-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 后台分类管理页面原型 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-th-large"></i>
+                后台分类管理 - Admin Categories
+            </h2>
+            
+            <div class="page-info">
+                <h3>页面功能概述</h3>
+                <p>管理员分类管理页面，支持分类的增删改查、排序、图标管理等功能。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-plus feature-icon"></i>
+                        <span>分类增删改查</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-sort feature-icon"></i>
+                        <span>排序管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-icons feature-icon"></i>
+                        <span>图标管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-eye feature-icon"></i>
+                        <span>显示状态控制</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-toggle">
+                <button class="device-btn active" onclick="switchDevice(this, 'desktop')">
+                    <i class="fas fa-desktop"></i> 桌面端
+                </button>
+                <button class="device-btn" onclick="switchDevice(this, 'mobile')">
+                    <i class="fas fa-mobile-alt"></i> 移动端
+                </button>
+            </div>
+            
+            <div class="prototype-frame">
+                <div class="frame-header">
+                    <div class="frame-dots">
+                        <div class="frame-dot red"></div>
+                        <div class="frame-dot yellow"></div>
+                        <div class="frame-dot green"></div>
+                    </div>
+                    <div class="frame-title">admin-categories.html</div>
+                </div>
+                <iframe src="pages/admin-categories.html" class="prototype-iframe desktop-view" id="admin-categories-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- 原型说明 -->
+        <div class="prototype-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                原型说明
+            </h2>
+            
+            <div class="page-info">
+                <h3>技术实现说明</h3>
+                <p>本原型基于现代化Web技术栈构建，采用响应式设计，确保在不同设备上的良好体验。</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-code feature-icon"></i>
+                        <span>HTML5 + CSS3 + JavaScript</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt feature-icon"></i>
+                        <span>响应式设计</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-palette feature-icon"></i>
+                        <span>现代化UI设计系统</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-rocket feature-icon"></i>
+                        <span>可直接用于开发</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchDevice(button, device) {
+            // 移除所有按钮的active类
+            const buttons = button.parentElement.querySelectorAll('.device-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // 添加active类到当前按钮
+            button.classList.add('active');
+            
+            // 获取对应的iframe
+            const section = button.closest('.prototype-section');
+            const iframe = section.querySelector('.prototype-iframe');
+            
+            // 切换设备视图
+            if (device === 'mobile') {
+                iframe.classList.remove('desktop-view');
+                iframe.classList.add('mobile-view');
+            } else {
+                iframe.classList.remove('mobile-view');
+                iframe.classList.add('desktop-view');
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('HTML5游戏网站原型加载完成');
+            
+            // 为所有iframe添加加载事件
+            const iframes = document.querySelectorAll('.prototype-iframe');
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', function() {
+                    console.log(`页面 ${iframe.src} 加载完成`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

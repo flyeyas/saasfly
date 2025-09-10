@@ -21,12 +21,12 @@ interface PasswordResetFormProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const resetSchema = z.object({
-  email: z.string().email("请输入有效的邮箱地址"),
-  verificationCode: z.string().min(6, "验证码长度为6位"),
-  newPassword: z.string().min(8, "密码长度至少8位"),
+  email: z.string().email("Please enter a valid email address"),
+  verificationCode: z.string().min(6, "Verification code must be 6 characters"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "两次输入的密码不一致",
+  message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 
@@ -64,7 +64,7 @@ export function PasswordResetForm({
   const watchedEmail = watch("email");
   const watchedPassword = watch("newPassword");
 
-  // 倒计时效果
+  // Countdown effect
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -73,7 +73,7 @@ export function PasswordResetForm({
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  // 密码强度检查
+  // Password strength check
   React.useEffect(() => {
     const checkPasswordStrength = async () => {
       if (!watchedPassword || watchedPassword.length < 3) {
@@ -101,12 +101,12 @@ export function PasswordResetForm({
     return () => clearTimeout(debounceTimer);
   }, [watchedPassword]);
 
-  // 发送重置验证码
+  // Send reset verification code
   const sendResetCode = async () => {
     if (!watchedEmail || !z.string().email().safeParse(watchedEmail).success) {
       toast({
-        title: "错误",
-        description: "请先输入有效的邮箱地址",
+        title: "Error",
+      description: "Please enter a valid email address first",
         variant: "destructive",
       });
       return;
@@ -126,21 +126,21 @@ export function PasswordResetForm({
         setCountdown(60);
         setStep('reset');
         toast({
-          title: "验证码已发送",
-          description: "请查收邮箱中的重置验证码",
+          title: "Verification code sent",
+        description: "Please check your email for the reset verification code",
         });
       } else {
         toast({
-          title: "发送失败",
-          description: data.error || "验证码发送失败，请稍后重试",
+          title: "Send failed",
+        description: data.error || "Failed to send verification code, please try again later",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send reset code error:", error);
       toast({
-        title: "发送失败",
-        description: "网络错误，请稍后重试",
+        title: "Send failed",
+      description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -148,7 +148,7 @@ export function PasswordResetForm({
     }
   };
 
-  // 提交密码重置
+  // Submit password reset
   async function onSubmit(data: FormData) {
     if (step === 'email') {
       await sendResetCode();
@@ -170,24 +170,24 @@ export function PasswordResetForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "密码重置成功",
-          description: "密码已重置，请使用新密码登录",
+          title: "Password reset successful",
+        description: "Password has been reset, please login with your new password",
         });
         setTimeout(() => {
           router.push(`/${lang}/login`);
         }, 1500);
       } else {
         toast({
-          title: "重置失败",
-          description: result.error || "密码重置失败，请检查验证码",
+          title: "Reset failed",
+        description: result.error || "Password reset failed, please check verification code",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Password reset error:", error);
       toast({
-        title: "重置失败",
-        description: "网络错误，请稍后重试",
+        title: "Reset failed",
+      description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -215,13 +215,13 @@ export function PasswordResetForm({
     switch (score) {
       case 0:
       case 1:
-        return "弱";
+        return "Weak";
       case 2:
-        return "中等";
+        return "Fair";
       case 3:
-        return "强";
+        return "Strong";
       case 4:
-        return "很强";
+        return "Very Strong";
       default:
         return "";
     }
@@ -231,9 +231,9 @@ export function PasswordResetForm({
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
-          {/* 邮箱输入 */}
+          {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">邮箱</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               placeholder="name@example.com"
@@ -254,19 +254,19 @@ export function PasswordResetForm({
               {isCodeSending && (
                 <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-              发送重置验证码
+              Send Reset Code
             </Button>
           )}
 
           {step === 'reset' && (
             <>
-              {/* 验证码输入 */}
+              {/* Verification code input */}
               <div className="grid gap-2">
-                <Label htmlFor="verificationCode">验证码</Label>
+                <Label htmlFor="verificationCode">Verification Code</Label>
                 <div className="flex space-x-2">
                   <Input
                     id="verificationCode"
-                    placeholder="请输入6位验证码"
+                    placeholder="Enter 6-digit verification code"
                     disabled={isLoading}
                     {...register("verificationCode")}
                   />
@@ -279,7 +279,7 @@ export function PasswordResetForm({
                     {isCodeSending && (
                       <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    {countdown > 0 ? `${countdown}s` : "重新发送"}
+                    {countdown > 0 ? `${countdown}s` : "Resend"}
                   </Button>
                 </div>
                 {errors?.verificationCode && (
@@ -287,12 +287,12 @@ export function PasswordResetForm({
                 )}
               </div>
 
-              {/* 新密码输入 */}
+              {/* New password input */}
               <div className="grid gap-2">
-                <Label htmlFor="newPassword">新密码</Label>
+                <Label htmlFor="newPassword">New Password</Label>
                 <Input
                   id="newPassword"
-                  placeholder="请输入新密码"
+                  placeholder="Enter new password"
                   type="password"
                   disabled={isLoading}
                   {...register("newPassword")}
@@ -301,7 +301,7 @@ export function PasswordResetForm({
                   <p className="text-xs text-red-600">{errors.newPassword.message}</p>
                 )}
                 
-                {/* 密码强度指示器 */}
+                {/* Password strength indicator */}
                 {passwordStrength && (
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
@@ -314,7 +314,7 @@ export function PasswordResetForm({
                         />
                       </div>
                       <span className="text-sm text-gray-600">
-                        {getPasswordStrengthText(passwordStrength.score)}
+                        Password strength: {getPasswordStrengthText(passwordStrength.score)}
                       </span>
                     </div>
                     {passwordStrength.errors.length > 0 && (
@@ -326,12 +326,12 @@ export function PasswordResetForm({
                 )}
               </div>
 
-              {/* 确认密码输入 */}
+              {/* Confirm password input */}
               <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">确认新密码</Label>
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
                 <Input
                   id="confirmPassword"
-                  placeholder="请再次输入新密码"
+                  placeholder="Enter new password again"
                   type="password"
                   disabled={isLoading}
                   {...register("confirmPassword")}
@@ -345,7 +345,7 @@ export function PasswordResetForm({
                 {isLoading && (
                   <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                重置密码
+                Reset Password
               </Button>
             </>
           )}

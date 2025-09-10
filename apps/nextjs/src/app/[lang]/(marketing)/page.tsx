@@ -2,60 +2,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { getDictionary } from "~/lib/get-dictionary";
 
-import { CodeCopy } from "~/components/code-copy";
-import { Comments } from "~/components/comments";
-import { FeaturesGrid } from "~/components/features-grid";
-import { RightsideMarketing } from "~/components/rightside-marketing";
-
-import { AnimatedTooltip } from "@saasfly/ui/animated-tooltip";
-import { BackgroundLines } from "@saasfly/ui/background-lines";
 import { Button } from "@saasfly/ui/button";
-import { ColourfulText } from "@saasfly/ui/colorful-text";
 import * as Icons from "@saasfly/ui/icons";
 
 import type { Locale } from "~/config/i18n-config";
-import {VideoScroll} from "~/components/video-scroll";
+import { getFeaturedGames, getPopularGames, getLatestGames, categories } from "~/data/mock-games";
+import { Gamepad2, TrendingUp, Clock, Star, Search, ArrowRight, Play } from "lucide-react";
+import GameSearch from "~/components/search/GameSearch";
+import "~/styles/games.css";
 
-const people = [
-  {
-    id: 1,
-    name: "tianzx",
-    designation: "CEO at Nextify",
-    image: "https://avatars.githubusercontent.com/u/10096899",
-    link: "https://x.com/nextify2024",
-  },
-  {
-    id: 2,
-    name: "jackc3",
-    designation: "Co-founder at Nextify",
-    image: "https://avatars.githubusercontent.com/u/10334353",
-    link: "https://x.com/BingxunYao",
-  },
-  {
-    id: 3,
-    name: "imesong",
-    designation: "Contributor",
-    image: "https://avatars.githubusercontent.com/u/3849293",
-  },
-  {
-    id: 4,
-    name: "ziveen",
-    designation: "Contributor",
-    image: "https://avatars.githubusercontent.com/u/22560152",
-  },
-  {
-    id: 5,
-    name: "Zenuncl",
-    designation: "Independent Software Developer",
-    image: "https://avatars.githubusercontent.com/u/3316062",
-  },
-  {
-    id: 6,
-    name: "Innei",
-    designation: "Indie Developer",
-    image: "https://avatars.githubusercontent.com/u/41265413",
-  },
-];
+// Game statistics
+const gameStats = {
+  totalGames: "500+",
+  categories: categories.length,
+  playersOnline: "1M+",
+  onlineService: "24/7"
+};
 
 export default async function IndexPage({
   params: { lang },
@@ -65,116 +27,367 @@ export default async function IndexPage({
   };
 }) {
   const dict = await getDictionary(lang);
+  const featuredGames = getFeaturedGames();
+  const hotGames = getPopularGames();
+  const latestGames = getLatestGames();
+
+  // Structured Data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "HTML5 Games Platform",
+    "description": "Play thousands of free HTML5 games online. No downloads required - play instantly in your browser!",
+    "url": `https://yourdomain.com/${lang}`,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `https://yourdomain.com/${lang}/search?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "HTML5 Games Platform",
+      "url": "https://yourdomain.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://yourdomain.com/logo.png"
+      }
+    }
+  };
+
+  const gameCollectionData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured HTML5 Games",
+    "description": "Collection of popular and featured HTML5 games",
+    "numberOfItems": featuredGames.length,
+    "itemListElement": featuredGames.map((game, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "VideoGame",
+        "name": game.title,
+        "description": game.description,
+        "image": game.coverImage,
+        "url": `https://yourdomain.com/${lang}/games/${game.slug}`,
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": game.rating,
+          "ratingCount": Math.floor(game.playCount / 10)
+        }
+      }
+    }))
+  };
 
   return (
     <>
-      <section className="container">
-        <div className="grid grid-cols-1 gap-10 xl:grid-cols-2">
-          <div className="flex flex-col items-start h-full">
-            <BackgroundLines className="h-full">
-              <div className="flex flex-col pt-4 md:pt-36 lg:pt-36 xl:pt-36">
-                <div className="mt-20">
-                  <div
-                    className="mb-6 max-w-4xl text-left text-4xl font-semibold dark:text-zinc-100 md:text-5xl xl:text-5xl md:leading-[4rem] xl:leading-[4rem]">
-                    {dict.marketing.title || "Ship your apps to the world easier with "}
-                    <ColourfulText text="Saasfly"/>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <span className="text-neutral-500 dark:text-neutral-400 sm:text-lg">
-                    {dict.marketing.sub_title || "Your complete All-in-One solution for building SaaS services."}
-                  </span>
-                </div>
-
-                <div
-                  className="mb-4 mt-6 flex w-full flex-col justify-center space-y-4 sm:flex-row sm:justify-start sm:space-x-8 sm:space-y-0 z-10">
-                  <Link href="https://github.com/saasfly/saasfly" target="_blank">
-                    <Button
-                      className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-lg px-6 h-12 font-medium">
-                      {dict.marketing.get_started}
-                      <Icons.ArrowRight className="h-5 w-5"/>
-                    </Button>
-                  </Link>
-
-                  <CodeCopy/>
-                </div>
-
-                <div className="flex xl:flex-row flex-col items-center justify-start mt-4 w-full">
-                  <div className="flex">
-                    <AnimatedTooltip items={people}/>
-                  </div>
-                  <div className="flex flex-col items-center justify-start ml-8">
-                    <div className="w-[340px]">
-                      <span className="font-semibold">9 </span>
-                      <span className="text-neutral-500 dark:text-neutral-400">{dict.marketing.contributors.contributors_desc}</span>
-                    </div>
-                    <div className="w-[340px]">
-                      <span
-                        className="text-neutral-500 dark:text-neutral-400">{dict.marketing.contributors.developers_first}</span>
-                      <ColourfulText text="2000"/>
-                      <span
-                        className="text-neutral-500 dark:text-neutral-400">{dict.marketing.contributors.developers_second}</span>
-                    </div>
-                  </div>
-                </div>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(gameCollectionData),
+        }}
+      />
+      
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="container">
+          <div className="hero-content">
+            <h1 className="hero-title">
+              Play Amazing HTML5 Games
+              <span className="hero-subtitle">Free Online Games Collection</span>
+            </h1>
+            <p className="hero-description">
+              Discover thousands of free HTML5 games. Play instantly in your browser - no downloads required!
+            </p>
+            
+            {/* Search Bar */}
+            <div className="search-container">
+              <div className="max-w-md mx-auto w-full px-4">
+                <GameSearch lang={lang} placeholder="Search for games..." />
               </div>
-            </BackgroundLines>
-          </div>
-
-          <div className="hidden h-full w-full xl:block bg-background">
-            <div className="flex flex-col pt-44">
-              <RightsideMarketing dict={dict.marketing.right_side}/>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="container mt-8 md:mt-[-180px] xl:mt-[-180px]">
-        <FeaturesGrid dict={dict.marketing.features_grid}/>
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-number">{gameStats.totalGames}</span>
+            <span className="stat-label">Games Available</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-number">{gameStats.categories}</span>
+            <span className="stat-label">Game Categories</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-number">{gameStats.playersOnline}</span>
+            <span className="stat-label">Active Players</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-number">{gameStats.onlineService}</span>
+            <span className="stat-label">Online Service</span>
+          </div>
+        </div>
       </section>
 
-      <section className="container pt-24">
-        <div className="flex flex-col justify-center items-center pt-10">
-          <div className="text-lg text-neutral-500 dark:text-neutral-400">{dict.marketing.sponsor.title}</div>
-          <div className="mt-4 flex items-center gap-4">
-
-            <Link href="https://www.twillot.com/" target="_blank">
-              <Image src="https://www.twillot.com/logo-128.png" width="48" height="48" alt="twillot"/>
-            </Link>
-            <Link href="https://www.setupyourpay.com/" target="_blank">
-              <Image src="https://www.setupyourpay.com/logo.png" width="48" height="48" alt="setupyourpay" />
-            </Link>
-            <Link href="https://opencollective.com/saasfly" target="_blank">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:bg-accent dark:hover:bg-neutral-800/30">
-                <Icons.Heart className="w-5 h-5 fill-pink-600 text-pink-600 dark:fill-pink-700 dark:text-pink-700" />
-                <span className="text-sm font-medium text-neutral-500 dark:text-neutral-200">{dict.marketing.sponsor.donate || ''}</span>
+      {/* Categories Section */}
+      <section className="categories-section">
+        <div className="section-header">
+          <h2 className="section-title">Popular Game Categories</h2>
+          <p className="section-subtitle">
+            Explore various exciting game types and find the perfect entertainment for you
+          </p>
+        </div>
+        
+        <div className="categories-grid">
+          {categories.map((category: any) => (
+            <Link key={category.id} href={`/${lang}/games/category/${category.slug}`} className="category-card">
+              <div className="category-image" style={{backgroundImage: `url(${category.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'})`}}>
+                <div className="category-overlay">
+                  <Gamepad2 className="category-icon" />
+                </div>
+              </div>
+              <div className="category-content">
+                <h3 className="category-title">{category.name}</h3>
+                <p className="category-description">{category.description}</p>
+                <div className="category-stats">
+                  <span className="game-count">{category.gameCount}+ games</span>
+                  <ArrowRight className="category-arrow" />
+                </div>
               </div>
             </Link>
-          </div>
+          ))}
         </div>
       </section>
 
-      <section className="container pt-8">
-        <VideoScroll dict={dict.marketing.video}/>
+      {/* Featured Games */}
+      <section className="featured-games">
+        <div className="section-header">
+          <h2 className="section-title">Featured Games</h2>
+          <p className="section-subtitle">
+            Editor's carefully selected quality games for the best gaming experience
+          </p>
+        </div>
+        
+        <div className="games-grid grid-responsive">
+          {featuredGames.slice(0, 6).map((game: any) => (
+            <Link key={game.id} href={`/${lang}/games/${game.slug}`} className="game-card">
+              <div className="game-thumbnail" style={{backgroundImage: `url(${game.coverImage})`}}>
+                <div className="game-overlay">
+                  <button className="play-button">
+                    <Play className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+              <div className="game-info">
+                <h3 className="game-title">{game.title}</h3>
+                <div className="game-meta">
+                  <span className="game-category">{game.category}</span>
+                  <div className="game-rating">
+                    <div className="rating-stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(game.rating) ? 'fill-current text-yellow-400' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="rating-score">{game.rating}</span>
+                  </div>
+                </div>
+                <p className="game-description">{game.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      <section className="w-full px-8 pt-10 sm:px-0 sm:pt-24 md:px-0 md:pt-24 xl:px-0 xl:pt-24">
-        <div className="flex h-full w-full flex-col items-center pb-[100px] pt-10">
-          <div>
-            <h1 className="mb-6 text-center text-3xl font-bold dark:text-zinc-100 md:text-5xl">
-              {dict.marketing.people_comment.title}
-            </h1>
-          </div>
-          <div className="mb-6 text-lg text-neutral-500 dark:text-neutral-400">
-            {dict.marketing.people_comment.desc}
-          </div>
+      {/* Hot Games */}
+      <section className="featured-games bg-gray-50">
+        <div className="section-header">
+          <h2 className="section-title">🔥 Hot Games</h2>
+          <p className="section-subtitle">
+            Most popular games trending right now
+          </p>
+        </div>
+        
+        <div className="games-grid grid-responsive">
+          {hotGames.slice(0, 6).map((game: any) => (
+            <Link key={game.id} href={`/${lang}/games/${game.slug}`} className="game-card">
+              <div className="game-thumbnail" style={{backgroundImage: `url(${game.coverImage})`}}>
+                <div className="game-overlay">
+                  <button className="play-button">
+                    <Play className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+              <div className="game-info">
+                <h3 className="game-title">{game.title}</h3>
+                <div className="game-meta">
+                  <span className="game-category">{game.category}</span>
+                  <div className="game-rating">
+                    <div className="rating-stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(game.rating) ? 'fill-current text-yellow-400' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="rating-score">{game.rating}</span>
+                  </div>
+                </div>
+                <p className="game-description">{game.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-          <div className="w-full overflow-x-hidden">
-            <Comments/>
+      {/* Latest Games */}
+      <section className="featured-games">
+        <div className="section-header">
+          <h2 className="section-title">🆕 Latest Games</h2>
+          <p className="section-subtitle">
+            Newest additions to our game collection
+          </p>
+        </div>
+        
+        <div className="games-grid grid-responsive">
+          {latestGames.slice(0, 6).map((game: any) => (
+            <Link key={game.id} href={`/${lang}/games/${game.slug}`} className="game-card">
+              <div className="game-thumbnail" style={{backgroundImage: `url(${game.coverImage})`}}>
+                <div className="game-overlay">
+                  <button className="play-button">
+                    <Play className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+              <div className="game-info">
+                <h3 className="game-title">{game.title}</h3>
+                <div className="game-meta">
+                  <span className="game-category">{game.category}</span>
+                  <div className="game-rating">
+                    <div className="rating-stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(game.rating) ? 'fill-current text-yellow-400' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="rating-score">{game.rating}</span>
+                  </div>
+                </div>
+                <p className="game-description">{game.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+       </section>
+
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="cta-content">
+          <h2 className="cta-title">Ready to Start Playing?</h2>
+          <p className="cta-description">
+            Join millions of players worldwide and discover your next favorite game today!
+          </p>
+          <div className="cta-buttons">
+            <Link href={`/${lang}/games`}>
+              <Button className="btn btn-primary btn-lg">
+                Browse All Games
+              </Button>
+            </Link>
+            <Link href={`/${lang}/games/category/action`}>
+              <Button className="btn btn-secondary btn-lg">
+                Popular Categories
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
-    </>
+    </>  
   );
+}
+
+export async function generateMetadata({
+  params: { lang },
+}: {
+  params: {
+    lang: Locale;
+  };
+}) {
+  const homeUrl = `https://yourdomain.com/${lang}`;
+  
+  return {
+    title: "Free HTML5 Games - Play Online Games Instantly | HTML5 Games Platform",
+    description: "Play thousands of free HTML5 games online! No downloads required. Enjoy action, puzzle, adventure, and more games directly in your browser. Updated daily with new games.",
+    keywords: [
+      'HTML5 games',
+      'free online games',
+      'browser games',
+      'no download games',
+      'instant play games',
+      'web games',
+      'action games',
+      'puzzle games',
+      'adventure games',
+      'arcade games'
+    ].join(', '),
+    authors: [{ name: 'HTML5 Games Platform' }],
+    creator: 'HTML5 Games Platform',
+    publisher: 'HTML5 Games Platform',
+    formatDetection: {
+      telephone: false,
+    },
+    metadataBase: new URL('https://yourdomain.com'),
+    alternates: {
+      canonical: homeUrl,
+      languages: {
+        'en-US': '/en',
+        'x-default': '/en',
+      },
+    },
+    openGraph: {
+      title: 'Free HTML5 Games - Play Online Games Instantly',
+      description: 'Play thousands of free HTML5 games online! No downloads required. Action, puzzle, adventure games and more.',
+      url: homeUrl,
+      siteName: 'HTML5 Games Platform',
+      images: [
+        {
+          url: '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'HTML5 Games Platform - Free Online Games',
+        },
+      ],
+      locale: lang,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Free HTML5 Games - Play Online Games Instantly',
+      description: 'Play thousands of free HTML5 games online! No downloads required.',
+      images: ['/og-image.jpg'],
+      creator: '@html5games',
+      site: '@html5games',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    verification: {
+      google: 'your-google-verification-code',
+    },
+  };
 }

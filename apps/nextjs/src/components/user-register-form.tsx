@@ -22,12 +22,12 @@ interface UserRegisterFormProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const registerSchema = z.object({
-  email: z.string().email("请输入有效的邮箱地址"),
-  password: z.string().min(8, "密码长度至少8位"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
-  verificationCode: z.string().min(6, "验证码长度至少6位"),
+  verificationCode: z.string().min(6, "Verification code must be at least 6 characters"),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "两次输入的密码不一致",
+  message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 
@@ -67,7 +67,7 @@ export function UserRegisterForm({
   const watchedEmail = watch("email");
   const watchedPassword = watch("password");
 
-  // 倒计时效果
+  // Countdown effect
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -76,7 +76,7 @@ export function UserRegisterForm({
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  // 检查邮箱可用性
+  // Check email availability
   React.useEffect(() => {
     const checkEmail = async () => {
       if (!watchedEmail || !z.string().email().safeParse(watchedEmail).success) {
@@ -101,7 +101,7 @@ export function UserRegisterForm({
     return () => clearTimeout(debounceTimer);
   }, [watchedEmail]);
 
-  // 检查密码强度
+  // Check password strength
   React.useEffect(() => {
     const checkPasswordStrength = async () => {
       if (!watchedPassword || watchedPassword.length < 1) {
@@ -126,12 +126,12 @@ export function UserRegisterForm({
     return () => clearTimeout(debounceTimer);
   }, [watchedPassword]);
 
-  // 发送验证码
+  // Send verification code
   const sendVerificationCode = async () => {
     if (!watchedEmail || !emailAvailable) {
       toast({
-        title: "错误",
-        description: "请先输入有效且可用的邮箱地址",
+        title: "Error",
+        description: "Please enter a valid and available email address first",
         variant: "destructive",
       });
       return;
@@ -150,21 +150,21 @@ export function UserRegisterForm({
         setCodeSent(true);
         setCountdown(60);
         toast({
-          title: "验证码已发送",
-          description: "请查收邮箱中的验证码",
+          title: "Verification code sent",
+        description: "Please check your email for the verification code",
         });
       } else {
         toast({
-          title: "发送失败",
-          description: data.error || "验证码发送失败，请稍后重试",
+          title: "Send failed",
+        description: data.error || "Failed to send verification code, please try again later",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send code error:", error);
       toast({
-        title: "发送失败",
-        description: "网络错误，请稍后重试",
+        title: "Send failed",
+        description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -172,12 +172,12 @@ export function UserRegisterForm({
     }
   };
 
-  // 提交注册
+  // Submit registration
   async function onSubmit(data: FormData) {
     if (!emailAvailable) {
       toast({
-        title: "注册失败",
-        description: "邮箱不可用，请更换邮箱",
+        title: "Registration failed",
+        description: "Email is not available, please use a different email",
         variant: "destructive",
       });
       return;
@@ -185,8 +185,8 @@ export function UserRegisterForm({
 
     if (passwordStrength && passwordStrength.score < 3) {
       toast({
-        title: "密码强度不足",
-        description: "请设置更强的密码",
+        title: "Password strength insufficient",
+        description: "Please set a stronger password",
         variant: "destructive",
       });
       return;
@@ -207,24 +207,24 @@ export function UserRegisterForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "注册成功",
-          description: "账户创建成功，正在跳转到登录页面",
+          title: "Registration successful",
+        description: "Account created successfully, redirecting to login page",
         });
         setTimeout(() => {
           router.push(`/${lang}/login`);
         }, 1500);
       } else {
         toast({
-          title: "注册失败",
-          description: result.error || "注册失败，请稍后重试",
+          title: "Registration failed",
+        description: result.error || "Registration failed, please try again later",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Register error:", error);
       toast({
-        title: "注册失败",
-        description: "网络错误，请稍后重试",
+        title: "Registration failed",
+        description: "Network error, please try again later",
         variant: "destructive",
       });
     } finally {
@@ -240,19 +240,19 @@ export function UserRegisterForm({
   };
 
   const getPasswordStrengthText = (score: number) => {
-    if (score < 2) return "弱";
-    if (score < 3) return "一般";
-    if (score < 4) return "良好";
-    return "强";
+    if (score < 2) return "Weak";
+    if (score < 3) return "Fair";
+    if (score < 4) return "Good";
+    return "Strong";
   };
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
-          {/* 邮箱输入 */}
+          {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">邮箱地址</Label>
+            <Label htmlFor="email">Email Address</Label>
             <div className="relative">
               <Input
                 id="email"
@@ -271,23 +271,23 @@ export function UserRegisterForm({
                 <Icons.Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
               )}
               {!checkingEmail && emailAvailable === false && (
-                <Icons.X className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                <Icons.Close className="absolute right-3 top-3 h-4 w-4 text-red-500" />
               )}
             </div>
             {errors?.email && (
               <p className="text-xs text-red-600">{errors.email.message}</p>
             )}
             {emailAvailable === false && (
-              <p className="text-xs text-red-600">该邮箱已被注册</p>
+              <p className="text-xs text-red-600">This email is already registered</p>
             )}
           </div>
 
-          {/* 密码输入 */}
+          {/* Password input */}
           <div className="grid gap-2">
-            <Label htmlFor="password">密码</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              placeholder="请输入密码"
+              placeholder="Enter password"
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -297,11 +297,11 @@ export function UserRegisterForm({
               <p className="text-xs text-red-600">{errors.password.message}</p>
             )}
             
-            {/* 密码强度指示器 */}
+            {/* Password strength indicator */}
             {passwordStrength && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">密码强度</span>
+                  <span className="text-xs text-muted-foreground">Password Strength</span>
                   <span className={cn(
                     "text-xs font-medium",
                     passwordStrength.score < 2 ? "text-red-500" :
@@ -340,12 +340,12 @@ export function UserRegisterForm({
             )}
           </div>
 
-          {/* 确认密码 */}
+          {/* Confirm password */}
           <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">确认密码</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
               id="confirmPassword"
-              placeholder="请再次输入密码"
+              placeholder="Enter password again"
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -356,13 +356,13 @@ export function UserRegisterForm({
             )}
           </div>
 
-          {/* 验证码 */}
+          {/* Verification code */}
           <div className="grid gap-2">
-            <Label htmlFor="verificationCode">邮箱验证码</Label>
+            <Label htmlFor="verificationCode">Email Verification Code</Label>
             <div className="flex gap-2">
               <Input
                 id="verificationCode"
-                placeholder="请输入验证码"
+                placeholder="Enter verification code"
                 disabled={isLoading}
                 {...register("verificationCode")}
               />
@@ -376,7 +376,7 @@ export function UserRegisterForm({
                 {isCodeSending && (
                   <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {countdown > 0 ? `${countdown}s` : codeSent ? "重新发送" : "发送验证码"}
+                {countdown > 0 ? `${countdown}s` : codeSent ? "Resend" : "Send Code"}
               </Button>
             </div>
             {errors?.verificationCode && (
@@ -384,16 +384,16 @@ export function UserRegisterForm({
             )}
           </div>
 
-          {/* 提交按钮 */}
+          {/* Submit button */}
           <Button 
             type="submit" 
-            disabled={isLoading || !emailAvailable || (passwordStrength && passwordStrength.score < 3)}
+            disabled={isLoading || emailAvailable === false || (passwordStrength?.score ?? 0) < 3}
             className="w-full"
           >
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            创建账户
+            Create Account
           </Button>
         </div>
       </form>

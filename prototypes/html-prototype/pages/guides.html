@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏攻略 - GameHub HTML5游戏中心</title>
+    <meta name="description" content="GameHub - 最全面的HTML5游戏攻略和技巧分享平台">
+    
+    <!-- 引入字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <style>
+        /* 攻略页面特定样式 */
+        .guides-hero {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            color: white;
+            padding: var(--space-16) 0 var(--space-12);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guides-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .guides-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .guides-hero h1 {
+            font-size: var(--text-5xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+            font-family: var(--font-game);
+        }
+        
+        .guides-hero p {
+            font-size: var(--text-xl);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto var(--space-8);
+        }
+        
+        .guides-search {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .guides-search input {
+            width: 100%;
+            padding: var(--space-4) var(--space-6) var(--space-4) var(--space-12);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: var(--text-lg);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--gray-900);
+        }
+        
+        .guides-search i {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+            font-size: var(--text-lg);
+        }
+        
+        .guides-categories {
+            padding: var(--space-12) 0;
+            background: var(--gray-50);
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .category-card {
+            background: white;
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            transition: all var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-200);
+        }
+        
+        .category-card.active {
+            border-color: var(--primary-500);
+            background: var(--primary-50);
+        }
+        
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto var(--space-4);
+            background: var(--primary-100);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            color: var(--primary-600);
+        }
+        
+        .category-card.active .category-icon {
+            background: var(--primary-500);
+            color: white;
+        }
+        
+        .category-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .category-count {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .guides-content {
+            padding: var(--space-12) 0;
+        }
+        
+        .guides-filters {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .filter-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+        }
+        
+        .filter-select {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: white;
+        }
+        
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .guide-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .guide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .guide-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--gray-200);
+        }
+        
+        .guide-content {
+            padding: var(--space-6);
+        }
+        
+        .guide-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .guide-category {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+        
+        .guide-difficulty {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .difficulty-easy {
+            color: var(--green-600);
+        }
+        
+        .difficulty-medium {
+            color: var(--yellow-600);
+        }
+        
+        .difficulty-hard {
+            color: var(--red-600);
+        }
+        
+        .guide-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-3);
+            line-height: 1.3;
+        }
+        
+        .guide-excerpt {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+        
+        .guide-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .guide-author {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            background: var(--gray-300);
+        }
+        
+        .author-name {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+        }
+        
+        .guide-engagement {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .engagement-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .featured-guides {
+            background: white;
+            padding: var(--space-8);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .featured-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .featured-title i {
+            color: var(--yellow-500);
+        }
+        
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .featured-guide {
+            display: flex;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: background var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .featured-guide:hover {
+            background: var(--gray-50);
+        }
+        
+        .featured-image {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-lg);
+            object-fit: cover;
+            background: var(--gray-200);
+            flex-shrink: 0;
+        }
+        
+        .featured-info {
+            flex: 1;
+        }
+        
+        .featured-guide-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            line-height: 1.3;
+        }
+        
+        .featured-guide-meta {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-12);
+        }
+        
+        .pagination-btn {
+            padding: var(--space-3) var(--space-4);
+            border: 1px solid var(--gray-300);
+            background: white;
+            color: var(--gray-700);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out);
+            font-weight: var(--font-medium);
+        }
+        
+        .pagination-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+        
+        .pagination-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .guides-hero h1 {
+                font-size: var(--text-3xl);
+            }
+            
+            .guides-hero p {
+                font-size: var(--text-lg);
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-4);
+            }
+            
+            .guides-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guides-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-guide {
+                flex-direction: column;
+            }
+            
+            .featured-image {
+                width: 100%;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-gamepad brand-icon"></i>
+                    <span class="brand-text">GameHub</span>
+                </a>
+            </div>
+            
+            <div class="navbar-menu" id="navbarMenu">
+                <div class="navbar-nav">
+                    <a href="../index.html" class="nav-link">首页</a>
+                    <a href="games.html" class="nav-link">游戏</a>
+                    <a href="rankings-popular.html" class="nav-link">排行榜</a>
+                    <a href="guides.html" class="nav-link active">攻略</a>
+                    <a href="#" class="nav-link">社区</a>
+                </div>
+                
+                <div class="navbar-actions">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="#" class="btn btn-primary">登录</a>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- 英雄区域 -->
+    <section class="guides-hero">
+        <div class="container">
+            <div class="guides-hero-content">
+                <h1>游戏攻略中心</h1>
+                <p>发现最全面的游戏攻略、技巧分享和策略指南，助你成为游戏高手</p>
+                
+                <div class="guides-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="搜索攻略、游戏名称或关键词..." id="guidesSearchInput">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 攻略分类 -->
+    <section class="guides-categories">
+        <div class="container">
+            <div class="categories-grid">
+                <div class="category-card active" data-category="all">
+                    <div class="category-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div class="category-name">全部攻略</div>
+                    <div class="category-count">156 篇</div>
+                </div>
+                
+                <div class="category-card" data-category="action">
+                    <div class="category-icon">
+                        <i class="fas fa-fist-raised"></i>
+                    </div>
+                    <div class="category-name">动作游戏</div>
+                    <div class="category-count">42 篇</div>
+                </div>
+                
+                <div class="category-card" data-category="puzzle">
+                    <div class="category-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="category-name">益智游戏</div>
+                    <div class="category-count">38 篇</div>
+                </div>
+                
+                <div class="category-card" data-category="strategy">
+                    <div class="category-icon">
+                        <i class="fas fa-chess"></i>
+                    </div>
+                    <div class="category-name">策略游戏</div>
+                    <div class="category-count">29 篇</div>
+                </div>
+                
+                <div class="category-card" data-category="racing">
+                    <div class="category-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="category-name">竞速游戏</div>
+                    <div class="category-count">24 篇</div>
+                </div>
+                
+                <div class="category-card" data-category="sports">
+                    <div class="category-icon">
+                        <i class="fas fa-football-ball"></i>
+                    </div>
+                    <div class="category-name">体育游戏</div>
+                    <div class="category-count">23 篇</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 攻略内容 -->
+    <section class="guides-content">
+        <div class="container">
+            <!-- 精选攻略 -->
+            <div class="featured-guides">
+                <h2 class="featured-title">
+                    <i class="fas fa-star"></i>
+                    精选攻略
+                </h2>
+                
+                <div class="featured-grid">
+                    <div class="featured-guide">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=80&h=80&fit=crop" alt="攻略图片" class="featured-image">
+                        <div class="featured-info">
+                            <h3 class="featured-guide-title">《超级马里奥》完美通关攻略</h3>
+                            <div class="featured-guide-meta">
+                                <span><i class="fas fa-eye"></i> 12.5K</span>
+                                <span><i class="fas fa-thumbs-up"></i> 892</span>
+                                <span><i class="fas fa-clock"></i> 2天前</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-guide">
+                        <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=80&h=80&fit=crop" alt="攻略图片" class="featured-image">
+                        <div class="featured-info">
+                            <h3 class="featured-guide-title">俄罗斯方块高分技巧大全</h3>
+                            <div class="featured-guide-meta">
+                                <span><i class="fas fa-eye"></i> 8.9K</span>
+                                <span><i class="fas fa-thumbs-up"></i> 654</span>
+                                <span><i class="fas fa-clock"></i> 3天前</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-guide">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&h=80&fit=crop" alt="攻略图片" class="featured-image">
+                        <div class="featured-info">
+                            <h3 class="featured-guide-title">塔防游戏布局策略指南</h3>
+                            <div class="featured-guide-meta">
+                                <span><i class="fas fa-eye"></i> 7.2K</span>
+                                <span><i class="fas fa-thumbs-up"></i> 523</span>
+                                <span><i class="fas fa-clock"></i> 5天前</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-guide">
+                        <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=80&h=80&fit=crop" alt="攻略图片" class="featured-image">
+                        <div class="featured-info">
+                            <h3 class="featured-guide-title">赛车游戏漂移技巧详解</h3>
+                            <div class="featured-guide-meta">
+                                <span><i class="fas fa-eye"></i> 6.8K</span>
+                                <span><i class="fas fa-thumbs-up"></i> 445</span>
+                                <span><i class="fas fa-clock"></i> 1周前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 筛选器 -->
+            <div class="guides-filters">
+                <div class="filter-group">
+                    <span class="filter-label">排序：</span>
+                    <select class="filter-select" id="sortFilter">
+                        <option value="latest">最新发布</option>
+                        <option value="popular">最受欢迎</option>
+                        <option value="views">浏览量</option>
+                        <option value="likes">点赞数</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <span class="filter-label">难度：</span>
+                    <select class="filter-select" id="difficultyFilter">
+                        <option value="all">全部难度</option>
+                        <option value="easy">简单</option>
+                        <option value="medium">中等</option>
+                        <option value="hard">困难</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <span class="filter-label">时长：</span>
+                    <select class="filter-select" id="lengthFilter">
+                        <option value="all">全部时长</option>
+                        <option value="short">5分钟内</option>
+                        <option value="medium">5-15分钟</option>
+                        <option value="long">15分钟以上</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 攻略网格 -->
+            <div class="guides-grid">
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">动作游戏</span>
+                            <div class="guide-difficulty difficulty-medium">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>中等</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 8分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">《超级马里奥》隐藏关卡完全攻略</h3>
+                        <p class="guide-excerpt">详细介绍如何找到并通过游戏中的所有隐藏关卡，包括秘密通道和隐藏道具的获取方法...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">游戏达人</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>12.5K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>892</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>156</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">益智游戏</span>
+                            <div class="guide-difficulty difficulty-easy">
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>简单</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 5分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">俄罗斯方块新手入门指南</h3>
+                        <p class="guide-excerpt">从基础操作到高级技巧，帮助新手快速掌握俄罗斯方块的游戏要领和得分技巧...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">益智专家</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>8.9K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>654</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>89</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">策略游戏</span>
+                            <div class="guide-difficulty difficulty-hard">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>困难</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 15分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">塔防游戏高级布局策略</h3>
+                        <p class="guide-excerpt">深入分析塔防游戏的高级战术，包括防御塔的最优配置和敌人路径的控制技巧...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">策略大师</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>7.2K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>523</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>78</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">竞速游戏</span>
+                            <div class="guide-difficulty difficulty-medium">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>中等</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 10分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">赛车游戏漂移技巧完全解析</h3>
+                        <p class="guide-excerpt">掌握完美漂移的秘诀，包括入弯时机、油门控制和方向盘操作的精确技巧...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">赛车高手</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>6.8K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>445</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>67</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">体育游戏</span>
+                            <div class="guide-difficulty difficulty-easy">
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>简单</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 6分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">足球游戏射门技巧大全</h3>
+                        <p class="guide-excerpt">学习各种射门技巧，包括任意球、点球和运动战中的得分要领...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">足球达人</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>5.4K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>378</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>45</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <img src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=200&fit=crop" alt="攻略封面" class="guide-image">
+                    <div class="guide-content">
+                        <div class="guide-meta">
+                            <span class="guide-category">益智游戏</span>
+                            <div class="guide-difficulty difficulty-medium">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>中等</span>
+                            </div>
+                            <span><i class="fas fa-clock"></i> 12分钟</span>
+                        </div>
+                        
+                        <h3 class="guide-title">数独解题技巧进阶教程</h3>
+                        <p class="guide-excerpt">从基础逻辑到高级技巧，系统学习数独的各种解题方法和思路...</p>
+                        
+                        <div class="guide-stats">
+                            <div class="guide-author">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" alt="作者头像" class="author-avatar">
+                                <span class="author-name">逻辑专家</span>
+                            </div>
+                            
+                            <div class="guide-engagement">
+                                <div class="engagement-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>4.9K</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>312</span>
+                                </div>
+                                <div class="engagement-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>38</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="pagination">
+                <button class="pagination-btn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">4</button>
+                <button class="pagination-btn">5</button>
+                <button class="pagination-btn">...</button>
+                <button class="pagination-btn">12</button>
+                <button class="pagination-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-gamepad"></i>
+                        <span>GameHub</span>
+                    </div>
+                    <p class="footer-description">
+                        最好的HTML5游戏平台，为您提供丰富多样的在线游戏体验。
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">游戏分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">动作游戏</a></li>
+                        <li><a href="#">益智游戏</a></li>
+                        <li><a href="#">策略游戏</a></li>
+                        <li><a href="#">体育游戏</a></li>
+                        <li><a href="#">竞速游戏</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">功能特色</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">热门排行</a></li>
+                        <li><a href="#">最新游戏</a></li>
+                        <li><a href="#">游戏攻略</a></li>
+                        <li><a href="#">用户评价</a></li>
+                        <li><a href="#">收藏夹</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">帮助支持</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">使用帮助</a></li>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">意见反馈</a></li>
+                        <li><a href="#">开发者API</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2024 GameHub. 保留所有权利。</p>
+                </div>
+                <div class="footer-legal">
+                    <a href="#">隐私政策</a>
+                    <a href="#">服务条款</a>
+                    <a href="#">Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navbarMenu = document.getElementById('navbarMenu');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            navbarMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+        
+        // 搜索功能
+        const guidesSearchInput = document.getElementById('guidesSearchInput');
+        
+        guidesSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            console.log('搜索攻略:', searchTerm);
+            // 这里添加搜索逻辑
+        });
+        
+        // 分类切换
+        const categoryCards = document.querySelectorAll('.category-card');
+        
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // 移除所有活跃状态
+                categoryCards.forEach(c => c.classList.remove('active'));
+                // 添加当前活跃状态
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                console.log('切换分类:', category);
+                // 这里添加分类筛选逻辑
+            });
+        });
+        
+        // 筛选器
+        const sortFilter = document.getElementById('sortFilter');
+        const difficultyFilter = document.getElementById('difficultyFilter');
+        const lengthFilter = document.getElementById('lengthFilter');
+        
+        function applyFilters() {
+            const sort = sortFilter.value;
+            const difficulty = difficultyFilter.value;
+            const length = lengthFilter.value;
+            
+            console.log('应用筛选:', { sort, difficulty, length });
+            // 这里添加筛选逻辑
+        }
+        
+        sortFilter.addEventListener('change', applyFilters);
+        difficultyFilter.addEventListener('change', applyFilters);
+        lengthFilter.addEventListener('change', applyFilters);
+        
+        // 攻略卡片点击
+        const guideCards = document.querySelectorAll('.guide-card');
+        
+        guideCards.forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('查看攻略详情');
+                // 这里添加跳转到攻略详情页的逻辑
+            });
+        });
+        
+        // 精选攻略点击
+        const featuredGuides = document.querySelectorAll('.featured-guide');
+        
+        featuredGuides.forEach(guide => {
+            guide.addEventListener('click', function() {
+                console.log('查看精选攻略详情');
+                // 这里添加跳转到攻略详情页的逻辑
+            });
+        });
+        
+        // 分页功能
+        const paginationBtns = document.querySelectorAll('.pagination-btn');
+        
+        paginationBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.disabled && !this.classList.contains('active')) {
+                    // 移除所有活跃状态
+                    paginationBtns.forEach(b => b.classList.remove('active'));
+                    // 添加当前活跃状态
+                    if (!this.querySelector('i')) {
+                        this.classList.add('active');
+                    }
+                    
+                    console.log('切换到页面:', this.textContent);
+                    // 这里添加分页逻辑
+                }
+            });
+        });
+        
+        // 主题切换
+        const themeToggle = document.getElementById('themeToggle');
+        
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            const icon = this.querySelector('i');
+            
+            if (document.body.classList.contains('dark-theme')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        });
+        
+        // 搜索按钮
+        const searchBtn = document.getElementById('searchBtn');
+        
+        searchBtn.addEventListener('click', function() {
+            console.log('打开搜索');
+            // 这里添加搜索功能
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多语言内容管理 - HTML5游戏网站后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-brand {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .admin-brand h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .admin-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin: 0.25rem 1rem;
+        }
+        
+        .nav-link {
+            color: #4a5568;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-content {
+            padding: 2rem;
+        }
+        
+        .page-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+        
+        .multilang-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .language-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+        
+        .language-tab {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .language-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .language-tab:hover {
+            color: #667eea;
+        }
+        
+        .language-flag {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        
+        .flag-cn { background: linear-gradient(to right, #de2910 0%, #de2910 100%); }
+        .flag-en { background: linear-gradient(to right, #012169 0%, #012169 33%, #fff 33%, #fff 66%, #c8102e 66%); }
+        .flag-jp { background: linear-gradient(to right, #fff 0%, #fff 100%); position: relative; }
+        .flag-jp::after { content: ''; position: absolute; top: 2px; left: 6px; width: 8px; height: 8px; background: #bc002d; border-radius: 50%; }
+        .flag-kr { background: linear-gradient(to right, #fff 0%, #fff 100%); }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .translation-editor {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            background: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .editor-content {
+            padding: 1rem;
+        }
+        
+        .translation-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .translation-source {
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .translation-target {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            transition: width 0.3s ease;
+        }
+        
+        .language-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .multilang-card {
+                padding: 1.5rem;
+            }
+            
+            .translation-pair {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <nav class="admin-sidebar" id="sidebar">
+            <div class="admin-brand">
+                <h3><i class="fas fa-gamepad me-2"></i>游戏后台</h3>
+            </div>
+            <div class="admin-nav">
+                <div class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        仪表盘
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-games.html" class="nav-link">
+                        <i class="fas fa-gamepad"></i>
+                        游戏管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-categories.html" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        分类管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-users.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        用户管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-ads.html" class="nav-link">
+                        <i class="fas fa-ad"></i>
+                        广告管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-adsense.html" class="nav-link">
+                        <i class="fab fa-google"></i>
+                        AdSense配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-seo.html" class="nav-link">
+                        <i class="fas fa-search"></i>
+                        SEO设置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-multilang.html" class="nav-link active">
+                        <i class="fas fa-globe"></i>
+                        多语言管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-config.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        系统配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-analytics.html" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        数据统计
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="mobile-menu-btn" id="mobileMenuBtn">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h4 class="mb-0">多语言内容管理</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted">管理员</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>Admin
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>个人资料</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>设置</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="admin-content">
+                <div class="page-title">多语言内容管理</div>
+                <div class="page-subtitle">管理网站多语言内容，支持内容翻译和本地化</div>
+                
+                <!-- 语言统计 -->
+                <div class="language-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">支持语言</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1,234</div>
+                        <div class="stat-label">翻译条目</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">89%</div>
+                        <div class="stat-label">翻译完成度</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">待翻译</div>
+                    </div>
+                </div>
+                
+                <div class="multilang-card">
+                    <div class="language-tabs">
+                        <button class="language-tab active" data-lang="zh-CN">
+                            <span class="language-flag flag-cn"></span>
+                            中文 (简体)
+                        </button>
+                        <button class="language-tab" data-lang="en-US">
+                            <span class="language-flag flag-en"></span>
+                            English
+                        </button>
+                        <button class="language-tab" data-lang="ja-JP">
+                            <span class="language-flag flag-jp"></span>
+                            日本語
+                        </button>
+                        <button class="language-tab" data-lang="ko-KR">
+                            <span class="language-flag flag-kr"></span>
+                            한국어
+                        </button>
+                    </div>
+                    
+                    <!-- 中文内容 -->
+                    <div class="language-content" id="zh-CN">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label">网站标题</label>
+                                    <input type="text" class="form-control" value="HTML5游戏网站" placeholder="输入网站标题">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">网站描述</label>
+                                    <textarea class="form-control" rows="3" placeholder="输入网站描述">最好玩的在线HTML5游戏平台，提供各种类型的免费游戏</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">导航菜单</label>
+                                    <div class="translation-editor">
+                                        <div class="editor-header">
+                                            <span class="fw-bold">菜单项翻译</span>
+                                            <button class="btn btn-sm btn-outline-primary">添加菜单项</button>
+                                        </div>
+                                        <div class="editor-content">
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">键名</label>
+                                                    <div class="translation-source">menu.home</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻译</label>
+                                                    <input type="text" class="form-control" value="首页">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">键名</label>
+                                                    <div class="translation-source">menu.games</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻译</label>
+                                                    <input type="text" class="form-control" value="游戏">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">键名</label>
+                                                    <div class="translation-source">menu.categories</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻译</label>
+                                                    <input type="text" class="form-control" value="分类">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">键名</label>
+                                                    <div class="translation-source">menu.ranking</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻译</label>
+                                                    <input type="text" class="form-control" value="排行榜">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label">翻译进度</label>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>中文 (简体)</span>
+                                            <span>100%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>English</span>
+                                            <span>85%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>日本語</span>
+                                            <span>72%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 72%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>한국어</span>
+                                            <span>68%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 68%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">翻译工具</label>
+                                    <div class="d-flex gap-2 mb-3">
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-robot me-1"></i>AI翻译
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-upload me-1"></i>导入翻译
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>导出翻译
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-lightbulb me-2"></i>翻译建议</h6>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>保持品牌名称一致</li>
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>考虑文化差异</li>
+                                            <li class="mb-2"><i class="fas fa-exclamation-triangle text-warning me-2"></i>注意文本长度变化</li>
+                                            <li class="mb-0"><i class="fas fa-info text-info me-2"></i>定期更新翻译内容</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 英文内容 -->
+                    <div class="language-content" id="en-US" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">Website Title</label>
+                                    <input type="text" class="form-control" value="HTML5 Games Website" placeholder="Enter website title">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Website Description</label>
+                                    <textarea class="form-control" rows="3" placeholder="Enter website description">The best online HTML5 games platform, offering various types of free games</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Navigation Menu</label>
+                                    <div class="translation-editor">
+                                        <div class="editor-header">
+                                            <span class="fw-bold">Menu Translation</span>
+                                            <span class="badge bg-warning">85% Complete</span>
+                                        </div>
+                                        <div class="editor-content">
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">Key</label>
+                                                    <div class="translation-source">menu.home</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">Translation</label>
+                                                    <input type="text" class="form-control" value="Home">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">Key</label>
+                                                    <div class="translation-source">menu.games</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">Translation</label>
+                                                    <input type="text" class="form-control" value="Games">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">Key</label>
+                                                    <div class="translation-source">menu.categories</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">Translation</label>
+                                                    <input type="text" class="form-control" value="Categories">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">Key</label>
+                                                    <div class="translation-source">menu.ranking</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">Translation</label>
+                                                    <input type="text" class="form-control" value="Ranking" placeholder="Missing translation">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Missing Translations</h6>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2">• button.play_now</li>
+                                            <li class="mb-2">• footer.copyright</li>
+                                            <li class="mb-2">• error.page_not_found</li>
+                                            <li class="mb-0">• user.profile_settings</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 日文内容 -->
+                    <div class="language-content" id="ja-JP" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">ウェブサイトタイトル</label>
+                                    <input type="text" class="form-control" value="HTML5ゲームサイト" placeholder="ウェブサイトタイトルを入力">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">ウェブサイト説明</label>
+                                    <textarea class="form-control" rows="3" placeholder="ウェブサイト説明を入力">最高のオンラインHTML5ゲームプラットフォーム、様々な種類の無料ゲームを提供</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">ナビゲーションメニュー</label>
+                                    <div class="translation-editor">
+                                        <div class="editor-header">
+                                            <span class="fw-bold">メニュー翻訳</span>
+                                            <span class="badge bg-info">72% Complete</span>
+                                        </div>
+                                        <div class="editor-content">
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">キー</label>
+                                                    <div class="translation-source">menu.home</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻訳</label>
+                                                    <input type="text" class="form-control" value="ホーム">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">キー</label>
+                                                    <div class="translation-source">menu.games</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻訳</label>
+                                                    <input type="text" class="form-control" value="ゲーム">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">キー</label>
+                                                    <div class="translation-source">menu.categories</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">翻訳</label>
+                                                    <input type="text" class="form-control" placeholder="翻訳が必要">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-info text-info me-2"></i>翻訳ステータス</h6>
+                                        <p class="mb-2">完了: 892 / 1,234</p>
+                                        <p class="mb-2">残り: 342項目</p>
+                                        <p class="mb-0">最終更新: 2024-01-10</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 韩文内容 -->
+                    <div class="language-content" id="ko-KR" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">웹사이트 제목</label>
+                                    <input type="text" class="form-control" value="HTML5 게임 웹사이트" placeholder="웹사이트 제목 입력">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">웹사이트 설명</label>
+                                    <textarea class="form-control" rows="3" placeholder="웹사이트 설명 입력">최고의 온라인 HTML5 게임 플랫폼, 다양한 종류의 무료 게임 제공</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">네비게이션 메뉴</label>
+                                    <div class="translation-editor">
+                                        <div class="editor-header">
+                                            <span class="fw-bold">메뉴 번역</span>
+                                            <span class="badge bg-secondary">68% Complete</span>
+                                        </div>
+                                        <div class="editor-content">
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">키</label>
+                                                    <div class="translation-source">menu.home</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">번역</label>
+                                                    <input type="text" class="form-control" value="홈">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="translation-pair">
+                                                <div>
+                                                    <label class="form-label small">키</label>
+                                                    <div class="translation-source">menu.games</div>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label small">번역</label>
+                                                    <input type="text" class="form-control" placeholder="번역 필요">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-clock text-secondary me-2"></i>번역 상태</h6>
+                                        <p class="mb-2">완료: 839 / 1,234</p>
+                                        <p class="mb-2">남은 항목: 395개</p>
+                                        <p class="mb-0">마지막 업데이트: 2024-01-08</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-3 mt-4">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>保存翻译
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-sync me-2"></i>同步翻译
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>添加语言
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        
+        // 语言标签切换
+        document.querySelectorAll('.language-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.language-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.language-content').forEach(content => content.style.display = 'none');
+                
+                // 激活当前标签
+                this.classList.add('active');
+                document.getElementById(this.dataset.lang).style.display = 'block';
+            });
+        });
+        
+        // AI翻译功能模拟
+        document.querySelectorAll('.btn:contains("AI翻译")')?.forEach(btn => {
+            btn?.addEventListener('click', function() {
+                // 模拟AI翻译过程
+                const emptyInputs = document.querySelectorAll('input[placeholder*="翻译"], input[placeholder*="translation"], input[placeholder*="번역"]');
+                
+                emptyInputs.forEach((input, index) => {
+                    setTimeout(() => {
+                        if (!input.value) {
+                            // 模拟翻译结果
+                            const translations = {
+                                'menu.categories': {
+                                    'en-US': 'Categories',
+                                    'ja-JP': 'カテゴリー',
+                                    'ko-KR': '카테고리'
+                                },
+                                'menu.games': {
+                                    'ko-KR': '게임'
+                                }
+                            };
+                            
+                            // 简单的翻译逻辑
+                            input.value = 'AI翻译中...';
+                            setTimeout(() => {
+                                input.value = 'AI翻译完成';
+                            }, 1000);
+                        }
+                    }, index * 500);
+                });
+            });
+        });
+        
+        // 翻译进度更新
+        function updateTranslationProgress() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const percentages = [100, 85, 72, 68];
+            
+            progressBars.forEach((bar, index) => {
+                if (percentages[index]) {
+                    bar.style.width = percentages[index] + '%';
+                }
+            });
+        }
+        
+        // 表单自动保存
+        let saveTimeout;
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    console.log('自动保存翻译内容...');
+                    // 这里可以添加实际的保存逻辑
+                }, 2000);
+            });
+        });
+        
+        // 导入/导出翻译文件
+        document.querySelectorAll('.btn:contains("导入翻译")')?.forEach(btn => {
+            btn?.addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json,.csv,.xlsx';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        console.log('导入翻译文件:', file.name);
+                        // 这里可以添加文件解析逻辑
+                    }
+                };
+                input.click();
+            });
+        });
+        
+        document.querySelectorAll('.btn:contains("导出翻译")')?.forEach(btn => {
+            btn?.addEventListener('click', function() {
+                // 模拟导出翻译文件
+                const translations = {
+                    'zh-CN': {
+                        'menu.home': '首页',
+                        'menu.games': '游戏',
+                        'menu.categories': '分类',
+                        'menu.ranking': '排行榜'
+                    },
+                    'en-US': {
+                        'menu.home': 'Home',
+                        'menu.games': 'Games',
+                        'menu.categories': 'Categories',
+                        'menu.ranking': 'Ranking'
+                    }
+                };
+                
+                const dataStr = JSON.stringify(translations, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'translations.json';
+                link.click();
+                URL.revokeObjectURL(url);
+            });
+        });
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTranslationProgress();
+        });
+    </script>
+</body>
+</html>

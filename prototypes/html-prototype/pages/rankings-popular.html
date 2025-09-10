@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>热门游戏排行榜 - HTML5游戏网站</title>
+    <meta name="description" content="发现最受欢迎的HTML5游戏，查看热门游戏排行榜，找到最好玩的在线游戏">
+    <meta name="keywords" content="热门游戏,游戏排行榜,HTML5游戏,在线游戏,免费游戏">
+    
+    <!-- 引入字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <style>
+        /* 排行榜页面特定样式 */
+        .rankings-hero {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            color: white;
+            padding: var(--space-16) 0 var(--space-12);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rankings-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+        
+        .rankings-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+        
+        .rankings-title {
+            font-family: var(--font-game);
+            font-size: var(--text-5xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .rankings-subtitle {
+            font-size: var(--text-xl);
+            opacity: 0.9;
+            margin-bottom: var(--space-8);
+        }
+        
+        .rankings-tabs {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        
+        .tab-button {
+            padding: var(--space-3) var(--space-6);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            color: white;
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            background: var(--secondary-500);
+            border-color: var(--secondary-500);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .rankings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-12) var(--space-6);
+        }
+        
+        .rankings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+        
+        .rankings-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+        }
+        
+        .filter-select {
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            background: white;
+            font-size: var(--text-sm);
+            cursor: pointer;
+        }
+        
+        .rankings-list {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-100);
+            transition: all var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .ranking-item:hover {
+            background: var(--gray-50);
+            transform: translateX(4px);
+        }
+        
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ranking-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-full);
+            font-family: var(--font-game);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            margin-right: var(--space-6);
+            flex-shrink: 0;
+        }
+        
+        .ranking-number.top-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+        
+        .ranking-number.top-2 {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: white;
+            box-shadow: 0 4px 20px rgba(192, 192, 192, 0.4);
+        }
+        
+        .ranking-number.top-3 {
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+            color: white;
+            box-shadow: 0 4px 20px rgba(205, 127, 50, 0.4);
+        }
+        
+        .ranking-number.other {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        
+        .game-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-lg);
+            object-fit: cover;
+            margin-right: var(--space-6);
+            flex-shrink: 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .game-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .game-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+            line-height: 1.3;
+        }
+        
+        .game-category {
+            color: var(--primary-600);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            margin-bottom: var(--space-2);
+        }
+        
+        .game-description {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            line-height: 1.4;
+            margin-bottom: var(--space-3);
+        }
+        
+        .game-tags {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+        
+        .game-tag {
+            padding: var(--space-1) var(--space-3);
+            background: var(--gray-100);
+            color: var(--gray-700);
+            font-size: var(--text-xs);
+            border-radius: var(--radius-full);
+        }
+        
+        .game-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: var(--space-2);
+            margin-left: var(--space-6);
+            flex-shrink: 0;
+        }
+        
+        .game-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--secondary-500);
+            font-weight: var(--font-medium);
+        }
+        
+        .game-plays {
+            color: var(--gray-500);
+            font-size: var(--text-sm);
+        }
+        
+        .game-trend {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .trend-up {
+            color: var(--success-500);
+        }
+        
+        .trend-down {
+            color: var(--error-500);
+        }
+        
+        .trend-same {
+            color: var(--gray-500);
+        }
+        
+        .play-button {
+            padding: var(--space-2) var(--space-4);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .play-button:hover {
+            background: var(--primary-600);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .rankings-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .rankings-tabs {
+                flex-wrap: wrap;
+                gap: var(--space-2);
+            }
+            
+            .tab-button {
+                padding: var(--space-2) var(--space-4);
+                font-size: var(--text-sm);
+            }
+            
+            .rankings-header {
+                flex-direction: column;
+                gap: var(--space-4);
+                align-items: flex-start;
+            }
+            
+            .filter-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .ranking-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+                padding: var(--space-4);
+            }
+            
+            .ranking-number {
+                width: 40px;
+                height: 40px;
+                font-size: var(--text-lg);
+                margin-right: 0;
+                align-self: flex-end;
+            }
+            
+            .game-thumbnail {
+                width: 60px;
+                height: 60px;
+                margin-right: 0;
+            }
+            
+            .game-stats {
+                margin-left: 0;
+                align-items: flex-start;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad nav-brand-icon"></i>
+                <span class="nav-brand-text">GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">首页</a>
+                <a href="categories.html" class="nav-link">分类</a>
+                <a href="rankings-popular.html" class="nav-link active">排行榜</a>
+                <a href="#" class="nav-link">攻略</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            
+            <div class="nav-search">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏..." class="search-input">
+                    <button class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="nav-auth">
+                <button class="btn btn-outline">登录</button>
+                <button class="btn btn-primary">注册</button>
+            </div>
+            
+            <button class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="rankings-hero">
+        <div class="rankings-hero-content">
+            <h1 class="rankings-title">
+                <i class="fas fa-trophy"></i>
+                游戏排行榜
+            </h1>
+            <p class="rankings-subtitle">发现最受欢迎的HTML5游戏，探索玩家最爱的精品内容</p>
+            
+            <div class="rankings-tabs">
+                <button class="tab-button active" data-tab="popular">
+                    <i class="fas fa-fire"></i>
+                    热门游戏
+                </button>
+                <button class="tab-button" data-tab="latest">
+                    <i class="fas fa-clock"></i>
+                    最新游戏
+                </button>
+                <button class="tab-button" data-tab="overall">
+                    <i class="fas fa-star"></i>
+                    综合排行
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 排行榜内容 -->
+    <section class="rankings-container">
+        <div class="rankings-header">
+            <div class="rankings-info">
+                <i class="fas fa-info-circle"></i>
+                <span>数据更新时间：2024年1月15日 14:30</span>
+                <span>•</span>
+                <span>基于过去7天的游戏数据</span>
+            </div>
+            
+            <div class="filter-controls">
+                <select class="filter-select">
+                    <option value="all">所有分类</option>
+                    <option value="action">动作游戏</option>
+                    <option value="puzzle">益智游戏</option>
+                    <option value="adventure">冒险游戏</option>
+                    <option value="strategy">策略游戏</option>
+                </select>
+                
+                <select class="filter-select">
+                    <option value="7days">过去7天</option>
+                    <option value="30days">过去30天</option>
+                    <option value="all">全部时间</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="rankings-list">
+            <!-- 排行榜项目 -->
+            <div class="ranking-item">
+                <div class="ranking-number top-1">1</div>
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&h=200&fit=crop" alt="超级马里奥" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">超级马里奥冒险</h3>
+                    <div class="game-category">动作游戏</div>
+                    <p class="game-description">经典的横版跳跃游戏，带你重温童年回忆，挑战各种关卡和敌人。</p>
+                    <div class="game-tags">
+                        <span class="game-tag">经典</span>
+                        <span class="game-tag">跳跃</span>
+                        <span class="game-tag">冒险</span>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.8</span>
+                    </div>
+                    <div class="game-plays">1,234,567 次游玩</div>
+                    <div class="game-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15%</span>
+                    </div>
+                    <button class="play-button">
+                        <i class="fas fa-play"></i>
+                        立即游玩
+                    </button>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="ranking-number top-2">2</div>
+                <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=200&h=200&fit=crop" alt="俄罗斯方块" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">经典俄罗斯方块</h3>
+                    <div class="game-category">益智游戏</div>
+                    <p class="game-description">永恒的经典益智游戏，考验你的反应速度和空间想象力。</p>
+                    <div class="game-tags">
+                        <span class="game-tag">益智</span>
+                        <span class="game-tag">经典</span>
+                        <span class="game-tag">休闲</span>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.7</span>
+                    </div>
+                    <div class="game-plays">987,654 次游玩</div>
+                    <div class="game-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+8%</span>
+                    </div>
+                    <button class="play-button">
+                        <i class="fas fa-play"></i>
+                        立即游玩
+                    </button>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="ranking-number top-3">3</div>
+                <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=200&h=200&fit=crop" alt="太空射击" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">银河战士</h3>
+                    <div class="game-category">射击游戏</div>
+                    <p class="game-description">在浩瀚的宇宙中驾驶战机，消灭外星敌人，保卫地球家园。</p>
+                    <div class="game-tags">
+                        <span class="game-tag">射击</span>
+                        <span class="game-tag">科幻</span>
+                        <span class="game-tag">动作</span>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.6</span>
+                    </div>
+                    <div class="game-plays">756,432 次游玩</div>
+                    <div class="game-trend trend-same">
+                        <i class="fas fa-minus"></i>
+                        <span>0%</span>
+                    </div>
+                    <button class="play-button">
+                        <i class="fas fa-play"></i>
+                        立即游玩
+                    </button>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="ranking-number other">4</div>
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop" alt="赛车游戏" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">极速赛车</h3>
+                    <div class="game-category">竞速游戏</div>
+                    <p class="game-description">体验极速驾驶的快感，在各种赛道上展现你的驾驶技术。</p>
+                    <div class="game-tags">
+                        <span class="game-tag">竞速</span>
+                        <span class="game-tag">3D</span>
+                        <span class="game-tag">刺激</span>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.5</span>
+                    </div>
+                    <div class="game-plays">654,321 次游玩</div>
+                    <div class="game-trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-3%</span>
+                    </div>
+                    <button class="play-button">
+                        <i class="fas fa-play"></i>
+                        立即游玩
+                    </button>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="ranking-number other">5</div>
+                <img src="https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=200&h=200&fit=crop" alt="解谜游戏" class="game-thumbnail">
+                <div class="game-info">
+                    <h3 class="game-title">神秘解谜</h3>
+                    <div class="game-category">解谜游戏</div>
+                    <p class="game-description">挑战你的智慧，解开一个个精心设计的谜题和机关。</p>
+                    <div class="game-tags">
+                        <span class="game-tag">解谜</span>
+                        <span class="game-tag">烧脑</span>
+                        <span class="game-tag">逻辑</span>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i>
+                        <span>4.4</span>
+                    </div>
+                    <div class="game-plays">543,210 次游玩</div>
+                    <div class="game-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+5%</span>
+                    </div>
+                    <button class="play-button">
+                        <i class="fas fa-play"></i>
+                        立即游玩
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-gamepad footer-brand-icon"></i>
+                        <span class="footer-brand-text">GameHub</span>
+                    </div>
+                    <p class="footer-description">
+                        最好的HTML5游戏平台，为您提供丰富多样的在线游戏体验。
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">游戏分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">动作游戏</a></li>
+                        <li><a href="#">益智游戏</a></li>
+                        <li><a href="#">冒险游戏</a></li>
+                        <li><a href="#">策略游戏</a></li>
+                        <li><a href="#">体育游戏</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">帮助中心</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">游戏指南</a></li>
+                        <li><a href="#">技术支持</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">意见反馈</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">关于我们</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">公司介绍</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">服务条款</a></li>
+                        <li><a href="#">版权声明</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 GameHub. 保留所有权利。</p>
+                <p>让游戏连接世界，让快乐触手可及</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 标签页切换功能
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 添加当前活动状态
+                this.classList.add('active');
+                
+                // 这里可以添加切换排行榜内容的逻辑
+                const tab = this.dataset.tab;
+                console.log('切换到标签页:', tab);
+            });
+        });
+
+        // 游戏项目点击事件
+        document.querySelectorAll('.ranking-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // 如果点击的是按钮，不触发项目点击
+                if (e.target.closest('.play-button')) {
+                    return;
+                }
+                
+                const gameTitle = this.querySelector('.game-title').textContent;
+                console.log('点击游戏:', gameTitle);
+                // 这里可以添加跳转到游戏详情页的逻辑
+            });
+        });
+
+        // 立即游玩按钮点击事件
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const gameTitle = this.closest('.ranking-item').querySelector('.game-title').textContent;
+                console.log('开始游玩:', gameTitle);
+                // 这里可以添加启动游戏的逻辑
+            });
+        });
+
+        // 筛选器变化事件
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                console.log('筛选器变化:', this.value);
+                // 这里可以添加筛选排行榜的逻辑
+            });
+        });
+
+        // 搜索功能
+        const searchInput = document.querySelector('.search-input');
+        const searchButton = document.querySelector('.search-button');
+        
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                console.log('搜索:', query);
+                // 这里可以添加搜索逻辑
+            }
+        }
+        
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // 移动端导航切换
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

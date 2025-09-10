@@ -5,6 +5,7 @@ import { getCurrentUser } from "@saasfly/auth";
 import { SiteFooter } from "~/components/site-footer";
 import { i18n, type Locale } from "~/config/i18n-config";
 import { getDictionary } from "~/lib/get-dictionary";
+import "~/styles/admin.css";
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;

@@ -64,10 +64,16 @@ export default function Dashboard() {
             Orders
           </Link>
           <Link
-            href="#"
+            href="/admin/games"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            Products
+            Games
+          </Link>
+          <Link
+            href="/admin/categories"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Categories
           </Link>
           <Link
             href="#"
@@ -108,10 +114,16 @@ export default function Dashboard() {
                 Orders
               </Link>
               <Link
-                href="#"
+                href="/admin/games"
                 className="text-muted-foreground hover:text-foreground"
               >
-                Products
+                Games
+              </Link>
+              <Link
+                href="/admin/categories"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Categories
               </Link>
               <Link
                 href="#"

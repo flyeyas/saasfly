@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索游戏 - HTML5游戏中心</title>
+    <meta name="description" content="搜索您喜欢的HTML5游戏，支持按分类、标签、评分等条件筛选，发现更多精彩游戏">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 搜索页面特定样式 */
+        .search-hero {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+            color: white;
+            padding: var(--space-12) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .search-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            text-align: center;
+        }
+        
+        .search-title {
+            font-family: var(--font-game);
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .search-subtitle {
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-8);
+            opacity: 0.9;
+        }
+        
+        .main-search-form {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .main-search-input {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            padding-right: var(--space-16);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: var(--text-lg);
+            box-shadow: var(--shadow-xl);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .main-search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), var(--shadow-2xl);
+        }
+        
+        .main-search-btn {
+            position: absolute;
+            right: var(--space-2);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            padding: var(--space-3);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .main-search-btn:hover {
+            background: var(--primary-600);
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            margin-top: var(--space-2);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: var(--space-3) var(--space-4);
+            cursor: pointer;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            transition: background-color var(--duration-fast) var(--ease-out);
+        }
+        
+        .suggestion-item:hover {
+            background: var(--gray-50);
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-icon {
+            color: var(--gray-400);
+            width: 16px;
+        }
+        
+        .search-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: var(--space-8);
+        }
+        
+        .search-filters {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+            position: sticky;
+            top: var(--space-6);
+        }
+        
+        .filters-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .filters-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+        }
+        
+        .clear-filters {
+            background: none;
+            border: none;
+            color: var(--primary-600);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .clear-filters:hover {
+            background: var(--primary-50);
+        }
+        
+        .filter-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-section-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .filter-collapse {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            transition: transform var(--duration-fast) var(--ease-out);
+        }
+        
+        .filter-collapse.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) 0;
+        }
+        
+        .filter-option input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-500);
+        }
+        
+        .filter-option label {
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .filter-count {
+            color: var(--gray-500);
+            font-size: var(--text-xs);
+            background: var(--gray-100);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+        }
+        
+        .rating-filter {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .rating-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) 0;
+            cursor: pointer;
+            transition: background-color var(--duration-fast) var(--ease-out);
+            border-radius: var(--radius-md);
+            padding-left: var(--space-2);
+            padding-right: var(--space-2);
+        }
+        
+        .rating-option:hover {
+            background: var(--gray-50);
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: var(--space-1);
+            color: var(--warning-400);
+        }
+        
+        .rating-text {
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+        
+        .search-results {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+        
+        .results-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .results-count {
+            font-size: var(--text-base);
+            color: var(--gray-900);
+            font-weight: var(--font-medium);
+        }
+        
+        .search-query {
+            color: var(--primary-600);
+            font-weight: var(--font-semibold);
+        }
+        
+        .results-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .sort-select {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: white;
+            cursor: pointer;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            padding: var(--space-1);
+        }
+        
+        .view-btn {
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .view-btn.active {
+            background: white;
+            color: var(--primary-600);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-200);
+        }
+        
+        .game-thumbnail {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .game-card:hover .game-overlay {
+            opacity: 1;
+        }
+        
+        .play-button {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: var(--text-lg);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .play-button:hover {
+            background: var(--primary-600);
+            transform: scale(1.1);
+        }
+        
+        .game-info {
+            padding: var(--space-4);
+        }
+        
+        .game-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            line-height: 1.4;
+        }
+        
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+        
+        .game-category {
+            font-size: var(--text-xs);
+            color: var(--primary-600);
+            background: var(--primary-50);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            font-weight: var(--font-medium);
+        }
+        
+        .game-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .rating-stars {
+            color: var(--warning-400);
+            font-size: var(--text-sm);
+        }
+        
+        .rating-score {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            font-weight: var(--font-medium);
+        }
+        
+        .game-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .game-list-item {
+            display: flex;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all var(--duration-fast) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .game-list-item:hover {
+            border-color: var(--primary-200);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .game-list-thumbnail {
+            width: 120px;
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+        
+        .game-list-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .game-list-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .game-list-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.4;
+            margin-bottom: var(--space-2);
+        }
+        
+        .game-list-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-8);
+        }
+        
+        .pagination-btn {
+            background: white;
+            border: 1px solid var(--gray-200);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .pagination-btn:hover {
+            border-color: var(--primary-300);
+            background: var(--primary-50);
+        }
+        
+        .pagination-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: var(--space-16) var(--space-4);
+        }
+        
+        .no-results-icon {
+            font-size: var(--text-6xl);
+            color: var(--gray-300);
+            margin-bottom: var(--space-4);
+        }
+        
+        .no-results-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .no-results-text {
+            font-size: var(--text-base);
+            color: var(--gray-600);
+            margin-bottom: var(--space-6);
+        }
+        
+        .no-results-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+        
+        .suggestion-tag {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .suggestion-tag:hover {
+            background: var(--primary-100);
+        }
+        
+        @media (max-width: 1024px) {
+            .search-content {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+            
+            .search-filters {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-hero {
+                padding: var(--space-8) 0;
+            }
+            
+            .search-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .results-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-list-item {
+                flex-direction: column;
+            }
+            
+            .game-list-thumbnail {
+                width: 100%;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="category.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-fire"></i>
+                    <span>热门</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>最新</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏..." id="nav-search">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn-register">
+                        <i class="fas fa-user-plus"></i>
+                        <span>注册</span>
+                    </button>
+                    <button class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 搜索英雄区域 -->
+    <section class="search-hero">
+        <div class="search-hero-content">
+            <h1 class="search-title">
+                <i class="fas fa-search"></i>
+                搜索游戏
+            </h1>
+            <p class="search-subtitle">
+                在2500+精选游戏中找到您最喜欢的，支持按分类、标签、评分等条件筛选
+            </p>
+            <form class="main-search-form" id="main-search-form">
+                <input type="text" class="main-search-input" id="main-search-input" 
+                       placeholder="输入游戏名称、分类或关键词..." autocomplete="off">
+                <button type="submit" class="main-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="search-suggestions" id="search-suggestions">
+                    <!-- 搜索建议将通过JavaScript动态生成 -->
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 搜索内容区域 -->
+    <div class="search-content">
+        <!-- 搜索筛选器 -->
+        <aside class="search-filters">
+            <div class="filters-header">
+                <h3 class="filters-title">筛选条件</h3>
+                <button class="clear-filters" id="clear-filters">
+                    <i class="fas fa-times"></i>
+                    清除全部
+                </button>
+            </div>
+
+            <!-- 游戏分类筛选 -->
+            <div class="filter-section">
+                <div class="filter-section-title">
+                    <span>游戏分类</span>
+                    <button class="filter-collapse" data-target="category-options">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="filter-options" id="category-options">
+                    <div class="filter-option">
+                        <input type="checkbox" id="action" name="category" value="action">
+                        <label for="action">
+                            <span>动作游戏</span>
+                            <span class="filter-count">320</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="puzzle" name="category" value="puzzle">
+                        <label for="puzzle">
+                            <span>益智游戏</span>
+                            <span class="filter-count">280</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="racing" name="category" value="racing">
+                        <label for="racing">
+                            <span>竞速游戏</span>
+                            <span class="filter-count">150</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="strategy" name="category" value="strategy">
+                        <label for="strategy">
+                            <span>策略游戏</span>
+                            <span class="filter-count">200</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="adventure" name="category" value="adventure">
+                        <label for="adventure">
+                            <span>冒险游戏</span>
+                            <span class="filter-count">180</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="sports" name="category" value="sports">
+                        <label for="sports">
+                            <span>体育游戏</span>
+                            <span class="filter-count">120</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏标签筛选 -->
+            <div class="filter-section">
+                <div class="filter-section-title">
+                    <span>游戏标签</span>
+                    <button class="filter-collapse" data-target="tags-options">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="filter-options" id="tags-options">
+                    <div class="filter-option">
+                        <input type="checkbox" id="multiplayer" name="tags" value="multiplayer">
+                        <label for="multiplayer">
+                            <span>多人游戏</span>
+                            <span class="filter-count">85</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="singleplayer" name="tags" value="singleplayer">
+                        <label for="singleplayer">
+                            <span>单人游戏</span>
+                            <span class="filter-count">420</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="pixel" name="tags" value="pixel">
+                        <label for="pixel">
+                            <span>像素风格</span>
+                            <span class="filter-count">95</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="3d" name="tags" value="3d">
+                        <label for="3d">
+                            <span>3D游戏</span>
+                            <span class="filter-count">160</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="casual" name="tags" value="casual">
+                        <label for="casual">
+                            <span>休闲游戏</span>
+                            <span class="filter-count">240</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 评分筛选 -->
+            <div class="filter-section">
+                <div class="filter-section-title">
+                    <span>游戏评分</span>
+                    <button class="filter-collapse" data-target="rating-options">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="rating-filter" id="rating-options">
+                    <div class="rating-option" data-rating="5">
+                        <input type="radio" id="rating-5" name="rating" value="5">
+                        <div class="rating-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5星</span>
+                    </div>
+                    <div class="rating-option" data-rating="4">
+                        <input type="radio" id="rating-4" name="rating" value="4">
+                        <div class="rating-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="rating-text">4星及以上</span>
+                    </div>
+                    <div class="rating-option" data-rating="3">
+                        <input type="radio" id="rating-3" name="rating" value="3">
+                        <div class="rating-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="rating-text">3星及以上</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发布时间筛选 -->
+            <div class="filter-section">
+                <div class="filter-section-title">
+                    <span>发布时间</span>
+                    <button class="filter-collapse" data-target="time-options">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="filter-options" id="time-options">
+                    <div class="filter-option">
+                        <input type="radio" id="today" name="time" value="today">
+                        <label for="today">
+                            <span>今天</span>
+                            <span class="filter-count">5</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="radio" id="week" name="time" value="week">
+                        <label for="week">
+                            <span>本周</span>
+                            <span class="filter-count">28</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="radio" id="month" name="time" value="month">
+                        <label for="month">
+                            <span>本月</span>
+                            <span class="filter-count">156</span>
+                        </label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="radio" id="year" name="time" value="year">
+                        <label for="year">
+                            <span>今年</span>
+                            <span class="filter-count">890</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 搜索结果区域 -->
+        <main class="search-results">
+            <div class="results-header">
+                <div class="results-info">
+                    <div class="results-count">
+                        找到 <span id="results-total">156</span> 个游戏
+                        <span id="search-query-display"></span>
+                    </div>
+                </div>
+                <div class="results-controls">
+                    <select class="sort-select" id="sort-select">
+                        <option value="relevance">相关度</option>
+                        <option value="rating">评分最高</option>
+                        <option value="newest">最新发布</option>
+                        <option value="popular">最受欢迎</option>
+                        <option value="name">名称排序</option>
+                    </select>
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="grid-view" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" id="list-view" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏网格视图 -->
+            <div class="games-grid" id="games-grid">
+                <!-- 示例游戏卡片 -->
+                <div class="game-card" onclick="location.href='game-detail.html?id=1'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">超级马里奥冒险</h3>
+                        <div class="game-meta">
+                            <span class="game-category">动作</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.8</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            经典的平台跳跃游戏，帮助马里奥收集金币，击败敌人，拯救公主。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="location.href='game-detail.html?id=2'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">数独大师</h3>
+                        <div class="game-meta">
+                            <span class="game-category">益智</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.2</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            挑战您的逻辑思维，在9x9的网格中填入数字，完成数独谜题。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="location.href='game-detail.html?id=3'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">极速赛车</h3>
+                        <div class="game-meta">
+                            <span class="game-category">竞速</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.6</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            在高速公路上驾驶超级跑车，避开障碍物，挑战最高速度记录。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="location.href='game-detail.html?id=4'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">国际象棋大师</h3>
+                        <div class="game-meta">
+                            <span class="game-category">策略</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.3</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            与AI对弈国际象棋，提升您的战略思维和棋艺水平。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="location.href='game-detail.html?id=5'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">神秘岛探险</h3>
+                        <div class="game-meta">
+                            <span class="game-category">冒险</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.7</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            探索神秘的岛屿，解开古老的谜题，寻找隐藏的宝藏。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="location.href='game-detail.html?id=6'">
+                    <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                        <div class="game-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">足球世界杯</h3>
+                        <div class="game-meta">
+                            <span class="game-category">体育</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.1</span>
+                            </div>
+                        </div>
+                        <p class="game-description">
+                            体验真实的足球比赛，控制球员射门得分，赢得世界杯冠军。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏列表视图 -->
+            <div class="games-list" id="games-list" style="display: none;">
+                <!-- 示例游戏列表项 -->
+                <div class="game-list-item" onclick="location.href='game-detail.html?id=1'">
+                    <div class="game-list-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="game-list-info">
+                        <h3 class="game-list-title">超级马里奥冒险</h3>
+                        <p class="game-list-description">
+                            经典的平台跳跃游戏，帮助马里奥收集金币，击败敌人，拯救公主。体验经典的游戏玩法和精美的像素艺术风格。
+                        </p>
+                        <div class="game-list-meta">
+                            <span class="game-category">动作</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.8</span>
+                            </div>
+                            <span style="color: var(--gray-500); font-size: var(--text-sm);">2024年1月15日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-list-item" onclick="location.href='game-detail.html?id=2'">
+                    <div class="game-list-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="game-list-info">
+                        <h3 class="game-list-title">数独大师</h3>
+                        <p class="game-list-description">
+                            挑战您的逻辑思维，在9x9的网格中填入数字，完成数独谜题。提供多种难度级别，适合所有年龄段的玩家。
+                        </p>
+                        <div class="game-list-meta">
+                            <span class="game-category">益智</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.2</span>
+                            </div>
+                            <span style="color: var(--gray-500); font-size: var(--text-sm);">2024年1月12日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-list-item" onclick="location.href='game-detail.html?id=3'">
+                    <div class="game-list-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="game-list-info">
+                        <h3 class="game-list-title">极速赛车</h3>
+                        <p class="game-list-description">
+                            在高速公路上驾驶超级跑车，避开障碍物，挑战最高速度记录。感受肾上腺素飙升的刺激体验。
+                        </p>
+                        <div class="game-list-meta">
+                            <span class="game-category">竞速</span>
+                            <div class="game-rating">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.6</span>
+                            </div>
+                            <span style="color: var(--gray-500); font-size: var(--text-sm);">2024年1月10日</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <button class="pagination-btn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    上一页
+                </button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">4</button>
+                <button class="pagination-btn">5</button>
+                <span style="padding: 0 var(--space-2); color: var(--gray-500);">...</span>
+                <button class="pagination-btn">12</button>
+                <button class="pagination-btn">
+                    下一页
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <p class="footer-description">
+                    最好的HTML5游戏聚合平台，为您提供优质的在线游戏体验。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">游戏分类</h4>
+                <ul class="footer-links">
+                    <li><a href="#">动作游戏</a></li>
+                    <li><a href="#">益智游戏</a></li>
+                    <li><a href="#">竞速游戏</a></li>
+                    <li><a href="#">策略游戏</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">帮助中心</h4>
+                <ul class="footer-links">
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">关于我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">开发者API</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 搜索功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainSearchInput = document.getElementById('main-search-input');
+            const mainSearchForm = document.getElementById('main-search-form');
+            const searchSuggestions = document.getElementById('search-suggestions');
+            const navSearchInput = document.getElementById('nav-search');
+            const searchQueryDisplay = document.getElementById('search-query-display');
+            const resultsTotal = document.getElementById('results-total');
+            
+            // 搜索建议数据
+            const suggestions = [
+                { text: '超级马里奥', type: 'game', icon: 'fas fa-gamepad' },
+                { text: '动作游戏', type: 'category', icon: 'fas fa-fist-raised' },
+                { text: '益智游戏', type: 'category', icon: 'fas fa-puzzle-piece' },
+                { text: '竞速游戏', type: 'category', icon: 'fas fa-car' },
+                { text: '多人游戏', type: 'tag', icon: 'fas fa-users' },
+                { text: '像素风格', type: 'tag', icon: 'fas fa-th' },
+                { text: '3D游戏', type: 'tag', icon: 'fas fa-cube' }
+            ];
+            
+            // 搜索建议功能
+            function showSuggestions(query) {
+                if (!query.trim()) {
+                    searchSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                const filtered = suggestions.filter(item => 
+                    item.text.toLowerCase().includes(query.toLowerCase())
+                ).slice(0, 5);
+                
+                if (filtered.length > 0) {
+                    searchSuggestions.innerHTML = filtered.map(item => `
+                        <div class="suggestion-item" data-query="${item.text}">
+                            <i class="${item.icon} suggestion-icon"></i>
+                            <span>${item.text}</span>
+                        </div>
+                    `).join('');
+                    searchSuggestions.style.display = 'block';
+                } else {
+                    searchSuggestions.style.display = 'none';
+                }
+            }
+            
+            // 主搜索框事件
+            mainSearchInput.addEventListener('input', function() {
+                showSuggestions(this.value);
+            });
+            
+            mainSearchInput.addEventListener('focus', function() {
+                if (this.value.trim()) {
+                    showSuggestions(this.value);
+                }
+            });
+            
+            // 点击建议项
+            searchSuggestions.addEventListener('click', function(e) {
+                const suggestionItem = e.target.closest('.suggestion-item');
+                if (suggestionItem) {
+                    const query = suggestionItem.dataset.query;
+                    mainSearchInput.value = query;
+                    performSearch(query);
+                    searchSuggestions.style.display = 'none';
+                }
+            });
+            
+            // 执行搜索
+            function performSearch(query) {
+                if (query.trim()) {
+                    searchQueryDisplay.innerHTML = `关键词: <span class="search-query">"${query}"</span>`;
+                    // 这里可以添加实际的搜索逻辑
+                    console.log('搜索:', query);
+                }
+            }
+            
+            // 搜索表单提交
+            mainSearchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                performSearch(mainSearchInput.value);
+                searchSuggestions.style.display = 'none';
+            });
+            
+            // 导航栏搜索
+             navSearchInput.addEventListener('keypress', function(e) {
+                 if (e.key === 'Enter') {
+                     e.preventDefault();
+                     mainSearchInput.value = this.value;
+                     performSearch(this.value);
+                 }
+             });
+             
+             // 筛选器折叠功能
+             const filterCollapses = document.querySelectorAll('.filter-collapse');
+             filterCollapses.forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     const target = document.getElementById(this.dataset.target);
+                     const icon = this.querySelector('i');
+                     
+                     if (target.style.display === 'none') {
+                         target.style.display = 'flex';
+                         icon.classList.remove('fa-chevron-up');
+                         icon.classList.add('fa-chevron-down');
+                         this.classList.remove('collapsed');
+                     } else {
+                         target.style.display = 'none';
+                         icon.classList.remove('fa-chevron-down');
+                         icon.classList.add('fa-chevron-up');
+                         this.classList.add('collapsed');
+                     }
+                 });
+             });
+             
+             // 清除筛选器
+             const clearFilters = document.getElementById('clear-filters');
+             clearFilters.addEventListener('click', function() {
+                 // 清除所有复选框
+                 const checkboxes = document.querySelectorAll('.search-filters input[type="checkbox"]');
+                 const radios = document.querySelectorAll('.search-filters input[type="radio"]');
+                 
+                 checkboxes.forEach(cb => cb.checked = false);
+                 radios.forEach(radio => radio.checked = false);
+                 
+                 console.log('已清除所有筛选条件');
+             });
+             
+             // 视图切换
+             const gridViewBtn = document.getElementById('grid-view');
+             const listViewBtn = document.getElementById('list-view');
+             const gamesGrid = document.getElementById('games-grid');
+             const gamesList = document.getElementById('games-list');
+             
+             gridViewBtn.addEventListener('click', function() {
+                 gridViewBtn.classList.add('active');
+                 listViewBtn.classList.remove('active');
+                 gamesGrid.style.display = 'grid';
+                 gamesList.style.display = 'none';
+             });
+             
+             listViewBtn.addEventListener('click', function() {
+                 listViewBtn.classList.add('active');
+                 gridViewBtn.classList.remove('active');
+                 gamesGrid.style.display = 'none';
+                 gamesList.style.display = 'flex';
+             });
+             
+             // 排序功能
+             const sortSelect = document.getElementById('sort-select');
+             sortSelect.addEventListener('change', function() {
+                 const sortBy = this.value;
+                 console.log('按', sortBy, '排序');
+                 // 这里可以添加实际的排序逻辑
+             });
+             
+             // 分页功能
+             const paginationBtns = document.querySelectorAll('.pagination-btn');
+             paginationBtns.forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     if (this.disabled) return;
+                     
+                     // 移除所有活动状态
+                     paginationBtns.forEach(b => b.classList.remove('active'));
+                     
+                     // 如果是数字按钮，添加活动状态
+                     if (!isNaN(this.textContent.trim())) {
+                         this.classList.add('active');
+                     }
+                     
+                     console.log('跳转到页面:', this.textContent.trim());
+                 });
+             });
+             
+             // 点击外部关闭搜索建议
+             document.addEventListener('click', function(e) {
+                 if (!mainSearchForm.contains(e.target)) {
+                     searchSuggestions.style.display = 'none';
+                 }
+             });
+         });

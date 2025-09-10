@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO设置管理 - HTML5游戏网站后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-brand {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .admin-brand h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .admin-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin: 0.25rem 1rem;
+        }
+        
+        .nav-link {
+            color: #4a5568;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-content {
+            padding: 2rem;
+        }
+        
+        .page-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+        
+        .seo-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .seo-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+        
+        .seo-tab {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .seo-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .seo-tab:hover {
+            color: #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .seo-preview {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .seo-preview-title {
+            color: #1e40af;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-decoration: underline;
+        }
+        
+        .seo-preview-url {
+            color: #059669;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .seo-preview-description {
+            color: #4b5563;
+            line-height: 1.5;
+        }
+        
+        .seo-score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .score-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .score-good {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .score-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .score-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .seo-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <nav class="admin-sidebar" id="sidebar">
+            <div class="admin-brand">
+                <h3><i class="fas fa-gamepad me-2"></i>游戏后台</h3>
+            </div>
+            <div class="admin-nav">
+                <div class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        仪表盘
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-games.html" class="nav-link">
+                        <i class="fas fa-gamepad"></i>
+                        游戏管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-categories.html" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        分类管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-users.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        用户管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-ads.html" class="nav-link">
+                        <i class="fas fa-ad"></i>
+                        广告管理
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-adsense.html" class="nav-link">
+                        <i class="fab fa-google"></i>
+                        AdSense配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-seo.html" class="nav-link active">
+                        <i class="fas fa-search"></i>
+                        SEO设置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-config.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        系统配置
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="admin-analytics.html" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        数据统计
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="mobile-menu-btn" id="mobileMenuBtn">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h4 class="mb-0">SEO设置管理</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted">管理员</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>Admin
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>个人资料</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>设置</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="admin-content">
+                <div class="page-title">SEO设置管理</div>
+                <div class="page-subtitle">优化网站搜索引擎排名，提升网站可见性</div>
+                
+                <div class="seo-card">
+                    <div class="seo-tabs">
+                        <button class="seo-tab active" data-tab="global">全局SEO</button>
+                        <button class="seo-tab" data-tab="pages">页面SEO</button>
+                        <button class="seo-tab" data-tab="sitemap">站点地图</button>
+                        <button class="seo-tab" data-tab="robots">Robots.txt</button>
+                        <button class="seo-tab" data-tab="analytics">SEO分析</button>
+                    </div>
+                    
+                    <!-- 全局SEO设置 -->
+                    <div class="tab-content" id="global">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">网站标题</label>
+                                    <input type="text" class="form-control" value="HTML5游戏网站 - 最好玩的在线游戏平台" placeholder="输入网站标题">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">网站描述</label>
+                                    <textarea class="form-control" rows="3" placeholder="输入网站描述">提供最新最热门的HTML5游戏，无需下载即可在线畅玩。包含动作、益智、休闲等多种类型游戏，为玩家带来极致的游戏体验。</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">关键词</label>
+                                    <input type="text" class="form-control" value="HTML5游戏,在线游戏,网页游戏,免费游戏,小游戏" placeholder="用逗号分隔关键词">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">网站作者</label>
+                                    <input type="text" class="form-control" value="HTML5游戏网站" placeholder="输入网站作者">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">版权信息</label>
+                                    <input type="text" class="form-control" value="© 2024 HTML5游戏网站. All rights reserved." placeholder="输入版权信息">
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="seo-preview">
+                                    <h6><i class="fas fa-search me-2"></i>搜索结果预览</h6>
+                                    <div class="seo-preview-title">HTML5游戏网站 - 最好玩的在线游戏平台</div>
+                                    <div class="seo-preview-url">https://yourdomain.com</div>
+                                    <div class="seo-preview-description">提供最新最热门的HTML5游戏，无需下载即可在线畅玩。包含动作、益智、休闲等多种类型游戏...</div>
+                                </div>
+                                
+                                <div class="seo-score">
+                                    <div class="score-circle score-good">85</div>
+                                    <div>
+                                        <div class="fw-bold">SEO评分</div>
+                                        <div class="text-muted small">良好</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>保存设置
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i>预览效果
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 页面SEO设置 -->
+                    <div class="tab-content" id="pages" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label">选择页面</label>
+                                    <select class="form-control">
+                                        <option>首页</option>
+                                        <option>游戏列表页</option>
+                                        <option>游戏详情页</option>
+                                        <option>分类页面</option>
+                                        <option>用户中心</option>
+                                        <option>关于我们</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">页面标题</label>
+                                    <input type="text" class="form-control" value="首页 - HTML5游戏网站" placeholder="输入页面标题">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">页面描述</label>
+                                    <textarea class="form-control" rows="3" placeholder="输入页面描述">发现最新最热门的HTML5游戏，包含动作、冒险、益智、休闲等各类游戏。无需下载，点击即玩！</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">页面关键词</label>
+                                    <input type="text" class="form-control" value="HTML5游戏首页,在线游戏,网页游戏" placeholder="用逗号分隔关键词">
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label">Open Graph设置</label>
+                                    <input type="text" class="form-control mb-2" placeholder="OG标题" value="HTML5游戏网站 - 最好玩的在线游戏">
+                                    <textarea class="form-control mb-2" rows="2" placeholder="OG描述">提供最新最热门的HTML5游戏，无需下载即可在线畅玩</textarea>
+                                    <input type="url" class="form-control" placeholder="OG图片URL" value="https://example.com/og-image.jpg">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Twitter Card设置</label>
+                                    <select class="form-control mb-2">
+                                        <option>summary_large_image</option>
+                                        <option>summary</option>
+                                        <option>app</option>
+                                    </select>
+                                    <input type="text" class="form-control" placeholder="Twitter站点" value="@yourgamesite">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>保存页面设置
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-plus me-2"></i>添加新页面
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 站点地图设置 -->
+                    <div class="tab-content" id="sitemap" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">站点地图状态</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="sitemapEnabled" checked>
+                                            <label class="form-check-label" for="sitemapEnabled">启用自动生成站点地图</label>
+                                        </div>
+                                        <span class="badge bg-success">已启用</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">更新频率</label>
+                                    <select class="form-control">
+                                        <option>daily</option>
+                                        <option>weekly</option>
+                                        <option>monthly</option>
+                                        <option>yearly</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">包含页面类型</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="includeHome" checked>
+                                                <label class="form-check-label" for="includeHome">首页</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="includeGames" checked>
+                                                <label class="form-check-label" for="includeGames">游戏页面</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="includeCategories" checked>
+                                                <label class="form-check-label" for="includeCategories">分类页面</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="includeStatic" checked>
+                                                <label class="form-check-label" for="includeStatic">静态页面</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="includeGuides">
+                                                <label class="form-check-label" for="includeGuides">攻略页面</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">站点地图URL</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="https://yourdomain.com/sitemap.xml" readonly>
+                                        <button class="btn btn-outline-primary" type="button">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-info-circle me-2"></i>站点地图信息</h6>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>总页面数:</span>
+                                            <span class="fw-bold">1,234</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>最后更新:</span>
+                                            <span class="fw-bold">2024-01-15</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>文件大小:</span>
+                                            <span class="fw-bold">156 KB</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>状态:</span>
+                                            <span class="badge bg-success">正常</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync me-2"></i>重新生成站点地图
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-download me-2"></i>下载站点地图
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Robots.txt设置 -->
+                    <div class="tab-content" id="robots" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label class="form-label">Robots.txt内容</label>
+                                    <textarea class="form-control" rows="15" style="font-family: monospace;">User-agent: *
+Allow: /
+
+# 禁止访问管理后台
+Disallow: /admin/
+Disallow: /api/
+
+# 禁止访问临时文件
+Disallow: /tmp/
+Disallow: /*.log$
+
+# 站点地图位置
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# 特定搜索引擎设置
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2</textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-robot me-2"></i>Robots.txt状态</h6>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>文件状态:</span>
+                                            <span class="badge bg-success">存在</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>最后更新:</span>
+                                            <span class="fw-bold">2024-01-10</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>文件大小:</span>
+                                            <span class="fw-bold">512 B</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-lightbulb me-2"></i>优化建议</h6>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>包含站点地图链接</li>
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>禁止访问敏感目录</li>
+                                            <li class="mb-2"><i class="fas fa-exclamation-triangle text-warning me-2"></i>建议添加爬虫延迟</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>保存Robots.txt
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i>预览文件
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-check me-2"></i>验证语法
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- SEO分析 -->
+                    <div class="tab-content" id="analytics" style="display: none;">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-body text-center">
+                                        <div class="score-circle score-good mx-auto mb-3">85</div>
+                                        <h6>整体SEO评分</h6>
+                                        <p class="text-muted mb-0">良好</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-body text-center">
+                                        <div class="score-circle score-warning mx-auto mb-3">72</div>
+                                        <h6>页面优化</h6>
+                                        <p class="text-muted mb-0">需要改进</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-body text-center">
+                                        <div class="score-circle score-good mx-auto mb-3">91</div>
+                                        <h6>技术SEO</h6>
+                                        <p class="text-muted mb-0">优秀</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-exclamation-triangle me-2"></i>需要优化的问题</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="score-circle score-error me-3" style="width: 40px; height: 40px; font-size: 0.8rem;">!</div>
+                                            <div>
+                                                <div class="fw-bold">缺少Alt标签</div>
+                                                <div class="text-muted small">23张图片缺少Alt描述</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="score-circle score-warning me-3" style="width: 40px; height: 40px; font-size: 0.8rem;">!</div>
+                                            <div>
+                                                <div class="fw-bold">页面加载速度</div>
+                                                <div class="text-muted small">平均加载时间3.2秒</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex align-items-center">
+                                            <div class="score-circle score-warning me-3" style="width: 40px; height: 40px; font-size: 0.8rem;">!</div>
+                                            <div>
+                                                <div class="fw-bold">内链优化</div>
+                                                <div class="text-muted small">内链结构需要改进</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-check-circle me-2"></i>优化建议</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>为所有图片添加描述性Alt标签</li>
+                                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>优化图片大小和格式</li>
+                                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>启用浏览器缓存</li>
+                                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>压缩CSS和JavaScript文件</li>
+                                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>增加内部链接</li>
+                                            <li class="mb-0"><i class="fas fa-lightbulb text-warning me-2"></i>优化页面标题长度</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync me-2"></i>重新分析
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-download me-2"></i>导出报告
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        
+        // 标签页切换
+        document.querySelectorAll('.seo-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.seo-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+                
+                // 激活当前标签
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).style.display = 'block';
+            });
+        });
+        
+        // 实时SEO预览更新
+        function updateSEOPreview() {
+            const title = document.querySelector('input[placeholder="输入网站标题"]').value;
+            const description = document.querySelector('textarea[placeholder="输入网站描述"]').value;
+            
+            document.querySelector('.seo-preview-title').textContent = title;
+            document.querySelector('.seo-preview-description').textContent = description.substring(0, 160) + '...';
+        }
+        
+        // 监听输入变化
+        document.querySelector('input[placeholder="输入网站标题"]').addEventListener('input', updateSEOPreview);
+        document.querySelector('textarea[placeholder="输入网站描述"]').addEventListener('input', updateSEOPreview);
+        
+        // 复制站点地图URL
+        document.querySelector('.input-group .btn').addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            input.select();
+            document.execCommand('copy');
+            
+            // 显示复制成功提示
+            const originalIcon = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                this.innerHTML = originalIcon;
+            }, 2000);
+        });
+        
+        // 表单自动保存
+        let saveTimeout;
+        document.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    console.log('自动保存SEO设置...');
+                }, 2000);
+            });
+        });
+        
+        // 模拟SEO分析数据更新
+        function updateSEOAnalytics() {
+            const scores = [85, 72, 91];
+            const circles = document.querySelectorAll('#analytics .score-circle');
+            
+            circles.forEach((circle, index) => {
+                if (scores[index]) {
+                    circle.textContent = scores[index];
+                    if (scores[index] >= 80) {
+                        circle.className = 'score-circle score-good mx-auto mb-3';
+                    } else if (scores[index] >= 60) {
+                        circle.className = 'score-circle score-warning mx-auto mb-3';
+                    } else {
+                        circle.className = 'score-circle score-error mx-auto mb-3';
+                    }
+                }
+            });
+        }
+        
+        // 页面加载完成后更新分析数据
+        document.addEventListener('DOMContentLoaded', updateSEOAnalytics);
+    </script>
+</body>
+</html>

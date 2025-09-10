@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏标签 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 标签页面特定样式 */
+        .tags-hero {
+            background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+            padding: var(--space-16) 0 var(--space-12);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tags-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .tags-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tags-title {
+            font-family: var(--font-game);
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3);
+        }
+        
+        .tags-subtitle {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+            margin-bottom: var(--space-8);
+        }
+        
+        .tags-search {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .tags-search-input {
+            width: 100%;
+            padding: var(--space-4) var(--space-6) var(--space-4) var(--space-12);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: var(--text-base);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tags-search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+        
+        .tags-search-icon {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+        
+        .tags-main {
+            padding: var(--space-12) 0;
+            background: var(--gray-50);
+        }
+        
+        .tags-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+        
+        .tags-section {
+            margin-bottom: var(--space-12);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .section-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .section-count {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .view-all-btn {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: var(--font-medium);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .view-all-btn:hover {
+            color: var(--primary-700);
+        }
+        
+        .tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .tag-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .tag-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        .tag-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+            font-size: var(--text-2xl);
+            color: white;
+        }
+        
+        .tag-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .tag-count {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .popular-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+        }
+        
+        .popular-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            background: white;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            color: var(--gray-700);
+            font-weight: var(--font-medium);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .popular-tag:hover {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .popular-tag-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            color: white;
+        }
+        
+        .trending-section {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .trending-tags {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .trending-tag {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            background: var(--gray-50);
+            transition: all var(--duration-fast) var(--ease-out);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .trending-tag:hover {
+            background: var(--primary-50);
+            transform: translateX(4px);
+        }
+        
+        .trending-tag-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .trending-tag-content {
+            flex: 1;
+        }
+        
+        .trending-tag-name {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .trending-tag-stats {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .trending-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--success-600);
+            font-weight: var(--font-medium);
+        }
+        
+        .alphabet-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-8);
+            padding: var(--space-4);
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .alphabet-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: var(--font-medium);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .alphabet-link:hover,
+        .alphabet-link.active {
+            background: var(--primary-500);
+            color: white;
+        }
+        
+        .all-tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .simple-tag {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            background: white;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--gray-700);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .simple-tag:hover {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .simple-tag-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .simple-tag-name {
+            font-weight: var(--font-medium);
+            flex: 1;
+        }
+        
+        .simple-tag-count {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        @media (max-width: 768px) {
+            .tags-title {
+                font-size: var(--text-2xl);
+            }
+            
+            .tags-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: var(--space-3);
+            }
+            
+            .trending-tags {
+                grid-template-columns: 1fr;
+            }
+            
+            .alphabet-nav {
+                gap: var(--space-1);
+            }
+            
+            .alphabet-link {
+                width: 35px;
+                height: 35px;
+                font-size: var(--text-sm);
+            }
+            
+            .all-tags-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="category.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="tags.html" class="nav-link active">
+                    <i class="fas fa-tags"></i>
+                    <span>标签</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>最新</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏...">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn-register">
+                        <i class="fas fa-user-plus"></i>
+                        <span>注册</span>
+                    </button>
+                    <button class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 标签页面主体 -->
+    <main>
+        <!-- Hero 区域 -->
+        <section class="tags-hero">
+            <div class="container">
+                <div class="tags-hero-content">
+                    <h1 class="tags-title">
+                        <i class="fas fa-tags"></i>
+                        游戏标签
+                    </h1>
+                    <p class="tags-subtitle">通过标签快速找到你感兴趣的游戏类型</p>
+                    
+                    <div class="tags-search">
+                        <i class="fas fa-search tags-search-icon"></i>
+                        <input type="text" placeholder="搜索标签..." class="tags-search-input" id="tagSearchInput">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 标签内容 -->
+        <section class="tags-main">
+            <div class="tags-container">
+                <!-- 热门标签 -->
+                <div class="tags-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-fire" style="color: var(--warning-500);"></i>
+                            热门标签
+                            <span class="section-count">12</span>
+                        </h2>
+                        <a href="#" class="view-all-btn">
+                            查看全部
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="popular-tags">
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                                <i class="fas fa-fist-raised"></i>
+                            </div>
+                            动作冒险
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #4834d4, #686de0);">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            益智解谜
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #00d2d3, #54a0ff);">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            竞速驾驶
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #ff9ff3, #f368e0);">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                            休闲娱乐
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #5f27cd, #341f97);">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            魔法幻想
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #00d8d6, #17c0eb);">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            太空科幻
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135dee, #ff3838, #ff6348);">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            浪漫恋爱
+                        </a>
+                        <a href="#" class="popular-tag">
+                            <div class="popular-tag-icon" style="background: linear-gradient(135deg, #2ed573, #7bed9f);">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            自然探索
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 游戏类型标签 -->
+                <div class="tags-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-gamepad" style="color: var(--primary-500);"></i>
+                            游戏类型
+                            <span class="section-count">8</span>
+                        </h2>
+                    </div>
+                    
+                    <div class="tags-grid">
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                                <i class="fas fa-fist-raised"></i>
+                            </div>
+                            <div class="tag-name">动作游戏</div>
+                            <div class="tag-count">156 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #4834d4, #686de0);">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div class="tag-name">益智游戏</div>
+                            <div class="tag-count">89 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #00d2d3, #54a0ff);">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div class="tag-name">竞速游戏</div>
+                            <div class="tag-count">67 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #ff9ff3, #f368e0);">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                            <div class="tag-name">休闲游戏</div>
+                            <div class="tag-count">234 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #ff7675, #fd79a8);">
+                                <i class="fas fa-football-ball"></i>
+                            </div>
+                            <div class="tag-name">体育游戏</div>
+                            <div class="tag-count">45 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7);">
+                                <i class="fas fa-dice"></i>
+                            </div>
+                            <div class="tag-name">策略游戏</div>
+                            <div class="tag-count">78 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #fd79a8, #e84393);">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="tag-name">音乐游戏</div>
+                            <div class="tag-count">32 个游戏</div>
+                        </a>
+                        
+                        <a href="#" class="tag-card">
+                            <div class="tag-icon" style="background: linear-gradient(135deg, #00b894, #00cec9);">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="tag-name">教育游戏</div>
+                            <div class="tag-count">56 个游戏</div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 趋势标签 -->
+                <div class="tags-section">
+                    <div class="trending-section">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-trending-up" style="color: var(--success-500);"></i>
+                                趋势标签
+                                <span class="section-count">6</span>
+                            </h2>
+                        </div>
+                        
+                        <div class="trending-tags">
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">王者荣耀</div>
+                                    <div class="trending-tag-stats">
+                                        <span>24 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +15%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #4834d4, #686de0);">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">机器人</div>
+                                    <div class="trending-tag-stats">
+                                        <span>18 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +22%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #00d2d3, #54a0ff);">
+                                    <i class="fas fa-dragon"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">龙与地下城</div>
+                                    <div class="trending-tag-stats">
+                                        <span>12 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +8%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #ff9ff3, #f368e0);">
+                                    <i class="fas fa-cat"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">可爱动物</div>
+                                    <div class="trending-tag-stats">
+                                        <span>36 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +12%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #5f27cd, #341f97);">
+                                    <i class="fas fa-ghost"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">恐怖惊悚</div>
+                                    <div class="trending-tag-stats">
+                                        <span>15 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +18%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="trending-tag">
+                                <div class="trending-tag-icon" style="background: linear-gradient(135deg, #00d8d6, #17c0eb);">
+                                    <i class="fas fa-space-shuttle"></i>
+                                </div>
+                                <div class="trending-tag-content">
+                                    <div class="trending-tag-name">太空探索</div>
+                                    <div class="trending-tag-stats">
+                                        <span>21 个游戏</span>
+                                        <span class="trending-indicator">
+                                            <i class="fas fa-arrow-up"></i>
+                                            +25%
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 所有标签 -->
+                <div class="tags-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-list" style="color: var(--gray-600);"></i>
+                            所有标签
+                            <span class="section-count">156</span>
+                        </h2>
+                    </div>
+                    
+                    <!-- 字母导航 -->
+                    <div class="alphabet-nav">
+                        <a href="#" class="alphabet-link active">全部</a>
+                        <a href="#" class="alphabet-link">A</a>
+                        <a href="#" class="alphabet-link">B</a>
+                        <a href="#" class="alphabet-link">C</a>
+                        <a href="#" class="alphabet-link">D</a>
+                        <a href="#" class="alphabet-link">E</a>
+                        <a href="#" class="alphabet-link">F</a>
+                        <a href="#" class="alphabet-link">G</a>
+                        <a href="#" class="alphabet-link">H</a>
+                        <a href="#" class="alphabet-link">I</a>
+                        <a href="#" class="alphabet-link">J</a>
+                        <a href="#" class="alphabet-link">K</a>
+                        <a href="#" class="alphabet-link">L</a>
+                        <a href="#" class="alphabet-link">M</a>
+                        <a href="#" class="alphabet-link">N</a>
+                        <a href="#" class="alphabet-link">O</a>
+                        <a href="#" class="alphabet-link">P</a>
+                        <a href="#" class="alphabet-link">Q</a>
+                        <a href="#" class="alphabet-link">R</a>
+                        <a href="#" class="alphabet-link">S</a>
+                        <a href="#" class="alphabet-link">T</a>
+                        <a href="#" class="alphabet-link">U</a>
+                        <a href="#" class="alphabet-link">V</a>
+                        <a href="#" class="alphabet-link">W</a>
+                        <a href="#" class="alphabet-link">X</a>
+                        <a href="#" class="alphabet-link">Y</a>
+                        <a href="#" class="alphabet-link">Z</a>
+                    </div>
+                    
+                    <div class="all-tags-grid" id="allTagsGrid">
+                        <!-- 这里会通过JavaScript动态加载标签 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <p class="footer-description">
+                    最好的HTML5游戏聚合平台，为您提供优质的在线游戏体验。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">游戏分类</h4>
+                <ul class="footer-links">
+                    <li><a href="#">动作游戏</a></li>
+                    <li><a href="#">益智游戏</a></li>
+                    <li><a href="#">竞速游戏</a></li>
+                    <li><a href="#">策略游戏</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">帮助中心</h4>
+                <ul class="footer-links">
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">关于我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">开发者API</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameHub. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // 模拟标签数据
+        const allTags = [
+            { name: '冒险', icon: 'fas fa-map', color: '#ff6b6b', count: 45 },
+            { name: '射击', icon: 'fas fa-crosshairs', color: '#4834d4', count: 67 },
+            { name: '平台', icon: 'fas fa-layer-group', color: '#00d2d3', count: 34 },
+            { name: '角色扮演', icon: 'fas fa-user-ninja', color: '#ff9ff3', count: 89 },
+            { name: '模拟', icon: 'fas fa-cogs', color: '#5f27cd', count: 23 },
+            { name: '塔防', icon: 'fas fa-chess-rook', color: '#00d8d6', count: 56 },
+            { name: '卡牌', icon: 'fas fa-id-card', color: '#ff3838', count: 78 },
+            { name: '街机', icon: 'fas fa-gamepad', color: '#2ed573', count: 123 },
+            { name: '多人', icon: 'fas fa-users', color: '#ff7675', count: 234 },
+            { name: '单人', icon: 'fas fa-user', color: '#a29bfe', count: 345 },
+            { name: '像素', icon: 'fas fa-th', color: '#fd79a8', count: 67 },
+            { name: '3D', icon: 'fas fa-cube', color: '#00b894', count: 89 },
+            { name: '复古', icon: 'fas fa-history', color: '#e17055', count: 45 },
+            { name: '现代', icon: 'fas fa-rocket', color: '#0984e3', count: 123 },
+            { name: '幻想', icon: 'fas fa-magic', color: '#6c5ce7', count: 78 },
+            { name: '科幻', icon: 'fas fa-space-shuttle', color: '#00cec9', count: 56 },
+            { name: '恐怖', icon: 'fas fa-ghost', color: '#2d3436', count: 34 },
+            { name: '喜剧', icon: 'fas fa-laugh', color: '#fdcb6e', count: 67 },
+            { name: '教育', icon: 'fas fa-graduation-cap', color: '#e84393', count: 45 },
+            { name: '儿童', icon: 'fas fa-child', color: '#74b9ff', count: 89 }
+        ];
+        
+        // 渲染所有标签
+        function renderAllTags(tags = allTags) {
+            const grid = document.getElementById('allTagsGrid');
+            grid.innerHTML = tags.map(tag => `
+                <a href="#" class="simple-tag">
+                    <div class="simple-tag-icon" style="background: ${tag.color};">
+                        <i class="${tag.icon}"></i>
+                    </div>
+                    <span class="simple-tag-name">${tag.name}</span>
+                    <span class="simple-tag-count">${tag.count}</span>
+                </a>
+            `).join('');
+        }
+        
+        // 字母导航
+        function initAlphabetNav() {
+            const alphabetLinks = document.querySelectorAll('.alphabet-link');
+            
+            alphabetLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 移除所有活跃状态
+                    alphabetLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // 添加活跃状态
+                    this.classList.add('active');
+                    
+                    const letter = this.textContent;
+                    if (letter === '全部') {
+                        renderAllTags();
+                    } else {
+                        // 这里可以根据字母筛选标签
+                        const filteredTags = allTags.filter(tag => 
+                            tag.name.charAt(0).toUpperCase() === letter
+                        );
+                        renderAllTags(filteredTags);
+                    }
+                });
+            });
+        }
+        
+        // 标签搜索
+        function initTagSearch() {
+            const searchInput = document.getElementById('tagSearchInput');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query === '') {
+                    renderAllTags();
+                } else {
+                    const filteredTags = allTags.filter(tag => 
+                        tag.name.toLowerCase().includes(query)
+                    );
+                    renderAllTags(filteredTags);
+                }
+            });
+        }
+        
+        // 用户菜单切换
+        function initUserMenu() {
+            const userBtn = document.querySelector('.user-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+            
+            if (userBtn && userDropdown) {
+                userBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', function() {
+                    userDropdown.classList.remove('active');
+                });
+            }
+        }
+        
+        // 搜索功能
+        function initSearch() {
+            const searchBtn = document.querySelector('.search-btn');
+            const searchInput = document.querySelector('.search-input');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', function() {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        console.log('搜索:', query);
+                        // 这里可以实现搜索逻辑
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+            }
+        }
+        
+        // 初始化所有功能
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAllTags();
+            initAlphabetNav();
+            initTagSearch();
+            initUserMenu();
+            initSearch();
+        });
+    </script>
+</body>
+</html>

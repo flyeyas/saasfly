@@ -78,6 +78,14 @@ model User {
   Authenticator Authenticator[]
   // 验证码关联
   verificationCodes VerificationCode[]
+  
+  // 游戏相关关联
+  gameRatings   GameRating[]
+  gameComments  GameComment[]
+  gameFavorites GameFavorite[]
+  socialShares  SocialShare[]
+  achievements  UserAchievement[]
+  gameHistories GameHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -140,7 +148,7 @@ model Authenticator {
 
 // 验证码模型
 model VerificationCode {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) 
   email     String
   code      String
   type      VerificationCodeType
@@ -158,4 +166,335 @@ enum VerificationCodeType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   LOGIN_VERIFICATION
+}
+
+// HTML5游戏网站相关模型
+
+// 游戏表
+model Game {
+  id          String   @id @default(cuid())
+  title       Json     // 多语言标题 {"en": "Game Title", "zh": "游戏标题"}
+  description Json     // 多语言描述
+  iframeUrl   String   // 游戏iframe URL
+  coverImage  String?  // 封面图片URL
+  thumbnail   String?  // 缩略图URL
+  screenshots String[] // 游戏截图URLs数组
+  slug        String   @unique // URL友好的游戏标识
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  playCount   Int      @default(0)
+  shareCount  Int      @default(0) // 分享次数
+  avgRating   Float?   @default(0)
+  ratingCount Int      @default(0)
+  gameplayGuide Json?  // 多语言玩法指南
+  difficultyLevel Int? // 难度等级 1-5
+  estimatedDuration Int? // 预估游戏时长（分钟）
+  developerInfo Json?  // 多语言开发者信息
+  gameStory   Json?    // 多语言游戏背景故事
+  controlsInfo Json?   // 多语言详细操作说明
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联关系
+  categories  GameCategory[]
+  tags        GameTagRelation[]
+  ratings     GameRating[]
+  comments    GameComment[]
+  favorites   GameFavorite[]
+  guides      GameGuide[]
+  socialShares SocialShare[]
+  rankings    GameRanking[]
+  achievements UserAchievement[]
+  histories   GameHistory[]
+  
+  @@map("games")
+}
+
+// 分类表
+model Category {
+  id          String   @id @default(cuid())
+  name        Json     // 多语言名称
+  description Json?    // 多语言描述
+  slug        String   @unique
+  icon        String?  // 分类图标
+  parentId    String?  // 父分类ID
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联关系
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  children    Category[] @relation("CategoryHierarchy")
+  games       GameCategory[]
+  
+  @@map("categories")
+}
+
+// 游戏分类关联表
+model GameCategory {
+  id         String   @id @default(cuid())
+  gameId     String
+  categoryId String
+  createdAt  DateTime @default(now())
+  
+  // 关联关系
+  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, categoryId])
+  @@map("game_categories")
+}
+
+// 游戏标签表
+model GameTag {
+  id          String   @id @default(cuid())
+  name        Json     // 多语言标签名称 {"en": "Action", "zh": "动作"}
+  slug        String   @unique // URL友好的标签标识
+  description Json?    // 多语言描述
+  color       String?  // 标签颜色（十六进制）
+  icon        String?  // 标签图标
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  usageCount  Int      @default(0) // 使用次数统计
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联关系
+  games       GameTagRelation[]
+  
+  @@map("game_tags")
+}
+
+// 游戏标签关联表
+model GameTagRelation {
+  id        String   @id @default(cuid())
+  gameId    String
+  tagId     String
+  createdAt DateTime @default(now())
+  
+  // 关联关系
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  tag       GameTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, tagId])
+  @@map("game_tag_relations")
+}
+
+// 游戏评分表
+model GameRating {
+  id        String   @id @default(cuid())
+  gameId    String
+  userId    String
+  rating    Int      // 1-5星评分
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 关联关系
+  game      Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, userId])
+  @@map("game_ratings")
+}
+
+// 游戏评论表
+model GameComment {
+  id        String   @id @default(cuid())
+  gameId    String
+  userId    String
+  content   String
+  parentId  String?  // 回复评论的父评论ID
+  likes     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 关联关系
+  game      Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    GameComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  replies   GameComment[] @relation("CommentReplies")
+  
+  @@map("game_comments")
+}
+
+// 游戏收藏表
+model GameFavorite {
+  id        String   @id @default(cuid())
+  gameId    String
+  userId    String
+  createdAt DateTime @default(now())
+  
+  // 关联关系
+  game      Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, userId])
+  @@map("game_favorites")
+}
+
+// 游戏攻略表
+model GameGuide {
+  id          String   @id @default(cuid())
+  gameId      String
+  title       Json     // 多语言标题
+  content     Json     // 多语言攻略内容
+  author      String   // 作者
+  difficulty  String   // 攻略难度：beginner, intermediate, advanced
+  isOfficial  Boolean  @default(false) // 是否官方攻略
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@map("game_guides")
+}
+
+// 社交分享记录表
+model SocialShare {
+  id          String   @id @default(cuid())
+  gameId      String
+  platform    String   // twitter, facebook, reddit, etc.
+  userId      String?
+  ipAddress   String
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("social_shares")
+}
+
+// 游戏排行榜表
+model GameRanking {
+  id          String   @id @default(cuid())
+  gameId      String
+  rankType    String   // popular, new, trending, featured
+  score       Float    // 综合评分
+  position    Int      // 排名位置
+  period      String   // daily, weekly, monthly, all_time
+  createdAt   DateTime @default(now())
+  
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, rankType, period])
+  @@map("game_rankings")
+}
+
+// 用户成就表
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  gameId        String
+  achievementType String // completed, high_score, time_record, etc.
+  value         String?  // 成就值（分数、时间等）
+  unlockedAt    DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game          Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, gameId, achievementType])
+  @@map("user_achievements")
+}
+
+// 游戏历史记录表
+model GameHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  gameId      String
+  playTime    Int      // 游戏时长（秒）
+  completed   Boolean  @default(false)
+  score       Int?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@map("game_histories")
+}
+
+// 广告表
+model Advertisement {
+  id          String   @id @default(cuid())
+  name        String   // 广告名称
+  type        AdType   // 广告类型
+  position    AdPosition // 广告位置
+  content     String   // 广告内容（HTML或AdSense代码）
+  targetUrl   String?  // 目标链接
+  imageUrl    String?  // 广告图片
+  isActive    Boolean  @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  clickCount  Int      @default(0)
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("advertisements")
+}
+
+enum AdType {
+  ADSENSE
+  BANNER
+  TEXT
+  VIDEO
+}
+
+enum AdPosition {
+  HEADER
+  SIDEBAR
+  FOOTER
+  IN_CONTENT
+  MOBILE_BANNER
+}
+
+// 系统配置表
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique // 配置键名
+  value       Json     // 配置值（支持复杂数据结构）
+  category    ConfigCategory // 配置分类
+  description String?  // 配置描述
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("system_configs")
+}
+
+enum ConfigCategory {
+  SMTP
+  WEBSITE
+  SEO
+  SECURITY
+  NOTIFICATION
+  GENERAL
+}
+
+// 邮件模板表
+model EmailTemplate {
+  id          String   @id @default(cuid())
+  name        String   // 模板名称
+  subject     Json     // 多语言邮件主题
+  content     Json     // 多语言邮件内容（HTML）
+  type        EmailType // 邮件类型
+  variables   Json?    // 可用变量说明
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("email_templates")
+}
+
+enum EmailType {
+  WELCOME
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  NOTIFICATION
+  NEWSLETTER
+  SYSTEM_ALERT
 }

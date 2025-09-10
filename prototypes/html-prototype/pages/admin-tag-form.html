@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签编辑 - 后台管理系统</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 后台管理布局 */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            text-align: center;
+        }
+        
+        .sidebar-brand-icon {
+            font-size: var(--text-2xl);
+            color: var(--primary-500);
+            margin-bottom: var(--space-2);
+        }
+        
+        .sidebar-brand-text {
+            font-family: var(--font-game);
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .admin-nav {
+            padding: var(--space-4) 0;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 var(--space-6) var(--space-2);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3) var(--space-6);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all var(--duration-fast) var(--ease-out);
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            border-left-color: var(--primary-200);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-left-color: var(--primary-500);
+            font-weight: var(--font-medium);
+        }
+        
+        .nav-item-icon {
+            width: 20px;
+            margin-right: var(--space-3);
+            text-align: center;
+        }
+        
+        .user-info {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-600);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+        
+        .user-name {
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .user-role {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        /* 页头样式 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .page-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: var(--text-base);
+        }
+        
+        .page-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-600);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-separator {
+            color: var(--gray-400);
+        }
+        
+        /* 表单样式 */
+        .form-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .form-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .form-description {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+        
+        .form-content {
+            padding: var(--space-6);
+        }
+        
+        .form-section {
+            margin-bottom: var(--space-8);
+        }
+        
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--primary-100);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-6);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-label.required::after {
+            content: ' *';
+            color: var(--error-500);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+        
+        .form-input.error {
+            border-color: var(--error-500);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: white;
+            cursor: pointer;
+        }
+        
+        .form-help {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+        
+        .form-error {
+            font-size: var(--text-xs);
+            color: var(--error-500);
+            margin-top: var(--space-1);
+            display: none;
+        }
+        
+        .form-error.show {
+            display: block;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .checkbox-input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-500);
+        }
+        
+        .checkbox-label {
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+        
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .color-input {
+            width: 50px;
+            height: 40px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-300);
+            background: #3b82f6;
+        }
+        
+        .tag-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .tag-preview-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-500);
+        }
+        
+        /* 按钮样式 */
+        .btn-primary {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-600);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+        
+        .btn-danger {
+            background: var(--error-500);
+            color: white;
+            border: none;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .btn-danger:hover {
+            background: var(--error-600);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .form-actions-left {
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        .form-actions-right {
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        /* 游戏关联选择器 */
+        .games-selector {
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .game-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3);
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: background-color var(--duration-fast) var(--ease-out);
+        }
+        
+        .game-item:hover {
+            background: var(--gray-50);
+        }
+        
+        .game-item:last-child {
+            border-bottom: none;
+        }
+        
+        .game-checkbox {
+            margin-right: var(--space-3);
+        }
+        
+        .game-info {
+            flex: 1;
+        }
+        
+        .game-name {
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .game-category {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .selected-games {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+        }
+        
+        .selected-game {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-1) var(--space-2);
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+        }
+        
+        .remove-game {
+            cursor: pointer;
+            color: var(--primary-500);
+        }
+        
+        .remove-game:hover {
+            color: var(--primary-700);
+        }
+        
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--duration-normal) var(--ease-out);
+            }
+            
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: var(--space-4);
+            }
+            
+            .form-actions-left,
+            .form-actions-right {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="sidebar-brand-text">GameHub Admin</div>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <a href="admin.html" class="nav-item">
+                        <i class="fas fa-tachometer-alt nav-item-icon"></i>
+                        <span>仪表盘</span>
+                    </a>
+                    <a href="admin-games.html" class="nav-item">
+                        <i class="fas fa-gamepad nav-item-icon"></i>
+                        <span>游戏管理</span>
+                    </a>
+                    <a href="admin-users.html" class="nav-item">
+                        <i class="fas fa-users nav-item-icon"></i>
+                        <span>用户管理</span>
+                    </a>
+                    <a href="admin-categories.html" class="nav-item">
+                        <i class="fas fa-folder nav-item-icon"></i>
+                        <span>分类管理</span>
+                    </a>
+                    <a href="admin-tags.html" class="nav-item active">
+                        <i class="fas fa-tags nav-item-icon"></i>
+                        <span>标签管理</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">营销推广</div>
+                    <a href="admin-ads.html" class="nav-item">
+                        <i class="fas fa-bullhorn nav-item-icon"></i>
+                        <span>广告管理</span>
+                    </a>
+                    <a href="admin-analytics.html" class="nav-item">
+                        <i class="fas fa-chart-bar nav-item-icon"></i>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">系统设置</div>
+                    <a href="admin-config.html" class="nav-item">
+                        <i class="fas fa-cog nav-item-icon"></i>
+                        <span>系统配置</span>
+                    </a>
+                    <a href="admin-smtp.html" class="nav-item">
+                        <i class="fas fa-envelope nav-item-icon"></i>
+                        <span>邮箱配置</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div class="user-name">管理员</div>
+                <div class="user-role">系统管理员</div>
+            </div>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <button class="btn-secondary mobile-menu-btn" style="display: none;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-actions">
+                    <button class="btn-secondary">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="admin-content">
+                <!-- 面包屑导航 -->
+                <nav class="breadcrumb">
+                    <a href="admin.html">仪表盘</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="admin-tags.html">标签管理</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>编辑标签</span>
+                </nav>
+                
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">编辑标签</h1>
+                        <p class="page-subtitle">修改标签信息，优化游戏分类和用户体验</p>
+                    </div>
+                </div>
+                
+                <!-- 表单容器 -->
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="form-title">标签信息</h2>
+                        <p class="form-description">请填写标签的基本信息和相关设置</p>
+                    </div>
+                    
+                    <form class="form-content" id="tagForm">
+                        <!-- 基本信息 -->
+                        <div class="form-section">
+                            <h3 class="section-title">基本信息</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label required" for="tagName">标签名称</label>
+                                    <input type="text" id="tagName" class="form-input" value="动作游戏" placeholder="请输入标签名称">
+                                    <div class="form-help">标签的显示名称，用户可见</div>
+                                    <div class="form-error" id="tagNameError">标签名称不能为空</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label required" for="tagSlug">标签别名</label>
+                                    <input type="text" id="tagSlug" class="form-input" value="action-games" placeholder="请输入标签别名">
+                                    <div class="form-help">用于URL的标签标识符，只能包含字母、数字和连字符</div>
+                                    <div class="form-error" id="tagSlugError">标签别名格式不正确</div>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label class="form-label" for="tagDescription">标签描述</label>
+                                    <textarea id="tagDescription" class="form-input form-textarea" placeholder="请输入标签描述">包含各种动作类游戏，如平台跳跃、格斗、射击等类型的游戏内容。</textarea>
+                                    <div class="form-help">详细描述标签的用途和包含的游戏类型</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 显示设置 -->
+                        <div class="form-section">
+                            <h3 class="section-title">显示设置</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tagColor">标签颜色</label>
+                                    <div class="color-picker-group">
+                                        <input type="color" id="tagColor" class="color-input" value="#3b82f6">
+                                        <div class="color-preview" id="colorPreview"></div>
+                                        <input type="text" class="form-input" style="flex: 1;" value="#3b82f6" placeholder="#000000">
+                                    </div>
+                                    <div class="form-help">标签在前台显示时的颜色</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="tagIcon">标签图标</label>
+                                    <input type="text" id="tagIcon" class="form-input" value="fas fa-fist-raised" placeholder="请输入图标类名">
+                                    <div class="form-help">FontAwesome图标类名，如：fas fa-gamepad</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="tagOrder">显示顺序</label>
+                                    <input type="number" id="tagOrder" class="form-input" value="1" min="0" placeholder="0">
+                                    <div class="form-help">数字越小越靠前显示</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="tagFeatured" class="checkbox-input" checked>
+                                        <label class="checkbox-label" for="tagFeatured">设为推荐标签</label>
+                                    </div>
+                                    <div class="form-help">推荐标签会在首页和重要位置优先显示</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SEO设置 -->
+                        <div class="form-section">
+                            <h3 class="section-title">SEO设置</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="metaTitle">SEO标题</label>
+                                    <input type="text" id="metaTitle" class="form-input" value="动作游戏 - 精彩刺激的动作类游戏合集" placeholder="请输入SEO标题">
+                                    <div class="form-help">搜索引擎显示的页面标题，建议60字符以内</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="metaKeywords">关键词</label>
+                                    <input type="text" id="metaKeywords" class="form-input" value="动作游戏,格斗游戏,射击游戏,平台跳跃" placeholder="请输入关键词，用逗号分隔">
+                                    <div class="form-help">用逗号分隔多个关键词</div>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label class="form-label" for="metaDescription">SEO描述</label>
+                                    <textarea id="metaDescription" class="form-input form-textarea" placeholder="请输入SEO描述">探索精彩的动作游戏世界，包含格斗、射击、平台跳跃等多种类型的刺激游戏，带给您极致的游戏体验。</textarea>
+                                    <div class="form-help">搜索引擎显示的页面描述，建议160字符以内</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 关联游戏 -->
+                        <div class="form-section">
+                            <h3 class="section-title">关联游戏</h3>
+                            <div class="form-group full-width">
+                                <label class="form-label">选择游戏</label>
+                                <div class="games-selector">
+                                    <div class="game-item">
+                                        <input type="checkbox" class="game-checkbox" checked>
+                                        <div class="game-info">
+                                            <div class="game-name">超级马里奥</div>
+                                            <div class="game-category">平台跳跃</div>
+                                        </div>
+                                    </div>
+                                    <div class="game-item">
+                                        <input type="checkbox" class="game-checkbox" checked>
+                                        <div class="game-info">
+                                            <div class="game-name">太空射击</div>
+                                            <div class="game-category">射击游戏</div>
+                                        </div>
+                                    </div>
+                                    <div class="game-item">
+                                        <input type="checkbox" class="game-checkbox" checked>
+                                        <div class="game-info">
+                                            <div class="game-name">忍者跑酷</div>
+                                            <div class="game-category">跑酷游戏</div>
+                                        </div>
+                                    </div>
+                                    <div class="game-item">
+                                        <input type="checkbox" class="game-checkbox">
+                                        <div class="game-info">
+                                            <div class="game-name">数字拼图</div>
+                                            <div class="game-category">益智游戏</div>
+                                        </div>
+                                    </div>
+                                    <div class="game-item">
+                                        <input type="checkbox" class="game-checkbox">
+                                        <div class="game-info">
+                                            <div class="game-name">极速赛车</div>
+                                            <div class="game-category">竞速游戏</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="selected-games">
+                                    <div class="selected-game">
+                                        <span>超级马里奥</span>
+                                        <i class="fas fa-times remove-game"></i>
+                                    </div>
+                                    <div class="selected-game">
+                                        <span>太空射击</span>
+                                        <i class="fas fa-times remove-game"></i>
+                                    </div>
+                                    <div class="selected-game">
+                                        <span>忍者跑酷</span>
+                                        <i class="fas fa-times remove-game"></i>
+                                    </div>
+                                </div>
+                                <div class="form-help">选择使用此标签的游戏</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 状态设置 -->
+                        <div class="form-section">
+                            <h3 class="section-title">状态设置</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tagStatus">标签状态</label>
+                                    <select id="tagStatus" class="form-select">
+                                        <option value="active" selected>启用</option>
+                                        <option value="inactive">禁用</option>
+                                    </select>
+                                    <div class="form-help">禁用的标签不会在前台显示</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="tag-preview">
+                                        <div class="tag-preview-icon"></div>
+                                        <span>动作游戏</span>
+                                    </div>
+                                    <div class="form-help">标签预览效果</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- 表单操作 -->
+                    <div class="form-actions">
+                        <div class="form-actions-left">
+                            <button type="button" class="btn-danger" onclick="deleteTag()">
+                                <i class="fas fa-trash"></i>
+                                <span>删除标签</span>
+                            </button>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn-secondary" onclick="cancelEdit()">
+                                <i class="fas fa-times"></i>
+                                <span>取消</span>
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="previewTag()">
+                                <i class="fas fa-eye"></i>
+                                <span>预览</span>
+                            </button>
+                            <button type="submit" class="btn-primary" onclick="saveTag()">
+                                <i class="fas fa-save"></i>
+                                <span>保存标签</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 移动端菜单切换
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const sidebar = document.querySelector('.admin-sidebar');
+            
+            function checkScreenSize() {
+                if (window.innerWidth <= 1024) {
+                    mobileMenuBtn.style.display = 'inline-flex';
+                } else {
+                    mobileMenuBtn.style.display = 'none';
+                    sidebar.classList.remove('open');
+                }
+            }
+            
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+            
+            document.querySelector('.admin-main').addEventListener('click', function() {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        });
+        
+        // 颜色选择器同步
+        const colorInput = document.getElementById('tagColor');
+        const colorPreview = document.getElementById('colorPreview');
+        const colorText = colorInput.nextElementSibling.nextElementSibling;
+        
+        function updateColor(color) {
+            colorPreview.style.backgroundColor = color;
+            colorText.value = color;
+            updateTagPreview();
+        }
+        
+        colorInput.addEventListener('change', function() {
+            updateColor(this.value);
+        });
+        
+        colorText.addEventListener('input', function() {
+            if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                colorInput.value = this.value;
+                updateColor(this.value);
+            }
+        });
+        
+        // 标签别名自动生成
+        document.getElementById('tagName').addEventListener('input', function() {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            document.getElementById('tagSlug').value = slug;
+            updateTagPreview();
+        });
+        
+        // 更新标签预览
+        function updateTagPreview() {
+            const tagName = document.getElementById('tagName').value || '标签名称';
+            const tagColor = document.getElementById('tagColor').value;
+            const tagPreview = document.querySelector('.tag-preview');
+            const tagPreviewIcon = document.querySelector('.tag-preview-icon');
+            
+            tagPreview.querySelector('span').textContent = tagName;
+            tagPreviewIcon.style.backgroundColor = tagColor;
+        }
+        
+        // 游戏选择器
+        document.querySelectorAll('.game-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectedGames();
+            });
+        });
+        
+        // 移除选中的游戏
+        document.querySelectorAll('.remove-game').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const gameName = this.previousElementSibling.textContent;
+                const gameItems = document.querySelectorAll('.game-item');
+                
+                gameItems.forEach(item => {
+                    const itemName = item.querySelector('.game-name').textContent;
+                    if (itemName === gameName) {
+                        item.querySelector('.game-checkbox').checked = false;
+                    }
+                });
+                
+                this.parentElement.remove();
+            });
+        });
+        
+        // 更新选中的游戏列表
+        function updateSelectedGames() {
+            const selectedGamesContainer = document.querySelector('.selected-games');
+            const checkedBoxes = document.querySelectorAll('.game-checkbox:checked');
+            
+            selectedGamesContainer.innerHTML = '';
+            
+            checkedBoxes.forEach(checkbox => {
+                const gameItem = checkbox.closest('.game-item');
+                const gameName = gameItem.querySelector('.game-name').textContent;
+                
+                const selectedGame = document.createElement('div');
+                selectedGame.className = 'selected-game';
+                selectedGame.innerHTML = `
+                    <span>${gameName}</span>
+                    <i class="fas fa-times remove-game"></i>
+                `;
+                
+                selectedGame.querySelector('.remove-game').addEventListener('click', function() {
+                    checkbox.checked = false;
+                    selectedGame.remove();
+                });
+                
+                selectedGamesContainer.appendChild(selectedGame);
+            });
+        }
+        
+        // 表单验证
+        function validateForm() {
+            let isValid = true;
+            
+            // 验证标签名称
+            const tagName = document.getElementById('tagName').value.trim();
+            const tagNameError = document.getElementById('tagNameError');
+            if (!tagName) {
+                document.getElementById('tagName').classList.add('error');
+                tagNameError.classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById('tagName').classList.remove('error');
+                tagNameError.classList.remove('show');
+            }
+            
+            // 验证标签别名
+            const tagSlug = document.getElementById('tagSlug').value.trim();
+            const tagSlugError = document.getElementById('tagSlugError');
+            if (!tagSlug || !/^[a-z0-9-]+$/.test(tagSlug)) {
+                document.getElementById('tagSlug').classList.add('error');
+                tagSlugError.classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById('tagSlug').classList.remove('error');
+                tagSlugError.classList.remove('show');
+            }
+            
+            return isValid;
+        }
+        
+        // 保存标签
+        function saveTag() {
+            if (validateForm()) {
+                alert('标签保存成功！\n\n在实际应用中，这里会将表单数据提交到服务器进行保存。');
+            }
+        }
+        
+        // 预览标签
+        function previewTag() {
+            const tagName = document.getElementById('tagName').value || '标签名称';
+            alert(`标签预览\n\n标签名称: ${tagName}\n\n在实际应用中，这里会打开新窗口显示标签页面的预览效果。`);
+        }
+        
+        // 取消编辑
+        function cancelEdit() {
+            if (confirm('确定要取消编辑吗？未保存的更改将丢失。')) {
+                window.location.href = 'admin-tags.html';
+            }
+        }
+        
+        // 删除标签
+        function deleteTag() {
+            if (confirm('确定要删除这个标签吗？\n\n删除后，所有使用该标签的游戏将失去此标签关联，此操作不可恢复。')) {
+                alert('标签删除成功！\n\n在实际应用中，这里会发送删除请求到服务器。');
+                window.location.href = 'admin-tags.html';
+            }
+        }
+        
+        // 初始化
+        updateColor('#3b82f6');
+        updateTagPreview();
+    </script>
+</body>
+</html>

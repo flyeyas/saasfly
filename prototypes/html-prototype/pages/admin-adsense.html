@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdSense集成配置 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 后台管理特定样式 */
+        body {
+            background: var(--gray-50);
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .admin-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .admin-brand i {
+            font-size: var(--text-2xl);
+            color: var(--primary-500);
+        }
+        
+        .admin-brand-text {
+            font-family: var(--font-game);
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .admin-nav {
+            flex: 1;
+            padding: var(--space-4);
+        }
+        
+        .admin-nav-group {
+            margin-bottom: var(--space-6);
+        }
+        
+        .admin-nav-title {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+            padding: 0 var(--space-3);
+        }
+        
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-1);
+        }
+        
+        .admin-nav-item:hover {
+            background: var(--gray-100);
+            color: var(--primary-600);
+        }
+        
+        .admin-nav-item.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            font-weight: 500;
+        }
+        
+        .admin-nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .admin-header-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .admin-header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+        }
+        
+        /* AdSense特定样式 */
+        .adsense-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .adsense-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .adsense-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+        
+        .adsense-card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .adsense-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+        }
+        
+        .revenue-icon {
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+        
+        .clicks-icon {
+            background: var(--blue-100);
+            color: var(--blue-600);
+        }
+        
+        .impressions-icon {
+            background: var(--purple-100);
+            color: var(--purple-600);
+        }
+        
+        .ctr-icon {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+        
+        .adsense-metric {
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .adsense-change {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .change-positive {
+            color: var(--green-600);
+        }
+        
+        .change-negative {
+            color: var(--red-600);
+        }
+        
+        .adsense-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .adsense-section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .adsense-section-title i {
+            color: var(--primary-500);
+        }
+        
+        .ad-units-grid {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        .ad-unit {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: all 0.2s ease;
+        }
+        
+        .ad-unit:hover {
+            border-color: var(--primary-300);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .ad-unit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+        
+        .ad-unit-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        .ad-unit-status {
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+        
+        .status-inactive {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .status-pending {
+            background: var(--yellow-100);
+            color: var(--yellow-700);
+        }
+        
+        .ad-unit-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+        
+        .ad-unit-metric {
+            text-align: center;
+        }
+        
+        .ad-unit-metric-label {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-bottom: var(--space-1);
+        }
+        
+        .ad-unit-metric-value {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        .ad-unit-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .btn-sm {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+        }
+        
+        .form-grid {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+        
+        .form-group {
+            display: grid;
+            gap: var(--space-2);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+        }
+        
+        .form-input {
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            background: white;
+            cursor: pointer;
+        }
+        
+        .optimization-tips {
+            background: var(--blue-50);
+            border: 1px solid var(--blue-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        
+        .optimization-tips-title {
+            font-weight: 600;
+            color: var(--blue-800);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .optimization-tips ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .optimization-tips li {
+            color: var(--blue-700);
+            margin-bottom: var(--space-1);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-2);
+        }
+        
+        .optimization-tips li:before {
+            content: "•";
+            color: var(--blue-500);
+            font-weight: bold;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+            }
+            
+            .admin-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .adsense-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .ad-unit-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <i class="fas fa-gamepad"></i>
+                <span class="admin-brand-text">游戏管理后台</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">主要功能</div>
+                    <a href="admin.html" class="admin-nav-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>仪表盘</span>
+                    </a>
+                    <a href="admin-games.html" class="admin-nav-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>游戏管理</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-item">
+                        <i class="fas fa-folder"></i>
+                        <span>分类管理</span>
+                    </a>
+                    <a href="admin-tags.html" class="admin-nav-item">
+                        <i class="fas fa-tags"></i>
+                        <span>标签管理</span>
+                    </a>
+                    <a href="admin-users.html" class="admin-nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">内容管理</div>
+                    <a href="admin-ads.html" class="admin-nav-item">
+                        <i class="fas fa-ad"></i>
+                        <span>广告管理</span>
+                    </a>
+                    <a href="admin-adsense.html" class="admin-nav-item active">
+                        <i class="fab fa-google"></i>
+                        <span>AdSense配置</span>
+                    </a>
+                    <a href="guides.html" class="admin-nav-item">
+                        <i class="fas fa-book"></i>
+                        <span>攻略管理</span>
+                    </a>
+                </div>
+                
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">系统设置</div>
+                    <a href="admin-config.html" class="admin-nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>系统配置</span>
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>统计分析</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="admin-main">
+            <!-- 页头 -->
+            <header class="admin-header">
+                <div>
+                    <h1 class="admin-header-title">AdSense集成配置</h1>
+                </div>
+                <div class="admin-header-actions">
+                    <button class="btn btn-secondary" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        新建广告单元
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="admin-content">
+                <!-- 收益概览 -->
+                <div class="adsense-overview">
+                    <div class="adsense-card">
+                        <div class="adsense-card-header">
+                            <div class="adsense-card-title">
+                                <div class="adsense-card-icon revenue-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                今日收益
+                            </div>
+                        </div>
+                        <div class="adsense-metric">$24.67</div>
+                        <div class="adsense-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +12.5% 较昨日
+                        </div>
+                    </div>
+                    
+                    <div class="adsense-card">
+                        <div class="adsense-card-header">
+                            <div class="adsense-card-title">
+                                <div class="adsense-card-icon clicks-icon">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                </div>
+                                今日点击
+                            </div>
+                        </div>
+                        <div class="adsense-metric">156</div>
+                        <div class="adsense-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +8.3% 较昨日
+                        </div>
+                    </div>
+                    
+                    <div class="adsense-card">
+                        <div class="adsense-card-header">
+                            <div class="adsense-card-title">
+                                <div class="adsense-card-icon impressions-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                今日展示
+                            </div>
+                        </div>
+                        <div class="adsense-metric">8,432</div>
+                        <div class="adsense-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +15.2% 较昨日
+                        </div>
+                    </div>
+                    
+                    <div class="adsense-card">
+                        <div class="adsense-card-header">
+                            <div class="adsense-card-title">
+                                <div class="adsense-card-icon ctr-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                点击率
+                            </div>
+                        </div>
+                        <div class="adsense-metric">1.85%</div>
+                        <div class="adsense-change change-negative">
+                            <i class="fas fa-arrow-down"></i>
+                            -2.1% 较昨日
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AdSense账户配置 -->
+                <div class="adsense-section">
+                    <h3 class="adsense-section-title">
+                        <i class="fab fa-google"></i>
+                        AdSense账户配置
+                    </h3>
+                    <form class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">发布商ID</label>
+                                <input type="text" class="form-input" value="pub-1234567890123456" placeholder="pub-xxxxxxxxxxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">账户状态</label>
+                                <select class="form-select">
+                                    <option value="active">已激活</option>
+                                    <option value="pending">待审核</option>
+                                    <option value="suspended">已暂停</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">AdSense代码</label>
+                            <textarea class="form-input form-textarea" placeholder="请粘贴AdSense自动广告代码"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456" crossorigin="anonymous"></script></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">自动广告</label>
+                                <select class="form-select">
+                                    <option value="enabled">启用</option>
+                                    <option value="disabled">禁用</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">广告个性化</label>
+                                <select class="form-select">
+                                    <option value="enabled">启用</option>
+                                    <option value="disabled">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="optimization-tips">
+                            <div class="optimization-tips-title">
+                                <i class="fas fa-lightbulb"></i>
+                                优化建议
+                            </div>
+                            <ul>
+                                <li>确保AdSense代码正确安装在所有页面</li>
+                                <li>启用自动广告可以提高收益，但需要监控用户体验</li>
+                                <li>定期检查广告政策合规性</li>
+                                <li>使用A/B测试优化广告位置和大小</li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 广告单元管理 -->
+                <div class="adsense-section">
+                    <h3 class="adsense-section-title">
+                        <i class="fas fa-th-large"></i>
+                        广告单元管理
+                    </h3>
+                    <div class="ad-units-grid">
+                        <div class="ad-unit">
+                            <div class="ad-unit-header">
+                                <div class="ad-unit-name">首页横幅广告</div>
+                                <div class="ad-unit-status status-active">活跃</div>
+                            </div>
+                            <div class="ad-unit-info">
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">尺寸</div>
+                                    <div class="ad-unit-metric-value">728x90</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">类型</div>
+                                    <div class="ad-unit-metric-value">展示广告</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">今日收益</div>
+                                    <div class="ad-unit-metric-value">$8.45</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">CTR</div>
+                                    <div class="ad-unit-metric-value">2.1%</div>
+                                </div>
+                            </div>
+                            <div class="ad-unit-actions">
+                                <button class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i>
+                                    编辑
+                                </button>
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="fas fa-chart-line"></i>
+                                    统计
+                                </button>
+                                <button class="btn btn-sm btn-danger">
+                                    <i class="fas fa-pause"></i>
+                                    暂停
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ad-unit">
+                            <div class="ad-unit-header">
+                                <div class="ad-unit-name">侧边栏广告</div>
+                                <div class="ad-unit-status status-active">活跃</div>
+                            </div>
+                            <div class="ad-unit-info">
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">尺寸</div>
+                                    <div class="ad-unit-metric-value">300x250</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">类型</div>
+                                    <div class="ad-unit-metric-value">展示广告</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">今日收益</div>
+                                    <div class="ad-unit-metric-value">$6.78</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">CTR</div>
+                                    <div class="ad-unit-metric-value">1.8%</div>
+                                </div>
+                            </div>
+                            <div class="ad-unit-actions">
+                                <button class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i>
+                                    编辑
+                                </button>
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="fas fa-chart-line"></i>
+                                    统计
+                                </button>
+                                <button class="btn btn-sm btn-danger">
+                                    <i class="fas fa-pause"></i>
+                                    暂停
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ad-unit">
+                            <div class="ad-unit-header">
+                                <div class="ad-unit-name">游戏页面底部</div>
+                                <div class="ad-unit-status status-pending">待审核</div>
+                            </div>
+                            <div class="ad-unit-info">
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">尺寸</div>
+                                    <div class="ad-unit-metric-value">320x50</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">类型</div>
+                                    <div class="ad-unit-metric-value">移动横幅</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">今日收益</div>
+                                    <div class="ad-unit-metric-value">$0.00</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">CTR</div>
+                                    <div class="ad-unit-metric-value">0.0%</div>
+                                </div>
+                            </div>
+                            <div class="ad-unit-actions">
+                                <button class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i>
+                                    编辑
+                                </button>
+                                <button class="btn btn-sm btn-warning">
+                                    <i class="fas fa-clock"></i>
+                                    等待审核
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ad-unit">
+                            <div class="ad-unit-header">
+                                <div class="ad-unit-name">文章内容广告</div>
+                                <div class="ad-unit-status status-inactive">已暂停</div>
+                            </div>
+                            <div class="ad-unit-info">
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">尺寸</div>
+                                    <div class="ad-unit-metric-value">自适应</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">类型</div>
+                                    <div class="ad-unit-metric-value">信息流</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">今日收益</div>
+                                    <div class="ad-unit-metric-value">$0.00</div>
+                                </div>
+                                <div class="ad-unit-metric">
+                                    <div class="ad-unit-metric-label">CTR</div>
+                                    <div class="ad-unit-metric-value">0.0%</div>
+                                </div>
+                            </div>
+                            <div class="ad-unit-actions">
+                                <button class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i>
+                                    编辑
+                                </button>
+                                <button class="btn btn-sm btn-success">
+                                    <i class="fas fa-play"></i>
+                                    启用
+                                </button>
+                                <button class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 收益优化设置 -->
+                <div class="adsense-section">
+                    <h3 class="adsense-section-title">
+                        <i class="fas fa-chart-line"></i>
+                        收益优化设置
+                    </h3>
+                    <form class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">广告密度</label>
+                                <select class="form-select">
+                                    <option value="low">低密度（用户体验优先）</option>
+                                    <option value="medium" selected>中等密度（平衡）</option>
+                                    <option value="high">高密度（收益优先）</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">广告刷新频率</label>
+                                <select class="form-select">
+                                    <option value="30">30秒</option>
+                                    <option value="60" selected>60秒</option>
+                                    <option value="120">120秒</option>
+                                    <option value="disabled">禁用刷新</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">移动端优化</label>
+                                <select class="form-select">
+                                    <option value="enabled" selected>启用</option>
+                                    <option value="disabled">禁用</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">广告屏蔽检测</label>
+                                <select class="form-select">
+                                    <option value="enabled" selected>启用</option>
+                                    <option value="disabled">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="optimization-tips">
+                            <div class="optimization-tips-title">
+                                <i class="fas fa-rocket"></i>
+                                收益优化技巧
+                            </div>
+                            <ul>
+                                <li>使用响应式广告单元以适应不同设备</li>
+                                <li>在内容丰富的页面放置更多广告位</li>
+                                <li>避免在游戏进行中显示干扰性广告</li>
+                                <li>定期分析广告表现并调整位置</li>
+                                <li>考虑使用延迟加载减少页面加载时间</li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.admin-sidebar').classList.toggle('mobile-open');
+        });
+        
+        // 广告单元操作
+        document.querySelectorAll('.ad-unit-actions .btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const action = this.textContent.trim();
+                const adUnitName = this.closest('.ad-unit').querySelector('.ad-unit-name').textContent;
+                
+                // 模拟操作反馈
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示操作结果
+                    alert(`${action} "${adUnitName}" 操作完成`);
+                }, 1000);
+            });
+        });
+        
+        // 表单自动保存
+        let saveTimeout;
+        document.querySelectorAll('.form-input, .form-select').forEach(input => {
+            input.addEventListener('change', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    console.log('自动保存AdSense配置...');
+                    
+                    // 显示保存提示
+                    const notification = document.createElement('div');
+                    notification.className = 'notification success';
+                    notification.innerHTML = '<i class="fas fa-check"></i> 配置已自动保存';
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: var(--green-500);
+                        color: white;
+                        padding: var(--space-3) var(--space-4);
+                        border-radius: var(--radius-lg);
+                        box-shadow: var(--shadow-lg);
+                        z-index: 1000;
+                        display: flex;
+                        align-items: center;
+                        gap: var(--space-2);
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                }, 1000);
+            });
+        });
+        
+        // 收益数据实时更新模拟
+        function updateMetrics() {
+            const metrics = document.querySelectorAll('.adsense-metric');
+            metrics.forEach(metric => {
+                const currentValue = parseFloat(metric.textContent.replace(/[^0-9.]/g, ''));
+                const change = (Math.random() - 0.5) * 0.1; // -5% to +5% change
+                const newValue = currentValue * (1 + change);
+                
+                if (metric.textContent.includes('$')) {
+                    metric.textContent = '$' + newValue.toFixed(2);
+                } else if (metric.textContent.includes('%')) {
+                    metric.textContent = newValue.toFixed(2) + '%';
+                } else {
+                    metric.textContent = Math.round(newValue).toLocaleString();
+                }
+            });
+        }
+        
+        // 每30秒更新一次数据（仅用于演示）
+        setInterval(updateMetrics, 30000);
+    </script>
+</body>
+</html>

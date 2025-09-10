@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 登录页面特定样式 */
+        .auth-container {
+            min-height: calc(100vh - 140px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8) 0;
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            padding: var(--space-8);
+            width: 100%;
+            max-width: 420px;
+            margin: 0 var(--space-4);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+        
+        .auth-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-family: var(--font-game);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+            margin-bottom: var(--space-4);
+        }
+        
+        .auth-logo i {
+            font-size: var(--text-3xl);
+        }
+        
+        .auth-title {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .auth-subtitle {
+            font-size: var(--text-base);
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .form-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            background: white;
+            transition: all var(--duration-fast) var(--ease-out);
+            color: var(--gray-700);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+        
+        .form-input.error {
+            border-color: var(--error-500);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .form-input.success {
+            border-color: var(--success-500);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: var(--space-3);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: var(--text-lg);
+            pointer-events: none;
+        }
+        
+        .input-with-icon {
+            padding-left: var(--space-10);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--space-3);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: var(--text-lg);
+            padding: var(--space-1);
+            transition: color var(--duration-fast) var(--ease-out);
+        }
+        
+        .password-toggle:hover {
+            color: var(--gray-600);
+        }
+        
+        .form-error {
+            font-size: var(--text-sm);
+            color: var(--error-500);
+            margin-top: var(--space-1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: var(--space-4) 0;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .checkbox-input {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            background: white;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-input:checked {
+            background: var(--primary-500);
+            border-color: var(--primary-500);
+        }
+        
+        .checkbox-input:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+        }
+        
+        .checkbox-label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            cursor: pointer;
+        }
+        
+        .forgot-password {
+            font-size: var(--text-sm);
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: var(--font-medium);
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            background: var(--primary-600);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-out);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+        
+        .submit-button:hover {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-button:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .auth-footer p {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+        }
+        
+        .auth-link {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: var(--font-medium);
+        }
+        
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+        
+        .social-login {
+            margin-top: var(--space-6);
+        }
+        
+        .social-divider {
+            display: flex;
+            align-items: center;
+            margin: var(--space-6) 0;
+        }
+        
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+        
+        .social-divider span {
+            padding: 0 var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .social-button {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: white;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3);
+            text-decoration: none;
+        }
+        
+        .social-button:hover {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+        }
+        
+        .social-button i {
+            font-size: var(--text-lg);
+        }
+        
+        .social-button.google i {
+            color: #4285f4;
+        }
+        
+        .social-button.facebook i {
+            color: #1877f2;
+        }
+        
+        .social-button.twitter i {
+            color: #1da1f2;
+        }
+        
+        .login-benefits {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-6);
+        }
+        
+        .benefits-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .benefits-list li {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .benefits-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .benefits-list i {
+            color: var(--success-500);
+            font-size: var(--text-xs);
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: var(--space-4) 0;
+                min-height: calc(100vh - 120px);
+            }
+            
+            .auth-card {
+                padding: var(--space-6);
+                margin: 0 var(--space-3);
+            }
+            
+            .auth-title {
+                font-size: var(--text-2xl);
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="category.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-fire"></i>
+                    <span>热门</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>最新</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏...">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn-register" onclick="location.href='register.html'">
+                        <i class="fas fa-user-plus"></i>
+                        <span>注册</span>
+                    </button>
+                    <button class="btn-login" onclick="location.href='login.html'">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 登录表单容器 -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <h1 class="auth-title">欢迎回来</h1>
+                <p class="auth-subtitle">
+                    登录您的账户，继续您的游戏之旅
+                </p>
+            </div>
+            
+            <form class="auth-form" id="loginForm">
+                <!-- 邮箱/用户名 -->
+                <div class="form-group">
+                    <label for="loginId" class="form-label">邮箱或用户名</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="loginId" 
+                            name="loginId" 
+                            class="form-input input-with-icon" 
+                            placeholder="请输入邮箱或用户名"
+                            required
+                        >
+                    </div>
+                    <div class="form-error" id="loginIdError" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- 密码 -->
+                <div class="form-group">
+                    <label for="password" class="form-label">密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input input-with-icon" 
+                            placeholder="请输入密码"
+                            required
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-error" id="passwordError" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- 登录选项 -->
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="checkbox-input">
+                        <label for="rememberMe" class="checkbox-label">记住我</label>
+                    </div>
+                    <a href="#" class="forgot-password" onclick="forgotPassword()">忘记密码？</a>
+                </div>
+                
+                <!-- 提交按钮 -->
+                <button type="submit" class="submit-button" id="submitButton">
+                    <span id="submitText">登录</span>
+                    <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                </button>
+            </form>
+            
+            <!-- 登录优势 -->
+            <div class="login-benefits">
+                <div class="benefits-title">
+                    <i class="fas fa-star"></i>
+                    <span>登录后您可以</span>
+                </div>
+                <ul class="benefits-list">
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>保存游戏进度和成就</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>收藏喜欢的游戏</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>参与评分和评论</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>获得个性化推荐</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 社交登录 -->
+            <div class="social-login">
+                <div class="social-divider">
+                    <span>或使用以下方式登录</span>
+                </div>
+                <div class="social-buttons">
+                    <button class="social-button google" onclick="socialLogin('google')">
+                        <i class="fab fa-google"></i>
+                        <span>使用 Google 登录</span>
+                    </button>
+                    <button class="social-button facebook" onclick="socialLogin('facebook')">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>使用 Facebook 登录</span>
+                    </button>
+                    <button class="social-button twitter" onclick="socialLogin('twitter')">
+                        <i class="fab fa-twitter"></i>
+                        <span>使用 Twitter 登录</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 页脚链接 -->
+            <div class="auth-footer">
+                <p>还没有账户？ <a href="register.html" class="auth-link">立即注册</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <p class="footer-description">
+                    最好的HTML5游戏聚合平台，为您提供优质的在线游戏体验。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">游戏分类</h4>
+                <ul class="footer-links">
+                    <li><a href="#">动作游戏</a></li>
+                    <li><a href="#">益智游戏</a></li>
+                    <li><a href="#">竞速游戏</a></li>
+                    <li><a href="#">策略游戏</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">帮助中心</h4>
+                <ul class="footer-links">
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">关于我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">开发者API</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 表单验证和交互功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const loginIdInput = document.getElementById('loginId');
+            const passwordInput = document.getElementById('password');
+            const rememberMeCheckbox = document.getElementById('rememberMe');
+            const submitButton = document.getElementById('submitButton');
+            
+            // 登录ID验证
+            loginIdInput.addEventListener('blur', validateLoginId);
+            loginIdInput.addEventListener('input', clearError.bind(null, 'loginId'));
+            
+            // 密码验证
+            passwordInput.addEventListener('blur', validatePassword);
+            passwordInput.addEventListener('input', clearError.bind(null, 'password'));
+            
+            // 表单提交
+            form.addEventListener('submit', handleSubmit);
+            
+            // 从localStorage恢复记住我状态
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                loginIdInput.value = rememberedUser;
+                rememberMeCheckbox.checked = true;
+            }
+            
+            function validateLoginId() {
+                const loginId = loginIdInput.value.trim();
+                
+                if (!loginId) {
+                    showError('loginId', '请输入邮箱或用户名');
+                    return false;
+                }
+                
+                if (loginId.length < 3) {
+                    showError('loginId', '用户名至少需要3个字符');
+                    return false;
+                }
+                
+                clearError('loginId');
+                return true;
+            }
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                
+                if (!password) {
+                    showError('password', '请输入密码');
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    showError('password', '密码至少需要6个字符');
+                    return false;
+                }
+                
+                clearError('password');
+                return true;
+            }
+            
+            function showError(fieldName, message) {
+                const input = document.getElementById(fieldName);
+                const errorElement = document.getElementById(fieldName + 'Error');
+                
+                input.classList.add('error');
+                errorElement.style.display = 'flex';
+                errorElement.querySelector('span').textContent = message;
+            }
+            
+            function clearError(fieldName) {
+                const input = document.getElementById(fieldName);
+                const errorElement = document.getElementById(fieldName + 'Error');
+                
+                input.classList.remove('error');
+                errorElement.style.display = 'none';
+            }
+            
+            function handleSubmit(e) {
+                e.preventDefault();
+                
+                // 验证所有字段
+                const isLoginIdValid = validateLoginId();
+                const isPasswordValid = validatePassword();
+                
+                if (!isLoginIdValid || !isPasswordValid) {
+                    return;
+                }
+                
+                // 处理记住我功能
+                if (rememberMeCheckbox.checked) {
+                    localStorage.setItem('rememberedUser', loginIdInput.value.trim());
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
+                
+                // 显示加载状态
+                const submitText = document.getElementById('submitText');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                
+                submitButton.disabled = true;
+                submitText.textContent = '登录中...';
+                loadingSpinner.style.display = 'block';
+                
+                // 模拟登录过程
+                setTimeout(() => {
+                    // 模拟登录验证
+                    const loginId = loginIdInput.value.trim();
+                    const password = passwordInput.value;
+                    
+                    // 简单的演示验证（实际应用中会发送到服务器）
+                    if (loginId === 'demo@example.com' && password === 'demo123') {
+                        alert('登录成功！\n\n在实际应用中，这里会：\n1. 验证用户凭据\n2. 设置用户会话\n3. 跳转到用户仪表板或首页');
+                        
+                        // 实际应用中这里会跳转到用户仪表板
+                        // window.location.href = 'dashboard.html';
+                    } else {
+                        // 显示登录失败信息
+                        showError('password', '邮箱或密码错误，请重试');
+                        
+                        // 提示演示账户信息
+                        setTimeout(() => {
+                            alert('演示提示：\n\n请使用以下账户登录：\n邮箱：demo@example.com\n密码：demo123');
+                        }, 500);
+                    }
+                    
+                    // 重置按钮状态
+                    submitButton.disabled = false;
+                    submitText.textContent = '登录';
+                    loadingSpinner.style.display = 'none';
+                }, 1500);
+            }
+        });
+        
+        // 密码显示/隐藏切换
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = document.getElementById(fieldId + 'ToggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // 忘记密码
+        function forgotPassword() {
+            const email = document.getElementById('loginId').value.trim();
+            let message = '忘记密码\n\n在实际应用中，这里会：\n1. 跳转到密码重置页面\n2. 发送重置邮件到您的邮箱';
+            
+            if (email && email.includes('@')) {
+                message += `\n3. 重置链接将发送到：${email}`;
+            }
+            
+            alert(message);
+        }
+        
+        // 社交登录
+        function socialLogin(provider) {
+            alert(`使用 ${provider} 登录\n\n在实际应用中，这里会跳转到 ${provider} 的OAuth授权页面。`);
+        }
+        
+        // 搜索功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-box input');
+            const searchButton = document.querySelector('.search-box button');
+            
+            searchButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    alert(`搜索: "${query}"\n\n在实际应用中，这里会跳转到搜索结果页面。`);
+                }
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchButton.click();
+                }
+            });
+        });
+        
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            // Alt + L 快速聚焦到登录ID输入框
+            if (e.altKey && e.key === 'l') {
+                e.preventDefault();
+                document.getElementById('loginId').focus();
+            }
+            
+            // Alt + P 快速聚焦到密码输入框
+            if (e.altKey && e.key === 'p') {
+                e.preventDefault();
+                document.getElementById('password').focus();
+            }
+        });
+    </script>
+</body>
+</html>

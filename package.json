@@ -36,6 +36,9 @@
   ],
   "packageManager": "bun@1.1.10",
   "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2",
     "caniuse-lite": "^1.0.30001741"
   }
 }

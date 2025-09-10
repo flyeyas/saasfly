@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 后台管理特定样式 */
+        body {
+            background: var(--gray-50);
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .admin-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .admin-brand i {
+            font-size: var(--text-2xl);
+            color: var(--primary-500);
+        }
+        
+        .admin-brand-text {
+            font-family: var(--font-game);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .admin-nav {
+            flex: 1;
+            padding: var(--space-4);
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+            padding: 0 var(--space-3);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all var(--duration-fast) var(--ease-out);
+            margin-bottom: var(--space-1);
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            border-left: 3px solid var(--primary-500);
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item-text {
+            font-weight: var(--font-medium);
+        }
+        
+        .nav-item-badge {
+            background: var(--red-500);
+            color: white;
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            margin-left: auto;
+        }
+        
+        .admin-user {
+            padding: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: var(--font-bold);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            font-size: var(--text-sm);
+        }
+        
+        .user-role {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .page-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .notification-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: var(--red-500);
+            border-radius: 50%;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .stat-card {
+            background: white;
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+        }
+        
+        .stat-icon.primary {
+            background: var(--primary-100);
+            color: var(--primary-600);
+        }
+        
+        .stat-icon.success {
+            background: var(--success-100);
+            color: var(--success-600);
+        }
+        
+        .stat-icon.warning {
+            background: var(--warning-100);
+            color: var(--warning-600);
+        }
+        
+        .stat-icon.info {
+            background: var(--info-100);
+            color: var(--info-600);
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-change {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .stat-change.positive {
+            color: var(--success-600);
+        }
+        
+        .stat-change.negative {
+            color: var(--red-600);
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .card-content {
+            padding: var(--space-6);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            text-align: left;
+            padding: var(--space-3) var(--space-4);
+            font-weight: var(--font-semibold);
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: var(--text-sm);
+        }
+        
+        .data-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-100);
+            font-size: var(--text-sm);
+        }
+        
+        .data-table tr:hover {
+            background: var(--gray-50);
+        }
+        
+        .game-thumbnail-small {
+            width: 60px;
+            height: 45px;
+            border-radius: var(--radius-lg);
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .game-info-small {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .game-details-small {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .game-title-small {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .game-category-small {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .status-badge {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+        
+        .status-badge.published {
+            background: var(--success-100);
+            color: var(--success-700);
+        }
+        
+        .status-badge.draft {
+            background: var(--warning-100);
+            color: var(--warning-700);
+        }
+        
+        .status-badge.archived {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            color: var(--gray-500);
+        }
+        
+        .action-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .action-btn.edit:hover {
+            background: var(--primary-100);
+            color: var(--primary-600);
+        }
+        
+        .action-btn.delete:hover {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--space-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: var(--space-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            background: white;
+            cursor: pointer;
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-400);
+            background: var(--primary-50);
+        }
+        
+        .file-upload-icon {
+            font-size: var(--text-4xl);
+            color: var(--gray-400);
+            margin-bottom: var(--space-3);
+        }
+        
+        .file-upload-text {
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+        }
+        
+        .file-upload-hint {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .chart-container {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            color: var(--gray-500);
+        }
+        
+        .pagination-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .pagination-info {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .pagination-controls {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .pagination-btn {
+            background: white;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-600);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            font-size: var(--text-sm);
+        }
+        
+        .pagination-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--duration-normal) var(--ease-out);
+            }
+            
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            cursor: pointer;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="admin-brand">
+                <i class="fas fa-gamepad"></i>
+                <span class="admin-brand-text">GameHub Admin</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <a href="#" class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-item-text">仪表盘</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="games">
+                        <i class="fas fa-gamepad"></i>
+                        <span class="nav-item-text">游戏管理</span>
+                        <span class="nav-item-badge">156</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="categories">
+                        <i class="fas fa-th-large"></i>
+                        <span class="nav-item-text">分类管理</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-item-text">用户管理</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">内容管理</div>
+                    <a href="#" class="nav-item" data-section="reviews">
+                        <i class="fas fa-star"></i>
+                        <span class="nav-item-text">评价管理</span>
+                        <span class="nav-item-badge">12</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="comments">
+                        <i class="fas fa-comments"></i>
+                        <span class="nav-item-text">评论管理</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="reports">
+                        <i class="fas fa-flag"></i>
+                        <span class="nav-item-text">举报管理</span>
+                        <span class="nav-item-badge">3</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">系统设置</div>
+                    <a href="#" class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-item-text">数据分析</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-item-text">系统设置</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="admin-user">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name">管理员</div>
+                    <div class="user-role">超级管理员</div>
+                </div>
+                <button class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="admin-main">
+            <!-- 头部 -->
+            <header class="admin-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">仪表盘</h1>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge"></div>
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>添加游戏</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <main class="admin-content">
+                <!-- 仪表盘 -->
+                <div class="content-section active" id="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">156</div>
+                                <div class="stat-label">总游戏数</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+12 本月</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">2,847</div>
+                                <div class="stat-label">活跃用户</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+18% 本周</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">45.2K</div>
+                                <div class="stat-label">游戏次数</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+25% 今日</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">4.8</div>
+                                <div class="stat-label">平均评分</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+0.2 本月</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6); margin-bottom: var(--space-6);">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">游戏访问趋势</h3>
+                                <div class="card-actions">
+                                    <select class="form-select" style="width: auto;">
+                                        <option>最近7天</option>
+                                        <option>最近30天</option>
+                                        <option>最近90天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <i class="fas fa-chart-line" style="font-size: var(--text-4xl); margin-right: var(--space-3);"></i>
+                                    <span>游戏访问趋势图表</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">热门分类</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <i class="fas fa-chart-pie" style="font-size: var(--text-4xl); margin-right: var(--space-3);"></i>
+                                    <span>分类分布图表</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">最新游戏</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm">
+                                    <span>查看全部</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>游戏</th>
+                                        <th>分类</th>
+                                        <th>状态</th>
+                                        <th>游戏次数</th>
+                                        <th>评分</th>
+                                        <th>发布时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentGamesTable">
+                                    <!-- 动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏管理 -->
+                <div class="content-section" id="games">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+                        <div>
+                            <h2 style="font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--space-2);">游戏管理</h2>
+                            <p style="color: var(--gray-600);">管理平台上的所有游戏内容</p>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            <span>添加新游戏</span>
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div style="display: flex; gap: var(--space-4); align-items: center;">
+                                <div class="search-box">
+                                    <input type="text" placeholder="搜索游戏..." id="gameSearchInput">
+                                    <button type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <select class="form-select" style="width: auto;">
+                                    <option>全部分类</option>
+                                    <option>动作游戏</option>
+                                    <option>益智游戏</option>
+                                    <option>竞速游戏</option>
+                                </select>
+                                <select class="form-select" style="width: auto;">
+                                    <option>全部状态</option>
+                                    <option>已发布</option>
+                                    <option>草稿</option>
+                                    <option>已归档</option>
+                                </select>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    <span>导出</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content" style="padding: 0;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectAll">
+                                        </th>
+                                        <th>游戏</th>
+                                        <th>分类</th>
+                                        <th>状态</th>
+                                        <th>游戏次数</th>
+                                        <th>评分</th>
+                                        <th>更新时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gamesTable">
+                                    <!-- 动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-admin">
+                            <div class="pagination-info">
+                                显示 1-20 条，共 156 条记录
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="pagination-btn">1</button>
+                                <button class="pagination-btn">2</button>
+                                <button class="pagination-btn">3</button>
+                                <button class="pagination-btn">...</button>
+                                <button class="pagination-btn">8</button>
+                                <button class="pagination-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分类管理 -->
+                <div class="content-section" id="categories">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+                        <div>
+                            <h2 style="font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--space-2);">分类管理</h2>
+                            <p style="color: var(--gray-600);">管理游戏分类和标签</p>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            <span>添加分类</span>
+                        </button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">游戏分类</h3>
+                            </div>
+                            <div class="card-content">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>分类名称</th>
+                                            <th>游戏数量</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="categoriesTable">
+                                        <!-- 动态生成 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">添加/编辑分类</h3>
+                            </div>
+                            <div class="card-content">
+                                <form class="form-grid" style="grid-template-columns: 1fr;">
+                                    <div class="form-group">
+                                        <label class="form-label">分类名称</label>
+                                        <input type="text" class="form-input" placeholder="输入分类名称">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">分类描述</label>
+                                        <textarea class="form-input form-textarea" placeholder="输入分类描述"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">分类图标</label>
+                                        <select class="form-select">
+                                            <option>选择图标</option>
+                                            <option>🎮 游戏手柄</option>
+                                            <option>🏃 动作</option>
+                                            <option>🧩 益智</option>
+                                            <option>🏎️ 竞速</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">排序权重</label>
+                                        <input type="number" class="form-input" placeholder="数字越大排序越靠前">
+                                    </div>
+                                    <div style="display: flex; gap: var(--space-3);">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            <span>保存分类</span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary">
+                                            <span>取消</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 数据分析 -->
+                <div class="content-section" id="analytics">
+                    <div style="margin-bottom: var(--space-6);">
+                        <h2 style="font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--space-2);">数据分析</h2>
+                        <p style="color: var(--gray-600);">查看平台运营数据和用户行为分析</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-6);">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">用户活跃度</h3>
+                                <div class="card-actions">
+                                    <select class="form-select" style="width: auto;">
+                                        <option>最近7天</option>
+                                        <option>最近30天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <i class="fas fa-chart-area" style="font-size: var(--text-4xl); margin-right: var(--space-3);"></i>
+                                    <span>用户活跃度图表</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3 class="card-title">游戏热度排行</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <i class="fas fa-chart-bar" style="font-size: var(--text-4xl); margin-right: var(--space-3);"></i>
+                                    <span>游戏热度排行图表</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">详细数据报告</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    <span>导出报告</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                                <div style="text-align: center; padding: var(--space-4);">
+                                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--primary-600);">2,847</div>
+                                    <div style="color: var(--gray-600); margin-top: var(--space-1);">总用户数</div>
+                                </div>
+                                <div style="text-align: center; padding: var(--space-4);">
+                                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--success-600);">1,234</div>
+                                    <div style="color: var(--gray-600); margin-top: var(--space-1);">活跃用户</div>
+                                </div>
+                                <div style="text-align: center; padding: var(--space-4);">
+                                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--warning-600);">45.2K</div>
+                                    <div style="color: var(--gray-600); margin-top: var(--space-1);">总游戏次数</div>
+                                </div>
+                                <div style="text-align: center; padding: var(--space-4);">
+                                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--info-600);">8.5min</div>
+                                    <div style="color: var(--gray-600); margin-top: var(--space-1);">平均游戏时长</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- 移动端遮罩 -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // 示例数据
+        const gamesData = [
+            {
+                id: 1,
+                title: "太空探险者",
+                category: "adventure",
+                status: "published",
+                plays: 15200,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                updatedAt: "2024-01-15"
+            },
+            {
+                id: 2,
+                title: "魔法消除",
+                category: "puzzle",
+                status: "published",
+                plays: 23400,
+                rating: 4.6,
+                image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                updatedAt: "2024-01-12"
+            },
+            {
+                id: 3,
+                title: "极速赛车",
+                category: "racing",
+                status: "draft",
+                plays: 18700,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                updatedAt: "2024-01-10"
+            },
+            {
+                id: 4,
+                title: "城堡守卫",
+                category: "strategy",
+                status: "published",
+                plays: 12300,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1556438064-2d7646166914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                updatedAt: "2024-01-08"
+            },
+            {
+                id: 5,
+                title: "忍者跑酷",
+                category: "action",
+                status: "archived",
+                plays: 28900,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                updatedAt: "2024-01-05"
+            }
+        ];
+        
+        const categoriesData = [
+            { id: 1, name: "动作游戏", count: 32, status: "active", icon: "🏃" },
+            { id: 2, name: "益智游戏", count: 28, status: "active", icon: "🧩" },
+            { id: 3, name: "竞速游戏", count: 18, status: "active", icon: "🏎️" },
+            { id: 4, name: "策略游戏", count: 24, status: "active", icon: "♟️" },
+            { id: 5, name: "冒险游戏", count: 21, status: "active", icon: "🗺️" },
+            { id: 6, name: "体育游戏", count: 15, status: "active", icon: "⚽" },
+            { id: 7, name: "街机游戏", count: 18, status: "inactive", icon: "🎮" }
+        ];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            renderRecentGames();
+            renderGamesTable();
+            renderCategoriesTable();
+            initializeMobileMenu();
+        });
+        
+        // 初始化导航
+        function initializeNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            const pageTitle = document.getElementById('pageTitle');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 更新导航状态
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应内容
+                    const sectionId = this.dataset.section;
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // 更新页面标题
+                    const titles = {
+                        'dashboard': '仪表盘',
+                        'games': '游戏管理',
+                        'categories': '分类管理',
+                        'users': '用户管理',
+                        'reviews': '评价管理',
+                        'comments': '评论管理',
+                        'reports': '举报管理',
+                        'analytics': '数据分析',
+                        'settings': '系统设置'
+                    };
+                    pageTitle.textContent = titles[sectionId] || '管理后台';
+                    
+                    // 移动端关闭侧边栏
+                    if (window.innerWidth <= 1024) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+        }
+        
+        // 渲染最新游戏表格
+        function renderRecentGames() {
+            const tableBody = document.getElementById('recentGamesTable');
+            const recentGames = gamesData.slice(0, 5);
+            
+            tableBody.innerHTML = recentGames.map(game => `
+                <tr>
+                    <td>
+                        <div class="game-info-small">
+                            <div class="game-thumbnail-small" style="background-image: url('${game.image}')"></div>
+                            <div class="game-details-small">
+                                <div class="game-title-small">${game.title}</div>
+                                <div class="game-category-small">${getCategoryName(game.category)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${getCategoryName(game.category)}</td>
+                    <td><span class="status-badge ${game.status}">${getStatusName(game.status)}</span></td>
+                    <td>${formatNumber(game.plays)}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-1);">
+                            <span style="color: var(--warning-400);">
+                                ${generateStars(game.rating)}
+                            </span>
+                            <span>${game.rating}</span>
+                        </div>
+                    </td>
+                    <td>${formatDate(game.updatedAt)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit" title="编辑">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="查看">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn delete" title="删除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染游戏管理表格
+        function renderGamesTable() {
+            const tableBody = document.getElementById('gamesTable');
+            
+            tableBody.innerHTML = gamesData.map(game => `
+                <tr>
+                    <td><input type="checkbox" name="gameSelect" value="${game.id}"></td>
+                    <td>
+                        <div class="game-info-small">
+                            <div class="game-thumbnail-small" style="background-image: url('${game.image}')"></div>
+                            <div class="game-details-small">
+                                <div class="game-title-small">${game.title}</div>
+                                <div class="game-category-small">ID: ${game.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${getCategoryName(game.category)}</td>
+                    <td><span class="status-badge ${game.status}">${getStatusName(game.status)}</span></td>
+                    <td>${formatNumber(game.plays)}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-1);">
+                            <span style="color: var(--warning-400);">
+                                ${generateStars(game.rating)}
+                            </span>
+                            <span>${game.rating}</span>
+                        </div>
+                    </td>
+                    <td>${formatDate(game.updatedAt)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit" title="编辑">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="查看">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" title="复制">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn delete" title="删除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染分类管理表格
+        function renderCategoriesTable() {
+            const tableBody = document.getElementById('categoriesTable');
+            
+            tableBody.innerHTML = categoriesData.map(category => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-2);">
+                            <span style="font-size: var(--text-lg);">${category.icon}</span>
+                            <span class="game-title-small">${category.name}</span>
+                        </div>
+                    </td>
+                    <td>${category.count}</td>
+                    <td><span class="status-badge ${category.status === 'active' ? 'published' : 'archived'}">${category.status === 'active' ? '启用' : '禁用'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit" title="编辑">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" title="删除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 初始化移动端菜单
+        function initializeMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('overlay');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            });
+            
+            overlay.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+        }
+        
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+        
+        // 工具函数
+        function getCategoryName(category) {
+            const categoryNames = {
+                'action': '动作游戏',
+                'puzzle': '益智游戏',
+                'racing': '竞速游戏',
+                'strategy': '策略游戏',
+                'adventure': '冒险游戏',
+                'sports': '体育游戏',
+                'arcade': '街机游戏'
+            };
+            return categoryNames[category] || '其他';
+        }
+        
+        function getStatusName(status) {
+            const statusNames = {
+                'published': '已发布',
+                'draft': '草稿',
+                'archived': '已归档'
+            };
+            return statusNames[status] || '未知';
+        }
+        
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+        
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>广告管理 - GameHub 后台管理</title>
+    <meta name="description" content="GameHub 后台管理系统 - 广告管理">
+    
+    <!-- 引入字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 引入图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <style>
+        /* 后台管理布局样式 */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: transform var(--duration-normal) var(--ease-out);
+        }
+        
+        .admin-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-family: var(--font-game);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+        }
+        
+        .admin-brand i {
+            font-size: var(--text-2xl);
+        }
+        
+        .admin-nav {
+            flex: 1;
+            padding: var(--space-4) 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .nav-section-title {
+            padding: 0 var(--space-6) var(--space-2);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-6);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all var(--duration-normal) var(--ease-out);
+            position: relative;
+        }
+        
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--primary-600);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            border-right: 3px solid var(--primary-600);
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item-text {
+            flex: 1;
+            font-weight: var(--font-medium);
+        }
+        
+        .nav-item-badge {
+            background: var(--red-500);
+            color: white;
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .admin-user {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-500);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-bold);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            font-size: var(--text-sm);
+        }
+        
+        .user-role {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .page-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: var(--space-2);
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: var(--space-2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--red-500);
+            border-radius: 50%;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+        }
+        
+        /* 广告管理特定样式 */
+        .ads-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .ads-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .stat-card {
+            background: white;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .stat-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-600);
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+        }
+        
+        .stat-icon.revenue {
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+        
+        .stat-icon.clicks {
+            background: var(--blue-100);
+            color: var(--blue-600);
+        }
+        
+        .stat-icon.impressions {
+            background: var(--purple-100);
+            color: var(--purple-600);
+        }
+        
+        .stat-icon.ctr {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+        
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-change {
+            font-size: var(--text-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .stat-change.positive {
+            color: var(--green-600);
+        }
+        
+        .stat-change.negative {
+            color: var(--red-600);
+        }
+        
+        .ads-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .tab-btn {
+            padding: var(--space-3) var(--space-4);
+            background: none;
+            border: none;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-600);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary-600);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-600);
+            border-bottom-color: var(--primary-600);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .ads-filters {
+            background: white;
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-6);
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .filter-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+        }
+        
+        .form-select, .form-input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: white;
+        }
+        
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .ad-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .ad-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .ad-preview {
+            height: 200px;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ad-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .ad-type-badge {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+        
+        .ad-content {
+            padding: var(--space-4);
+        }
+        
+        .ad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+        
+        .ad-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .ad-status {
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+        
+        .ad-status.active {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+        
+        .ad-status.paused {
+            background: var(--yellow-100);
+            color: var(--yellow-700);
+        }
+        
+        .ad-status.expired {
+            background: var(--red-100);
+            color: var(--red-700);
+        }
+        
+        .ad-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-4);
+            line-height: 1.4;
+        }
+        
+        .ad-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: var(--space-2);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+        }
+        
+        .metric-value {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+        
+        .metric-label {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+        
+        .ad-actions {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: flex-end;
+        }
+        
+        .action-btn {
+            background: none;
+            border: 1px solid var(--gray-300);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .action-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .action-btn.edit {
+            color: var(--primary-600);
+            border-color: var(--primary-300);
+        }
+        
+        .action-btn.edit:hover {
+            background: var(--primary-50);
+        }
+        
+        .action-btn.pause {
+            color: var(--yellow-600);
+            border-color: var(--yellow-300);
+        }
+        
+        .action-btn.pause:hover {
+            background: var(--yellow-50);
+        }
+        
+        .action-btn.delete {
+            color: var(--red-600);
+            border-color: var(--red-300);
+        }
+        
+        .action-btn.delete:hover {
+            background: var(--red-50);
+        }
+        
+        /* AdSense 配置样式 */
+        .adsense-config {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: var(--space-6);
+        }
+        
+        .config-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .config-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            transition: border-color var(--duration-normal) var(--ease-out);
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-help {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: var(--duration-normal);
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--duration-normal);
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-500);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .ads-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .ads-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                gap: var(--space-2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="admin-brand">
+                <i class="fas fa-gamepad"></i>
+                <span class="admin-brand-text">GameHub Admin</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <a href="admin.html" class="nav-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-item-text">仪表盘</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span class="nav-item-text">游戏管理</span>
+                        <span class="nav-item-badge">156</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-th-large"></i>
+                        <span class="nav-item-text">分类管理</span>
+                    </a>
+                    <a href="admin-tags.html" class="nav-item">
+                        <i class="fas fa-tags"></i>
+                        <span class="nav-item-text">标签管理</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-item-text">用户管理</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">内容管理</div>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span class="nav-item-text">评价管理</span>
+                        <span class="nav-item-badge">12</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-comments"></i>
+                        <span class="nav-item-text">评论管理</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-flag"></i>
+                        <span class="nav-item-text">举报管理</span>
+                        <span class="nav-item-badge">3</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">营收管理</div>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-ad"></i>
+                        <span class="nav-item-text">广告管理</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="nav-item-text">收益统计</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">系统设置</div>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-item-text">数据分析</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-item-text">系统设置</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="admin-user">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name">管理员</div>
+                    <div class="user-role">超级管理员</div>
+                </div>
+                <button class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="admin-main">
+            <!-- 头部 -->
+            <header class="admin-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">广告管理</h1>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge"></div>
+                    </button>
+                    <button class="btn btn-primary" id="addAdBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>创建广告</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <main class="admin-content">
+                <!-- 统计卡片 -->
+                <div class="ads-stats">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">总收益</div>
+                            <div class="stat-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">$2,847</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5% 本月</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">总点击数</div>
+                            <div class="stat-icon clicks">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">18,429</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8.2% 本月</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">总展示数</div>
+                            <div class="stat-icon impressions">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">245,678</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+15.3% 本月</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">点击率</div>
+                            <div class="stat-icon ctr">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">7.5%</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-2.1% 本月</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 标签页 -->
+                <div class="ads-tabs">
+                    <button class="tab-btn active" data-tab="ads">广告管理</button>
+                    <button class="tab-btn" data-tab="adsense">AdSense 配置</button>
+                    <button class="tab-btn" data-tab="analytics">收益分析</button>
+                </div>
+                
+                <!-- 广告管理标签页 -->
+                <div class="tab-content active" id="ads-tab">
+                    <!-- 筛选器 -->
+                    <div class="ads-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">状态：</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="all">全部状态</option>
+                                <option value="active">活跃</option>
+                                <option value="paused">暂停</option>
+                                <option value="expired">已过期</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">类型：</label>
+                            <select class="form-select" id="typeFilter">
+                                <option value="all">全部类型</option>
+                                <option value="banner">横幅广告</option>
+                                <option value="popup">弹窗广告</option>
+                                <option value="interstitial">插页广告</option>
+                                <option value="native">原生广告</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">搜索：</label>
+                            <input type="text" class="form-input" placeholder="搜索广告名称..." id="searchInput">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <button class="btn btn-outline" id="resetFilters">
+                                <i class="fas fa-refresh"></i>
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 广告网格 -->
+                    <div class="ads-grid">
+                        <!-- 广告卡片 -->
+                        <div class="ad-card">
+                            <div class="ad-preview">
+                                <img src="https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400&h=200&fit=crop" alt="游戏广告">
+                                <div class="ad-type-badge">横幅广告</div>
+                            </div>
+                            <div class="ad-content">
+                                <div class="ad-header">
+                                    <div>
+                                        <div class="ad-title">首页顶部横幅</div>
+                                        <div class="ad-status active">活跃</div>
+                                    </div>
+                                </div>
+                                <div class="ad-description">位于网站首页顶部的主要广告位，展示效果最佳</div>
+                                <div class="ad-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">1,247</div>
+                                        <div class="metric-label">点击数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">15,678</div>
+                                        <div class="metric-label">展示数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">7.9%</div>
+                                        <div class="metric-label">点击率</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">$342</div>
+                                        <div class="metric-label">收益</div>
+                                    </div>
+                                </div>
+                                <div class="ad-actions">
+                                    <button class="action-btn edit">
+                                        <i class="fas fa-edit"></i> 编辑
+                                    </button>
+                                    <button class="action-btn pause">
+                                        <i class="fas fa-pause"></i> 暂停
+                                    </button>
+                                    <button class="action-btn delete">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ad-card">
+                            <div class="ad-preview">
+                                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=200&fit=crop" alt="游戏广告">
+                                <div class="ad-type-badge">侧边栏</div>
+                            </div>
+                            <div class="ad-content">
+                                <div class="ad-header">
+                                    <div>
+                                        <div class="ad-title">右侧边栏广告</div>
+                                        <div class="ad-status active">活跃</div>
+                                    </div>
+                                </div>
+                                <div class="ad-description">位于页面右侧边栏的固定广告位</div>
+                                <div class="ad-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">892</div>
+                                        <div class="metric-label">点击数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">12,456</div>
+                                        <div class="metric-label">展示数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">7.2%</div>
+                                        <div class="metric-label">点击率</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">$267</div>
+                                        <div class="metric-label">收益</div>
+                                    </div>
+                                </div>
+                                <div class="ad-actions">
+                                    <button class="action-btn edit">
+                                        <i class="fas fa-edit"></i> 编辑
+                                    </button>
+                                    <button class="action-btn pause">
+                                        <i class="fas fa-pause"></i> 暂停
+                                    </button>
+                                    <button class="action-btn delete">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ad-card">
+                            <div class="ad-preview">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=200&fit=crop" alt="游戏广告">
+                                <div class="ad-type-badge">弹窗广告</div>
+                            </div>
+                            <div class="ad-content">
+                                <div class="ad-header">
+                                    <div>
+                                        <div class="ad-title">游戏结束弹窗</div>
+                                        <div class="ad-status paused">暂停</div>
+                                    </div>
+                                </div>
+                                <div class="ad-description">在用户游戏结束后显示的弹窗广告</div>
+                                <div class="ad-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">654</div>
+                                        <div class="metric-label">点击数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">8,234</div>
+                                        <div class="metric-label">展示数</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">7.9%</div>
+                                        <div class="metric-label">点击率</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">$198</div>
+                                        <div class="metric-label">收益</div>
+                                    </div>
+                                </div>
+                                <div class="ad-actions">
+                                    <button class="action-btn edit">
+                                        <i class="fas fa-edit"></i> 编辑
+                                    </button>
+                                    <button class="action-btn" style="color: var(--green-600); border-color: var(--green-300);">
+                                        <i class="fas fa-play"></i> 启用
+                                    </button>
+                                    <button class="action-btn delete">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AdSense 配置标签页 -->
+                <div class="tab-content" id="adsense-tab">
+                    <div class="adsense-config">
+                        <div class="config-section">
+                            <h3 class="config-title">
+                                <i class="fab fa-google"></i>
+                                AdSense 基本配置
+                            </h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">AdSense 发布商 ID</label>
+                                <input type="text" class="form-input" placeholder="ca-pub-xxxxxxxxxxxxxxxx" id="publisherId">
+                                <div class="form-help">请输入您的 AdSense 发布商 ID</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">启用 AdSense</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enableAdsense">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="config-section">
+                            <h3 class="config-title">
+                                <i class="fas fa-cog"></i>
+                                广告单元配置
+                            </h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">首页横幅广告单元 ID</label>
+                                <input type="text" class="form-input" placeholder="xxxxxxxxxx" id="homeBannerUnit">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">侧边栏广告单元 ID</label>
+                                <input type="text" class="form-input" placeholder="xxxxxxxxxx" id="sidebarUnit">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">游戏页面广告单元 ID</label>
+                                <input type="text" class="form-input" placeholder="xxxxxxxxxx" id="gamePageUnit">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">移动端广告单元 ID</label>
+                                <input type="text" class="form-input" placeholder="xxxxxxxxxx" id="mobileUnit">
+                            </div>
+                        </div>
+                        
+                        <div class="config-section">
+                            <h3 class="config-title">
+                                <i class="fas fa-shield-alt"></i>
+                                广告过滤设置
+                            </h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">阻止敏感类别</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="blockSensitive" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <div class="form-help">自动阻止敏感内容的广告</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">允许的广告类型</label>
+                                <div style="display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-2);">
+                                    <label style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <input type="checkbox" checked> 展示广告
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <input type="checkbox" checked> 文字广告
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <input type="checkbox"> 视频广告
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <input type="checkbox"> 富媒体广告
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: var(--space-3); justify-content: flex-end;">
+                            <button class="btn btn-outline">重置配置</button>
+                            <button class="btn btn-primary">保存配置</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 收益分析标签页 -->
+                <div class="tab-content" id="analytics-tab">
+                    <div class="adsense-config">
+                        <div class="config-section">
+                            <h3 class="config-title">
+                                <i class="fas fa-chart-line"></i>
+                                收益趋势分析
+                            </h3>
+                            <div style="height: 300px; background: var(--gray-100); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: var(--space-4);"></i>
+                                    <div>收益趋势图表将在此显示</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-section">
+                            <h3 class="config-title">
+                                <i class="fas fa-pie-chart"></i>
+                                广告类型收益分布
+                            </h3>
+                            <div style="height: 300px; background: var(--gray-100); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-pie-chart" style="font-size: 3rem; margin-bottom: var(--space-4);"></i>
+                                    <div>收益分布饼图将在此显示</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const adminSidebar = document.getElementById('adminSidebar');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            adminSidebar.classList.toggle('show');
+        });
+        
+        // 标签页切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                // 移除所有活跃状态
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // 添加活跃状态
+                this.classList.add('active');
+                document.getElementById(targetTab + '-tab').classList.add('active');
+            });
+        });
+        
+        // 筛选功能
+        const statusFilter = document.getElementById('statusFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const searchInput = document.getElementById('searchInput');
+        const resetFilters = document.getElementById('resetFilters');
+        
+        function applyFilters() {
+            const status = statusFilter.value;
+            const type = typeFilter.value;
+            const search = searchInput.value.toLowerCase();
+            
+            console.log('应用筛选:', { status, type, search });
+            // 这里添加筛选逻辑
+        }
+        
+        statusFilter.addEventListener('change', applyFilters);
+        typeFilter.addEventListener('change', applyFilters);
+        searchInput.addEventListener('input', applyFilters);
+        
+        resetFilters.addEventListener('click', function() {
+            statusFilter.value = 'all';
+            typeFilter.value = 'all';
+            searchInput.value = '';
+            applyFilters();
+        });
+        
+        // 广告操作
+        document.querySelectorAll('.action-btn.edit').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('编辑广告');
+                // 这里添加编辑逻辑
+            });
+        });
+        
+        document.querySelectorAll('.action-btn.pause').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('暂停广告');
+                // 这里添加暂停逻辑
+            });
+        });
+        
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('确定要删除这个广告吗？删除后无法恢复。')) {
+                    console.log('删除广告');
+                    // 这里添加删除逻辑
+                }
+            });
+        });
+        
+        // 创建广告按钮
+        document.getElementById('addAdBtn').addEventListener('click', function() {
+            console.log('创建新广告');
+            // 这里添加创建广告的逻辑
+        });
+    </script>
+</body>
+</html>

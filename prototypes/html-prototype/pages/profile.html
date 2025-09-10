@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 个人中心特定样式 */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+            color: white;
+            padding: var(--space-12) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .profile-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            background: var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-4xl);
+            color: var(--gray-600);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary-500);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid white;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .avatar-upload:hover {
+            background: var(--primary-600);
+            transform: scale(1.1);
+        }
+        
+        .profile-details h1 {
+            font-family: var(--font-game);
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+            font-size: var(--text-base);
+            opacity: 0.9;
+        }
+        
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-6);
+            max-width: 600px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-family: var(--font-game);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            display: block;
+            margin-bottom: var(--space-1);
+        }
+        
+        .stat-label {
+            font-size: var(--text-sm);
+            opacity: 0.8;
+        }
+        
+        .profile-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-8);
+        }
+        
+        .profile-sidebar {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-lg);
+            height: fit-content;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .sidebar-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 2px solid var(--gray-100);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: var(--space-2);
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all var(--duration-fast) var(--ease-out);
+            font-weight: var(--font-medium);
+        }
+        
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            transform: translateX(4px);
+        }
+        
+        .sidebar-nav .icon {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .profile-main {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-100);
+        }
+        
+        .section-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .section-action {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .section-action:hover {
+            background: var(--primary-50);
+            text-decoration: none;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            transition: all var(--duration-normal) var(--ease-out);
+            cursor: pointer;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .game-thumbnail {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all var(--duration-normal) var(--ease-out);
+        }
+        
+        .game-card:hover .game-overlay {
+            opacity: 1;
+        }
+        
+        .play-button {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .play-button:hover {
+            background: var(--primary-600);
+            transform: scale(1.1);
+        }
+        
+        .game-info {
+            padding: var(--space-4);
+        }
+        
+        .game-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            line-height: 1.4;
+        }
+        
+        .game-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .game-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .rating-stars {
+            color: var(--warning-500);
+        }
+        
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .achievement-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            text-align: center;
+            border: 2px solid var(--gray-200);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .achievement-card.unlocked {
+            background: var(--success-100);
+            border-color: var(--success-500);
+        }
+        
+        .achievement-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--space-2);
+            color: var(--gray-400);
+        }
+        
+        .achievement-card.unlocked .achievement-icon {
+            color: var(--success-500);
+        }
+        
+        .achievement-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .achievement-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .activity-list {
+            space-y: var(--space-4);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+        
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-100);
+            color: var(--primary-600);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .activity-time {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        /* 账户设置样式 */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .settings-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .settings-card.danger-zone {
+            border-color: var(--error-200);
+        }
+        
+        .settings-card-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .danger-zone .settings-card-header {
+            background: var(--error-50);
+            border-bottom-color: var(--error-200);
+        }
+        
+        .settings-card-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .danger-zone .settings-card-title {
+            color: var(--error-700);
+        }
+        
+        .settings-card-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin: 0;
+        }
+        
+        .settings-card-body {
+            padding: var(--space-6);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-6);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            transition: all var(--duration-fast) var(--ease-out);
+            background: white;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+        
+        .form-help {
+            display: block;
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+        }
+        
+        .btn {
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+            border: 1px solid transparent;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: var(--primary-500);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-600);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-700);
+            border-color: var(--gray-300);
+        }
+        
+        .btn-outline:hover {
+            background: var(--gray-50);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--gray-600);
+        }
+        
+        .btn-ghost:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .btn-danger {
+            background: var(--error-500);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: var(--error-600);
+        }
+        
+        .btn-outline-danger {
+            background: transparent;
+            color: var(--error-600);
+            border-color: var(--error-300);
+        }
+        
+        .btn-outline-danger:hover {
+            background: var(--error-50);
+        }
+        
+        .avatar-upload-section {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .current-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--gray-200);
+        }
+        
+        .current-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload-controls {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .security-option, .privacy-option, .notification-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+        
+        .security-option-info, .privacy-option-info, .notification-option-info {
+            flex: 1;
+        }
+        
+        .security-option-title, .privacy-option-title, .notification-option-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .security-option-description, .privacy-option-description, .notification-option-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin: 0;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: var(--duration-fast);
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--duration-fast);
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-500);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        .danger-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            border: 1px solid var(--error-200);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+            background: var(--error-50);
+        }
+        
+        .danger-action-info {
+            flex: 1;
+        }
+        
+        .danger-action-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-medium);
+            color: var(--error-700);
+            margin-bottom: var(--space-1);
+        }
+        
+        .danger-action-description {
+            font-size: var(--text-sm);
+            color: var(--error-600);
+            margin: 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-12) var(--space-4);
+            color: var(--gray-500);
+        }
+        
+        .empty-state-icon {
+            font-size: var(--text-5xl);
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+        
+        .empty-state-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-2);
+        }
+        
+        .empty-state-description {
+            font-size: var(--text-base);
+            margin-bottom: var(--space-6);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-6);
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+            
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .achievement-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 - 与首页一致 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="homepage.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="category.html" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>分类</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-fire"></i>
+                    <span>热门</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>最新</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索游戏...">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="profile.html" class="btn-profile active">
+                        <i class="fas fa-user"></i>
+                        <span>个人中心</span>
+                    </a>
+                    <button class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>退出</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 个人中心英雄区域 -->
+    <section class="profile-hero">
+        <div class="profile-hero-content">
+            <div class="profile-info">
+                <div class="profile-avatar">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="用户头像">
+                    <div class="avatar-upload">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <h1>游戏玩家</h1>
+                    <div class="profile-meta">
+                        <div class="profile-meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>加入于 2024年1月</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>中国</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>最后活跃: 2小时前</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-number">156</span>
+                    <span class="stat-label">游戏次数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">23</span>
+                    <span class="stat-label">收藏游戏</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">成就解锁</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">45h</span>
+                    <span class="stat-label">游戏时长</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 个人中心内容 -->
+    <div class="profile-content">
+        <!-- 侧边栏导航 -->
+        <div class="profile-sidebar">
+            <h3 class="sidebar-title">个人中心</h3>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="#" class="active" data-section="overview">
+                        <i class="fas fa-tachometer-alt icon"></i>
+                        <span>概览</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="favorites">
+                        <i class="fas fa-heart icon"></i>
+                        <span>收藏游戏</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="history">
+                        <i class="fas fa-history icon"></i>
+                        <span>游戏历史</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="achievements">
+                        <i class="fas fa-trophy icon"></i>
+                        <span>成就系统</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="comments">
+                        <i class="fas fa-comments icon"></i>
+                        <span>我的评论</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="activity">
+                        <i class="fas fa-chart-line icon"></i>
+                        <span>活动记录</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="settings">
+                        <i class="fas fa-cog icon"></i>
+                        <span>账户设置</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="profile-main">
+            <!-- 概览页面 -->
+            <div id="overview-section" class="content-section active">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        概览
+                    </h2>
+                </div>
+                
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <i class="fas fa-fire"></i>
+                        最近游戏
+                    </h3>
+                    <a href="#" class="section-action">查看全部</a>
+                </div>
+                
+                <div class="games-grid">
+                    <div class="game-card" onclick="location.href='game-detail.html'">
+                        <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                            <div class="game-overlay">
+                                <button class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">太空冒险</h3>
+                            <div class="game-meta">
+                                <div class="game-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span>4.2</span>
+                                </div>
+                                <span>2小时前</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-card" onclick="location.href='game-detail.html'">
+                        <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                            <div class="game-overlay">
+                                <button class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">战斗英雄</h3>
+                            <div class="game-meta">
+                                <div class="game-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span>4.8</span>
+                                </div>
+                                <span>1天前</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-card" onclick="location.href='game-detail.html'">
+                        <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                            <div class="game-overlay">
+                                <button class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">智力拼图</h3>
+                            <div class="game-meta">
+                                <div class="game-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span>4.1</span>
+                                </div>
+                                <span>3天前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 收藏游戏页面 -->
+            <div id="favorites-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-heart"></i>
+                        收藏游戏
+                    </h2>
+                    <span class="section-action">共23个游戏</span>
+                </div>
+                
+                <div class="games-grid">
+                    <div class="game-card" onclick="location.href='game-detail.html'">
+                        <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                            <div class="game-overlay">
+                                <button class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">极速赛车</h3>
+                            <div class="game-meta">
+                                <div class="game-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span>4.9</span>
+                                </div>
+                                <i class="fas fa-heart" style="color: var(--error-500);"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-card" onclick="location.href='game-detail.html'">
+                        <div class="game-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                            <div class="game-overlay">
+                                <button class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">策略大师</h3>
+                            <div class="game-meta">
+                                <div class="game-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span>4.3</span>
+                                </div>
+                                <i class="fas fa-heart" style="color: var(--error-500);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏历史页面 -->
+            <div id="history-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i>
+                        游戏历史
+                    </h2>
+                    <span class="section-action">共156次游戏</span>
+                </div>
+                
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">玩了《太空冒险》</div>
+                            <div class="activity-time">2小时前 · 游戏时长: 25分钟</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">在《战斗英雄》中获得新成就</div>
+                            <div class="activity-time">1天前 · 解锁"连胜达人"成就</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">收藏了《智力拼图》</div>
+                            <div class="activity-time">3天前</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">给《极速赛车》评分5星</div>
+                            <div class="activity-time">1周前</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成就系统页面 -->
+            <div id="achievements-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-trophy"></i>
+                        成就系统
+                    </h2>
+                    <span class="section-action">8/20 已解锁</span>
+                </div>
+                
+                <div class="achievement-grid">
+                    <div class="achievement-card unlocked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="achievement-title">初来乍到</div>
+                        <div class="achievement-description">完成第一次游戏</div>
+                    </div>
+                    
+                    <div class="achievement-card unlocked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="achievement-title">连胜达人</div>
+                        <div class="achievement-description">连续获胜10次</div>
+                    </div>
+                    
+                    <div class="achievement-card unlocked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="achievement-title">收藏家</div>
+                        <div class="achievement-description">收藏20个游戏</div>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="achievement-title">时间管理大师</div>
+                        <div class="achievement-description">累计游戏100小时</div>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="achievement-title">评论达人</div>
+                        <div class="achievement-description">发表50条评论</div>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="achievement-title">游戏之王</div>
+                        <div class="achievement-description">在排行榜中获得第一名</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的评论页面 -->
+            <div id="comments-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-comments"></i>
+                        我的评论
+                    </h2>
+                    <span class="section-action">共12条评论</span>
+                </div>
+                
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">评论了《太空冒险》</div>
+                            <div class="activity-time">"这个游戏真的很棒，画面精美，操作流畅！" · 2小时前</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-reply"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">回复了《战斗英雄》的评论</div>
+                            <div class="activity-time">"同意楼上的观点，这个游戏确实很有挑战性。" · 1天前</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">点赞了《智力拼图》的评论</div>
+                            <div class="activity-time">3天前</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 活动记录页面 -->
+            <div id="activity-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        活动记录
+                    </h2>
+                </div>
+                
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">今日游戏统计</div>
+                            <div class="activity-time">游戏3次 · 总时长1小时15分钟</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">本周游戏统计</div>
+                            <div class="activity-time">游戏18次 · 总时长8小时30分钟</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">本月游戏统计</div>
+                            <div class="activity-time">游戏76次 · 总时长35小时20分钟</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 账户设置页面 -->
+            <div id="settings-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-cog"></i>
+                        账户设置
+                    </h2>
+                </div>
+                
+                <div class="settings-container">
+                    <!-- 个人信息设置 -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <h3 class="settings-card-title">
+                                <i class="fas fa-user"></i>
+                                个人信息
+                            </h3>
+                            <p class="settings-card-description">管理您的基本信息和个人资料</p>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="form-group">
+                                <label class="form-label">用户名</label>
+                                <input type="text" class="form-input" value="游戏玩家001" placeholder="请输入用户名">
+                                <small class="form-help">用户名将在游戏中显示，建议使用易记的名称</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">邮箱地址</label>
+                                <input type="email" class="form-input" value="player001@example.com" placeholder="请输入邮箱地址">
+                                <small class="form-help">邮箱用于接收重要通知和找回密码</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">个人简介</label>
+                                <textarea class="form-textarea" rows="3" placeholder="介绍一下自己吧...">热爱游戏的玩家，喜欢挑战各种类型的游戏。</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">头像</label>
+                                <div class="avatar-upload-section">
+                                    <div class="current-avatar">
+                                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="当前头像">
+                                    </div>
+                                    <div class="avatar-upload-controls">
+                                        <button class="btn btn-outline">选择新头像</button>
+                                        <button class="btn btn-ghost">删除头像</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary">保存更改</button>
+                                <button class="btn btn-ghost">取消</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 安全设置 -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <h3 class="settings-card-title">
+                                <i class="fas fa-shield-alt"></i>
+                                安全设置
+                            </h3>
+                            <p class="settings-card-description">保护您的账户安全</p>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="form-group">
+                                <label class="form-label">当前密码</label>
+                                <input type="password" class="form-input" placeholder="请输入当前密码">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">新密码</label>
+                                <input type="password" class="form-input" placeholder="请输入新密码">
+                                <small class="form-help">密码长度至少8位，包含字母和数字</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">确认新密码</label>
+                                <input type="password" class="form-input" placeholder="请再次输入新密码">
+                            </div>
+                            <div class="security-option">
+                                <div class="security-option-info">
+                                    <h4 class="security-option-title">两步验证</h4>
+                                    <p class="security-option-description">为您的账户添加额外的安全保护</p>
+                                </div>
+                                <div class="security-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary">更新密码</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 隐私设置 -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <h3 class="settings-card-title">
+                                <i class="fas fa-eye-slash"></i>
+                                隐私设置
+                            </h3>
+                            <p class="settings-card-description">控制您的信息可见性</p>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="privacy-option">
+                                <div class="privacy-option-info">
+                                    <h4 class="privacy-option-title">公开个人资料</h4>
+                                    <p class="privacy-option-description">允许其他用户查看您的个人资料</p>
+                                </div>
+                                <div class="privacy-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="privacy-option">
+                                <div class="privacy-option-info">
+                                    <h4 class="privacy-option-title">显示游戏历史</h4>
+                                    <p class="privacy-option-description">在个人资料中显示您的游戏记录</p>
+                                </div>
+                                <div class="privacy-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="privacy-option">
+                                <div class="privacy-option-info">
+                                    <h4 class="privacy-option-title">允许好友请求</h4>
+                                    <p class="privacy-option-description">其他用户可以向您发送好友请求</p>
+                                </div>
+                                <div class="privacy-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 通知设置 -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <h3 class="settings-card-title">
+                                <i class="fas fa-bell"></i>
+                                通知设置
+                            </h3>
+                            <p class="settings-card-description">管理您接收的通知类型</p>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="notification-option">
+                                <div class="notification-option-info">
+                                    <h4 class="notification-option-title">邮件通知</h4>
+                                    <p class="notification-option-description">接收重要更新和活动通知</p>
+                                </div>
+                                <div class="notification-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="notification-option">
+                                <div class="notification-option-info">
+                                    <h4 class="notification-option-title">游戏推荐</h4>
+                                    <p class="notification-option-description">根据您的喜好推荐新游戏</p>
+                                </div>
+                                <div class="notification-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="notification-option">
+                                <div class="notification-option-info">
+                                    <h4 class="notification-option-title">成就通知</h4>
+                                    <p class="notification-option-description">获得新成就时通知您</p>
+                                </div>
+                                <div class="notification-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="notification-option">
+                                <div class="notification-option-info">
+                                    <h4 class="notification-option-title">社交互动</h4>
+                                    <p class="notification-option-description">好友活动和评论回复通知</p>
+                                </div>
+                                <div class="notification-option-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 账户管理 -->
+                    <div class="settings-card danger-zone">
+                        <div class="settings-card-header">
+                            <h3 class="settings-card-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                危险操作
+                            </h3>
+                            <p class="settings-card-description">这些操作不可逆转，请谨慎操作</p>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="danger-action">
+                                <div class="danger-action-info">
+                                    <h4 class="danger-action-title">清空游戏数据</h4>
+                                    <p class="danger-action-description">删除所有游戏记录、成就和统计数据</p>
+                                </div>
+                                <button class="btn btn-outline-danger">清空数据</button>
+                            </div>
+                            <div class="danger-action">
+                                <div class="danger-action-info">
+                                    <h4 class="danger-action-title">注销账户</h4>
+                                    <p class="danger-action-description">永久删除您的账户和所有相关数据</p>
+                                </div>
+                                <button class="btn btn-danger">注销账户</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 - 与首页一致 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <p class="footer-description">
+                    最好的HTML5游戏聚合平台，为您提供优质的在线游戏体验。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">游戏分类</h4>
+                <ul class="footer-links">
+                    <li><a href="#">动作游戏</a></li>
+                    <li><a href="#">益智游戏</a></li>
+                    <li><a href="#">竞速游戏</a></li>
+                    <li><a href="#">策略游戏</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">帮助中心</h4>
+                <ul class="footer-links">
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-title">关于我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#">公司介绍</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">开发者API</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 侧边栏导航切换
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.sidebar-nav a[data-section]');
+            const sections = document.querySelectorAll('.content-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 移除所有活跃状态
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => {
+                        s.classList.remove('active');
+                        s.style.display = 'none';
+                    });
+                    
+                    // 添加当前活跃状态
+                    this.classList.add('active');
+                    const targetSection = document.getElementById(this.dataset.section + '-section');
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                        targetSection.style.display = 'block';
+                    }
+                });
+            });
+            
+            // 搜索功能
+            const searchInput = document.querySelector('.search-box input');
+            const searchButton = document.querySelector('.search-box button');
+            
+            searchButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    alert(`搜索: "${query}"\n\n在实际应用中，这里会跳转到搜索结果页面。`);
+                }
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchButton.click();
+                }
+            });
+            
+            // 游戏卡片悬停效果
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // 头像上传功能
+            document.querySelector('.avatar-upload').addEventListener('click', function() {
+                alert('头像上传功能\n\n在实际应用中，这里会打开文件选择对话框。');
+            });
+            
+            // 退出登录
+            document.querySelector('.btn-logout').addEventListener('click', function() {
+                if (confirm('确定要退出登录吗？')) {
+                    alert('退出成功！\n\n在实际应用中，这里会清除用户会话并跳转到首页。');
+                    window.location.href = 'homepage.html';
+                }
+            });
+            
+            // 账户设置相关功能
+            // 个人信息保存
+            window.savePersonalInfo = function() {
+                const form = document.getElementById('personalInfoForm');
+                const formData = new FormData(form);
+                
+                // 模拟保存过程
+                const saveBtn = form.querySelector('.btn-primary');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = '保存中...';
+                saveBtn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('个人信息已保存');
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                }, 1000);
+            };
+            
+            // 密码修改
+            window.changePassword = function() {
+                const form = document.getElementById('passwordForm');
+                const currentPassword = form.querySelector('input[name="currentPassword"]').value;
+                const newPassword = form.querySelector('input[name="newPassword"]').value;
+                const confirmPassword = form.querySelector('input[name="confirmPassword"]').value;
+                
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    alert('请填写所有密码字段');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('新密码和确认密码不匹配');
+                    return;
+                }
+                
+                if (newPassword.length < 8) {
+                    alert('新密码长度至少为8位');
+                    return;
+                }
+                
+                // 模拟密码修改过程
+                const saveBtn = form.querySelector('.btn-primary');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = '修改中...';
+                saveBtn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('密码修改成功');
+                    form.reset();
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                }, 1000);
+            };
+            
+            // 头像上传
+            window.uploadAvatar = function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('图片大小不能超过5MB');
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const avatarImg = document.querySelector('.current-avatar img');
+                            avatarImg.src = e.target.result;
+                            alert('头像上传成功');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                input.click();
+            };
+            
+            // 删除头像
+            window.removeAvatar = function() {
+                if (confirm('确定要删除当前头像吗？')) {
+                    const avatarImg = document.querySelector('.current-avatar img');
+                    avatarImg.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+                    alert('头像已删除');
+                }
+            };
+            
+            // 双重认证
+            window.enableTwoFactor = function() {
+                alert('双重认证设置功能开发中...');
+            };
+            
+            // 查看登录历史
+            window.viewLoginHistory = function() {
+                alert('登录历史查看功能开发中...');
+            };
+            
+            // 导出数据
+            window.exportData = function() {
+                if (confirm('确定要导出您的数据吗？')) {
+                    alert('数据导出请求已提交，我们将在24小时内发送到您的邮箱');
+                }
+            };
+            
+            // 删除账户
+            window.deleteAccount = function() {
+                const confirmation = prompt('请输入 "DELETE" 来确认删除账户：');
+                if (confirmation === 'DELETE') {
+                    if (confirm('此操作不可逆转，确定要删除账户吗？')) {
+                        alert('账户删除请求已提交，我们将在7天内处理您的请求');
+                    }
+                } else if (confirmation !== null) {
+                    alert('确认文本不正确，账户删除已取消');
+                }
+            };
+            
+            // 开关切换功能
+            window.toggleSetting = function(checkbox, settingName) {
+                const isEnabled = checkbox.checked;
+                console.log(`${settingName} ${isEnabled ? '已启用' : '已禁用'}`);
+                
+                // 这里可以添加实际的设置保存逻辑
+                setTimeout(() => {
+                    // 模拟保存成功的反馈
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: var(--success-500);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        z-index: 1000;
+                        font-size: 14px;
+                    `;
+                    toast.textContent = `${settingName}设置已${isEnabled ? '启用' : '禁用'}`;
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 3000);
+                }, 300);
+            };
+        });
+    </script>
+</body>
+</html>

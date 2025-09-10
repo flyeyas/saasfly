@@ -26,7 +26,7 @@ export const customerRouter = createTRPCRouter({
         return { success: false, reason: "no auth" };
       }
       await db
-        .updateTable("User")
+        .updateTable("users")
         .set({
           name: input.name,
         })

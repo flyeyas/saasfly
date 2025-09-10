@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统配置管理 - HTML5游戏中心</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 后台管理特定样式 */
+        body {
+            background: var(--gray-50);
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .admin-brand {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .admin-brand i {
+            font-size: var(--text-2xl);
+            color: var(--primary-500);
+        }
+        
+        .admin-brand-text {
+            font-family: var(--font-game);
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .admin-nav {
+            flex: 1;
+            padding: var(--space-4);
+        }
+        
+        .admin-nav-group {
+            margin-bottom: var(--space-6);
+        }
+        
+        .admin-nav-title {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+            padding: 0 var(--space-3);
+        }
+        
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-1);
+        }
+        
+        .admin-nav-item:hover {
+            background: var(--gray-100);
+            color: var(--primary-600);
+        }
+        
+        .admin-nav-item.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+            font-weight: 500;
+        }
+        
+        .admin-nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .admin-header-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .admin-header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: var(--space-6);
+        }
+        
+        /* 系统配置特定样式 */
+        .config-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .config-tab {
+            padding: var(--space-3) var(--space-4);
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .config-tab:hover {
+            color: var(--primary-600);
+        }
+        
+        .config-tab.active {
+            color: var(--primary-600);
+            border-bottom-color: var(--primary-500);
+        }
+        
+        .config-panel {
+            display: none;
+        }
+        
+        .config-panel.active {
+            display: block;
+        }
+        
+        .config-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .config-section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .config-section-title i {
+            color: var(--primary-500);
+        }
+        
+        .config-form {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        .config-form-group {
+            display: grid;
+            gap: var(--space-2);
+        }
+        
+        .config-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+        
+        .config-form-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+        }
+        
+        .config-form-input {
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .config-form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+        
+        .config-form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .config-form-select {
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            background: white;
+            cursor: pointer;
+        }
+        
+        .config-form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .config-form-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .config-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .btn-test {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+        
+        .btn-test:hover {
+            background: var(--gray-200);
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+        
+        .status-error {
+            background: var(--red-100);
+            color: var(--red-700);
+        }
+        
+        .status-warning {
+            background: var(--yellow-100);
+            color: var(--yellow-700);
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+            }
+            
+            .admin-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .config-form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .config-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <i class="fas fa-gamepad"></i>
+                <span class="admin-brand-text">游戏管理后台</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">主要功能</div>
+                    <a href="admin.html" class="admin-nav-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>仪表盘</span>
+                    </a>
+                    <a href="admin-games.html" class="admin-nav-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>游戏管理</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-item">
+                        <i class="fas fa-folder"></i>
+                        <span>分类管理</span>
+                    </a>
+                    <a href="admin-tags.html" class="admin-nav-item">
+                        <i class="fas fa-tags"></i>
+                        <span>标签管理</span>
+                    </a>
+                    <a href="admin-users.html" class="admin-nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">内容管理</div>
+                    <a href="admin-ads.html" class="admin-nav-item">
+                        <i class="fas fa-ad"></i>
+                        <span>广告管理</span>
+                    </a>
+                    <a href="guides.html" class="admin-nav-item">
+                        <i class="fas fa-book"></i>
+                        <span>攻略管理</span>
+                    </a>
+                </div>
+                
+                <div class="admin-nav-group">
+                    <div class="admin-nav-title">系统设置</div>
+                    <a href="admin-config.html" class="admin-nav-item active">
+                        <i class="fas fa-cog"></i>
+                        <span>系统配置</span>
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>统计分析</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="admin-main">
+            <!-- 页头 -->
+            <header class="admin-header">
+                <div>
+                    <h1 class="admin-header-title">系统配置管理</h1>
+                </div>
+                <div class="admin-header-actions">
+                    <button class="btn btn-secondary" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        保存所有配置
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="admin-content">
+                <!-- 配置标签页 -->
+                <div class="config-tabs">
+                    <button class="config-tab active" data-tab="website">网站配置</button>
+                    <button class="config-tab" data-tab="smtp">邮箱配置</button>
+                    <button class="config-tab" data-tab="seo">SEO配置</button>
+                    <button class="config-tab" data-tab="security">安全配置</button>
+                    <button class="config-tab" data-tab="notification">通知配置</button>
+                </div>
+                
+                <!-- 网站配置面板 -->
+                <div class="config-panel active" id="website-panel">
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-globe"></i>
+                            基础信息
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">网站名称</label>
+                                    <input type="text" class="config-form-input" value="HTML5游戏中心" placeholder="请输入网站名称">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">网站域名</label>
+                                    <input type="url" class="config-form-input" value="https://games.example.com" placeholder="请输入网站域名">
+                                </div>
+                            </div>
+                            <div class="config-form-group">
+                                <label class="config-form-label">网站描述</label>
+                                <textarea class="config-form-input config-form-textarea" placeholder="请输入网站描述">最好玩的HTML5小游戏聚合平台，提供各种类型的在线游戏，支持多语言和移动端访问。</textarea>
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">联系邮箱</label>
+                                    <input type="email" class="config-form-input" value="admin@games.example.com" placeholder="请输入联系邮箱">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">客服电话</label>
+                                    <input type="tel" class="config-form-input" value="+1-555-0123" placeholder="请输入客服电话">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-share-alt"></i>
+                            社交媒体
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">Facebook</label>
+                                    <input type="url" class="config-form-input" placeholder="Facebook页面链接">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">Twitter</label>
+                                    <input type="url" class="config-form-input" placeholder="Twitter页面链接">
+                                </div>
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">Instagram</label>
+                                    <input type="url" class="config-form-input" placeholder="Instagram页面链接">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">YouTube</label>
+                                    <input type="url" class="config-form-input" placeholder="YouTube频道链接">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- SMTP配置面板 -->
+                <div class="config-panel" id="smtp-panel">
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-envelope"></i>
+                            SMTP服务器配置
+                            <span class="status-indicator status-error">
+                                <i class="fas fa-times-circle"></i>
+                                未配置
+                            </span>
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">SMTP服务器</label>
+                                    <input type="text" class="config-form-input" placeholder="smtp.gmail.com">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">端口</label>
+                                    <input type="number" class="config-form-input" placeholder="587">
+                                </div>
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">用户名</label>
+                                    <input type="text" class="config-form-input" placeholder="your-email@gmail.com">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">密码</label>
+                                    <input type="password" class="config-form-input" placeholder="应用专用密码">
+                                </div>
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">加密方式</label>
+                                    <select class="config-form-select">
+                                        <option value="tls">TLS</option>
+                                        <option value="ssl">SSL</option>
+                                        <option value="none">无加密</option>
+                                    </select>
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">发件人名称</label>
+                                    <input type="text" class="config-form-input" value="HTML5游戏中心" placeholder="发件人显示名称">
+                                </div>
+                            </div>
+                            <div class="config-actions">
+                                <button type="button" class="btn btn-test">
+                                    <i class="fas fa-paper-plane"></i>
+                                    发送测试邮件
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    保存配置
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- SEO配置面板 -->
+                <div class="config-panel" id="seo-panel">
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-search"></i>
+                            默认SEO设置
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-group">
+                                <label class="config-form-label">默认标题模板</label>
+                                <input type="text" class="config-form-input" value="{页面标题} - HTML5游戏中心" placeholder="使用{页面标题}作为占位符">
+                            </div>
+                            <div class="config-form-group">
+                                <label class="config-form-label">默认描述</label>
+                                <textarea class="config-form-input config-form-textarea" placeholder="网站默认描述">最好玩的HTML5小游戏聚合平台，提供各种类型的在线游戏，包括动作、益智、策略等游戏类型。</textarea>
+                            </div>
+                            <div class="config-form-group">
+                                <label class="config-form-label">关键词</label>
+                                <input type="text" class="config-form-input" value="HTML5游戏,在线游戏,小游戏,免费游戏" placeholder="用逗号分隔关键词">
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">Google Analytics ID</label>
+                                    <input type="text" class="config-form-input" placeholder="GA-XXXXXXXXX-X">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">Google Search Console</label>
+                                    <input type="text" class="config-form-input" placeholder="验证代码">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-sitemap"></i>
+                            站点地图设置
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="auto-sitemap" checked>
+                                <label for="auto-sitemap">自动生成站点地图</label>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="include-games" checked>
+                                <label for="include-games">包含游戏页面</label>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="include-categories" checked>
+                                <label for="include-categories">包含分类页面</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- 安全配置面板 -->
+                <div class="config-panel" id="security-panel">
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-shield-alt"></i>
+                            访问控制
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">API访问频率限制（每分钟）</label>
+                                    <input type="number" class="config-form-input" value="60" placeholder="60">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">登录失败锁定时间（分钟）</label>
+                                    <input type="number" class="config-form-input" value="15" placeholder="15">
+                                </div>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="enable-captcha" checked>
+                                <label for="enable-captcha">启用验证码</label>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="enable-2fa">
+                                <label for="enable-2fa">启用双因素认证</label>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-upload"></i>
+                            文件上传限制
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">最大文件大小（MB）</label>
+                                    <input type="number" class="config-form-input" value="10" placeholder="10">
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">允许的文件类型</label>
+                                    <input type="text" class="config-form-input" value="jpg,jpeg,png,gif,webp" placeholder="用逗号分隔">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- 通知配置面板 -->
+                <div class="config-panel" id="notification-panel">
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-bell"></i>
+                            邮件通知设置
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="notify-new-user" checked>
+                                <label for="notify-new-user">新用户注册通知</label>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="notify-new-comment" checked>
+                                <label for="notify-new-comment">新评论通知</label>
+                            </div>
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="notify-system-error" checked>
+                                <label for="notify-system-error">系统错误通知</label>
+                            </div>
+                            <div class="config-form-group">
+                                <label class="config-form-label">管理员邮箱</label>
+                                <input type="email" class="config-form-input" value="admin@games.example.com" placeholder="接收通知的邮箱">
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3 class="config-section-title">
+                            <i class="fas fa-database"></i>
+                            备份设置
+                        </h3>
+                        <form class="config-form">
+                            <div class="config-form-checkbox">
+                                <input type="checkbox" id="auto-backup" checked>
+                                <label for="auto-backup">启用自动备份</label>
+                            </div>
+                            <div class="config-form-row">
+                                <div class="config-form-group">
+                                    <label class="config-form-label">备份频率</label>
+                                    <select class="config-form-select">
+                                        <option value="daily">每日</option>
+                                        <option value="weekly" selected>每周</option>
+                                        <option value="monthly">每月</option>
+                                    </select>
+                                </div>
+                                <div class="config-form-group">
+                                    <label class="config-form-label">保留备份数量</label>
+                                    <input type="number" class="config-form-input" value="7" placeholder="7">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.admin-sidebar').classList.toggle('mobile-open');
+        });
+        
+        // 配置标签页切换
+        document.querySelectorAll('.config-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.config-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.config-panel').forEach(p => p.classList.remove('active'));
+                
+                // 添加当前活动状态
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + '-panel').classList.add('active');
+            });
+        });
+        
+        // 表单提交处理
+        document.querySelectorAll('.config-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 显示保存成功提示
+                const button = this.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> 保存成功';
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                }, 2000);
+            });
+        });
+        
+        // 测试邮件发送
+        document.querySelector('.btn-test').addEventListener('click', function() {
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+            button.disabled = true;
+            
+            // 模拟发送过程
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i> 发送成功';
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.disabled = false;
+                }, 2000);
+            }, 2000);
+        });
+        
+        // 自动保存功能
+        let saveTimeout;
+        document.querySelectorAll('.config-form-input, .config-form-select').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    console.log('自动保存配置...');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
