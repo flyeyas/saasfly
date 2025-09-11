@@ -38,7 +38,7 @@ export function SiteFooter({
             {getCopyrightText(dict)}
           </p>
         </div>
-        <ModeToggle />
+        <ModeToggle dict={dict} />
       </div>
     </footer>
   );

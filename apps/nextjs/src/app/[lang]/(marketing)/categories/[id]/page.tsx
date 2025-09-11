@@ -20,16 +20,19 @@ import {
 } from "@saasfly/ui/select";
 
 
+import { getDictionary } from "~/lib/get-dictionary";
+import type { Locale } from "~/config/i18n-config";
 import { games, categories, getCategoryById, type Game } from "../../../../../data/mock-games";
 
 interface CategoryPageProps {
   params: {
-    lang: string;
+    lang: Locale;
     id: string;
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const dict = await getDictionary(params.lang);
   const category = getCategoryById(params.id);
   
   if (!category) {
@@ -50,11 +53,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
             <Link href={`/${params.lang}`} className="hover:text-foreground">
-              Home
+              {dict.categories.home}
             </Link>
             <ChevronRight className="h-4 w-4" />
             <Link href={`/${params.lang}/categories`} className="hover:text-foreground">
-              Categories
+              {dict.categories.all_categories}
             </Link>
             <ChevronRight className="h-4 w-4" />
             <span className="text-foreground">{category.name}</span>
@@ -63,9 +66,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           {/* Category Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight">{category.name} Games</h1>
+              <h1 className="text-4xl font-bold tracking-tight">
+                {dict.categories.category_games_title.replace('{name}', category.name)}
+              </h1>
               <p className="text-xl text-muted-foreground mt-2">
-                Discover {categoryGames.length} amazing {category.name.toLowerCase()} games
+                {dict.categories.category_games_subtitle.replace('{count}', categoryGames.length.toString()).replace('{name}', category.name.toLowerCase())}
               </p>
             </div>
             <div className="hidden md:block">
@@ -86,7 +91,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search games..."
+                  placeholder={dict.categories.search_games_placeholder}
                   className="pl-10 w-full sm:w-[300px]"
                 />
               </div>
@@ -94,21 +99,21 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               {/* Sort */}
               <Select defaultValue="popular">
                 <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={dict.categories.sort_by} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="name">Name A-Z</SelectItem>
-                  <SelectItem value="name-desc">Name Z-A</SelectItem>
+                  <SelectItem value="popular">{dict.categories.most_popular}</SelectItem>
+                  <SelectItem value="newest">{dict.categories.newest_first}</SelectItem>
+                  <SelectItem value="oldest">{dict.categories.oldest_first}</SelectItem>
+                  <SelectItem value="name">{dict.categories.name_a_z}</SelectItem>
+                  <SelectItem value="name-desc">{dict.categories.name_z_a}</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Additional Filters */}
               <Button variant="outline" className="gap-2">
                 <Filter className="h-4 w-4" />
-                More Filters
+                {dict.categories.more_filters}
               </Button>
             </div>
 
@@ -116,11 +121,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="gap-2">
                 <Grid className="h-4 w-4" />
-                Grid
+                {dict.categories.grid_view}
               </Button>
               <Button variant="ghost" size="sm" className="gap-2">
                 <List className="h-4 w-4" />
-                List
+                {dict.categories.list_view}
               </Button>
             </div>
           </div>
@@ -134,12 +139,12 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             <div className="h-24 w-24 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
               <Grid className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No games found</h3>
+            <h3 className="text-xl font-semibold mb-2">{dict.categories.no_games_found}</h3>
             <p className="text-muted-foreground mb-4">
-              There are no games in the {category.name} category yet.
+              {dict.categories.no_games_in_category.replace('{name}', category.name)}
             </p>
             <Button asChild>
-              <Link href={`/${params.lang}`}>Browse All Games</Link>
+              <Link href={`/${params.lang}`}>{dict.categories.browse_all_games}</Link>
             </Button>
           </div>
         ) : (
@@ -147,7 +152,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             {/* Results Count */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-muted-foreground">
-                Showing {categoryGames.length} games in {category.name}
+                {dict.categories.showing_results.replace('{count}', categoryGames.length.toString()).replace('{category}', category.name)}
               </p>
             </div>
 
@@ -170,15 +175,15 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                       {game.title}
                     </CardTitle>
                     <CardDescription className="line-clamp-2 mb-3">
-                      {game.description || 'No description available for this game.'}
+                      {game.description || dict.categories.no_description_available}
                     </CardDescription>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">
-                        {getCategoryById(game.categoryId)?.name || 'Unknown'}
+                        {getCategoryById(game.categoryId)?.name || dict.categories.unknown_category}
                       </span>
                       <Button asChild size="sm">
                         <Link href={`/${params.lang}/games/${game.id}`}>
-                          Play Now
+                          {dict.categories.play_now}
                         </Link>
                       </Button>
                     </div>
@@ -191,7 +196,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             {categoryGames.length > 20 && (
               <div className="text-center mt-12">
                 <Button variant="outline" size="lg">
-                  Load More Games
+                  {dict.categories.load_more_games}
                 </Button>
               </div>
             )}
@@ -202,7 +207,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       {/* Related Categories */}
       <div className="border-t bg-muted/30">
         <div className="container mx-auto px-4 py-12">
-          <h2 className="text-2xl font-bold mb-6">Explore Other Categories</h2>
+          <h2 className="text-2xl font-bold mb-6">{dict.categories.explore_other_categories}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {categories
               .filter((cat) => cat.id !== params.id)
@@ -224,7 +229,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                           {cat.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          {catGameCount} games
+                          {dict.categories.games_count.replace('{count}', catGameCount.toString())}
                         </p>
                       </CardContent>
                     </Card>
@@ -245,19 +250,25 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
+  const dict = await getDictionary(params.lang);
   const category = getCategoryById(params.id);
   
   if (!category) {
     return {
-      title: 'Category Not Found',
+      title: dict.categories.category_not_found_title,
     };
   }
 
   const gameCount = games.filter((game: Game) => game.categoryId === params.id).length;
 
   return {
-    title: `${category.name} Games - Play ${gameCount} Free Online Games`,
-    description: `Discover ${gameCount} amazing ${category.name.toLowerCase()} games. Play free online games in the ${category.name} category.`,
-    keywords: `${category.name.toLowerCase()} games, free online games, ${category.name.toLowerCase()}, browser games`,
+    title: dict.categories.category_meta_title
+      .replace('{name}', category.name)
+      .replace('{count}', gameCount.toString()),
+    description: dict.categories.category_meta_description
+      .replace('{count}', gameCount.toString())
+      .replace(/{name}/g, category.name.toLowerCase()),
+    keywords: dict.categories.category_meta_keywords
+      .replace(/{name}/g, category.name.toLowerCase()),
   };
 }

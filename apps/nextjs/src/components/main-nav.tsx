@@ -45,7 +45,7 @@ export function MainNav({ items, children, params: { lang }, marketing }: MainNa
         onClick={() => setShowMobileMenu(!showMobileMenu)}
       >
         {showMobileMenu ? <Icons.Close/> : <Icons.Logo/>}
-        <span className="font-bold">Menu</span>
+        <span className="font-bold">{marketing?.menu || "Menu"}</span>
       </button>
       {showMobileMenu && items && (
         <MobileNav items={items} menuItemClick={handleMenuItemClick}>

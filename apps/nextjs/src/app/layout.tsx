@@ -64,11 +64,14 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { lang?: string };
 }) {
+  const lang = params?.lang || 'en';
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head />
       {/*<Suspense>*/}
       {/*  <PostHogPageview />*/}

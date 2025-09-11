@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Grid, Search, TrendingUp } from "lucide-react";
+import type { Metadata } from "next";
 
 import { Button } from "@saasfly/ui/button";
 import {
@@ -11,15 +12,19 @@ import {
 } from "@saasfly/ui/card";
 import { Input } from "@saasfly/ui/input";
 
+import { getDictionary } from "~/lib/get-dictionary";
+import type { Locale } from "~/config/i18n-config";
 import { games, categories, type Game, type Category } from "../../../../data/mock-games";
 
 interface CategoriesPageProps {
   params: {
-    lang: string;
+    lang: Locale;
   };
 }
 
-export default function CategoriesPage({ params }: CategoriesPageProps) {
+export default async function CategoriesPage({ params }: CategoriesPageProps) {
+  const dict = await getDictionary(params.lang);
+  
   // Calculate games count per category
   const getCategoryGameCount = (categoryId: string) => {
     return games.filter((game: Game) => game.categoryId === categoryId).length;
@@ -42,17 +47,17 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
             <Link href={`/${params.lang}`} className="hover:text-foreground">
-              Home
+              {dict.categories.home}
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground">Categories</span>
+            <span className="text-foreground">{dict.categories.all_categories}</span>
           </nav>
 
           {/* Page Header */}
           <div className="text-center">
-            <h1 className="text-4xl md:text-3xl sm:text-2xl font-bold tracking-tight mb-4">Game Categories</h1>
+            <h1 className="text-4xl md:text-3xl sm:text-2xl font-bold tracking-tight mb-4">{dict.categories.page_title}</h1>
             <p className="text-xl md:text-lg sm:text-base text-muted-foreground max-w-2xl mx-auto px-4">
-              Explore our collection of {categories.length} game categories with over {games.length} free online games
+              {dict.categories.page_subtitle.replace('{count}', categories.length.toString()).replace('{total}', games.length.toString())}
             </p>
           </div>
         </div>
@@ -65,7 +70,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search categories..."
+                placeholder={dict.categories.search_placeholder}
                 className="pl-10"
               />
             </div>
@@ -77,9 +82,9 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
         <div className="container mx-auto px-4 py-12">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Most Popular Category</h2>
+            <h2 className="text-2xl font-bold mb-2">{dict.categories.most_popular_category}</h2>
             <p className="text-muted-foreground">
-              Discover the most played games in our collection
+              {dict.categories.most_popular_subtitle}
             </p>
           </div>
           <Card className="max-w-2xl mx-auto hover:shadow-lg transition-shadow">
@@ -99,18 +104,18 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                     <div className="text-2xl font-bold text-primary">
                       {getCategoryGameCount(mostPopular.id)}
                     </div>
-                    <div className="text-sm text-muted-foreground">Games</div>
+                    <div className="text-sm text-muted-foreground">{dict.categories.games_count}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-primary">
                       {Math.round(games.filter(g => g.categoryId === mostPopular.id).reduce((sum, g) => sum + g.playCount, 0) / 1000)}K
                     </div>
-                    <div className="text-sm text-muted-foreground">Total Plays</div>
+                    <div className="text-sm text-muted-foreground">{dict.categories.total_plays}</div>
                   </div>
                 </div>
                 <Button asChild size="lg">
                   <Link href={`/${params.lang}/categories/${mostPopular.id}`}>
-                    Explore {mostPopular.name}
+                    {dict.categories.explore_category.replace('{name}', mostPopular.name)}
                   </Link>
                 </Button>
               </div>
@@ -122,9 +127,9 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
       {/* Categories Grid */}
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4">All Categories</h2>
+          <h2 className="text-3xl font-bold mb-4">{dict.categories.all_categories_title}</h2>
           <p className="text-muted-foreground">
-            Browse through all our game categories and find your favorite games
+            {dict.categories.all_categories_subtitle}
           </p>
         </div>
 
@@ -152,11 +157,11 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                   <CardContent className="pt-0">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Games</span>
+                        <span className="text-muted-foreground">{dict.categories.games_count}</span>
                         <span className="font-semibold">{gameCount}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Total Plays</span>
+                        <span className="text-muted-foreground">{dict.categories.total_plays}</span>
                         <span className="font-semibold">
                           {totalPlays > 1000 ? `${Math.round(totalPlays / 1000)}K` : totalPlays}
                         </span>
@@ -169,7 +174,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                           />
                         </div>
                         <div className="text-xs text-muted-foreground mt-1 text-center">
-                          Popularity
+                          {dict.categories.popularity}
                         </div>
                       </div>
                     </div>
@@ -185,9 +190,9 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
       <div className="bg-muted/30 border-t">
         <div className="container mx-auto px-4 py-12">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Platform Statistics</h2>
+            <h2 className="text-2xl font-bold mb-2">{dict.categories.platform_statistics}</h2>
             <p className="text-muted-foreground">
-              Discover the numbers behind our gaming platform
+              {dict.categories.platform_statistics_subtitle}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -200,7 +205,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                   {categories.length}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Game Categories
+                  {dict.categories.game_categories_stat}
                 </div>
               </CardContent>
             </Card>
@@ -213,7 +218,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                   {games.length}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Total Games
+                  {dict.categories.total_games_stat}
                 </div>
               </CardContent>
             </Card>
@@ -226,7 +231,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                   {Math.round(games.reduce((sum, g) => sum + g.playCount, 0) / 1000)}K
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Total Plays
+                  {dict.categories.total_plays_stat}
                 </div>
               </CardContent>
             </Card>
@@ -239,7 +244,7 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
                   {Math.round(games.length / categories.length)}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Avg Games/Category
+                  {dict.categories.avg_games_per_category}
                 </div>
               </CardContent>
             </Card>
@@ -250,13 +255,13 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
       {/* Call to Action */}
       <div className="border-t">
         <div className="container mx-auto px-4 py-12 text-center">
-          <h2 className="text-2xl font-bold mb-4">Ready to Start Playing?</h2>
+          <h2 className="text-2xl font-bold mb-4">{dict.categories.ready_to_play}</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Choose your favorite category and dive into hours of entertainment with our free online games.
+            {dict.categories.ready_to_play_subtitle}
           </p>
           <Button asChild size="lg">
             <Link href={`/${params.lang}`}>
-              Browse All Games
+              {dict.categories.browse_all_games}
             </Link>
           </Button>
         </div>
@@ -265,10 +270,11 @@ export default function CategoriesPage({ params }: CategoriesPageProps) {
   );
 }
 
-export async function generateMetadata({ params }: CategoriesPageProps) {
+export async function generateMetadata({ params }: CategoriesPageProps): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  
   return {
-    title: `Game Categories - Browse ${categories.length} Categories of Free Online Games`,
-    description: `Explore ${categories.length} different game categories with over ${games.length} free online games. Find action, puzzle, racing, strategy games and more.`,
-    keywords: 'game categories, free online games, browser games, action games, puzzle games, racing games, strategy games',
+    title: dict.categories.page_title,
+    description: dict.categories.page_subtitle.replace('{count}', categories.length.toString()).replace('{total}', games.length.toString()),
   };
 }

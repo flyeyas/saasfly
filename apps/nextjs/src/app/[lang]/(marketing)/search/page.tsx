@@ -22,10 +22,12 @@ import {
 
 import { searchGames, categories, getCategoryById, type Game } from "../../../../data/mock-games";
 import GameSearch from "../../../../components/search/GameSearch";
+import { getDictionary } from "~/lib/get-dictionary";
+import type { Locale } from "~/config/i18n-config";
 
 interface SearchPageProps {
   params: {
-    lang: string;
+    lang: Locale;
   };
   searchParams: {
     q?: string;
@@ -35,18 +37,20 @@ interface SearchPageProps {
   };
 }
 
-export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: SearchPageProps): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
   const query = searchParams.q || "";
   
   return {
-    title: query ? `Search Results for "${query}" - GameHub` : "Search Games - GameHub",
+    title: query ? dict.search.search_results_title.replace('{query}', query) : dict.search.search_title,
     description: query 
-      ? `Find games matching "${query}". Browse our collection of free online games.`
-      : "Search and discover amazing free online games. Filter by category, rating, and more.",
+      ? dict.search.search_results_description.replace('{query}', query)
+      : dict.search.search_description,
   };
 }
 
-function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["searchParams"]; lang: string }) {
+async function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["searchParams"]; lang: Locale }) {
+  const dict = await getDictionary(lang);
   const query = searchParams.q || "";
   const categoryFilter = searchParams.category || "";
   const sortBy = searchParams.sort || "relevance";
@@ -92,7 +96,7 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
           <Link href={`/${lang}`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              {dict.search.back_to_home}
             </Button>
           </Link>
         </div>
@@ -101,22 +105,22 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
           <div>
             <h1 className="text-3xl font-bold mb-2">
               {query ? (
-                <>Search Results for "{query}"\</>
+                <>{dict.search.search_results_for.replace('{query}', query)}</>
               ) : (
-                "Browse All Games"
+                dict.search.browse_all_games
               )}
             </h1>
             <p className="text-muted-foreground">
-              {results.length} game{results.length !== 1 ? 's' : ''} found
+              {dict.search.games_found.replace('{count}', results.length.toString())}
               {selectedCategory && (
-                <> in <span className="font-medium">{selectedCategory.name}</span></>
+                <> {dict.search.in_category.replace('{category}', selectedCategory.name)}</>
               )}
             </p>
           </div>
           
           {/* Search Bar */}
           <div className="w-full lg:w-96">
-            <GameSearch lang={lang} placeholder="Search games..." />
+            <GameSearch lang={lang} placeholder={dict.search.search_placeholder} />
           </div>
         </div>
       </div>
@@ -136,10 +140,10 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
           }}>
             <SelectTrigger className="w-48">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder={dict.search.all_categories} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="">{dict.search.all_categories}</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.icon} {category.name}
@@ -158,10 +162,10 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="relevance">Relevance</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="popular">Most Popular</SelectItem>
+              <SelectItem value="relevance">{dict.search.sort_relevance}</SelectItem>
+              <SelectItem value="rating">{dict.search.sort_rating}</SelectItem>
+              <SelectItem value="newest">{dict.search.sort_newest}</SelectItem>
+              <SelectItem value="popular">{dict.search.sort_popular}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -214,7 +218,7 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg mb-1 truncate">{game.title}</h3>
                       <p className="text-muted-foreground text-sm mb-2 line-clamp-2">
-                        {game.description || 'No description available'}
+                        {game.description || dict.search.no_description}
                       </p>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="flex items-center gap-1">
@@ -222,7 +226,7 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
                           {game.rating.toFixed(1)}
                         </span>
                         <span className="bg-muted px-2 py-1 rounded-full">
-                          {category?.name || 'Unknown'}
+                          {category?.name || dict.search.unknown_category}
                         </span>
                         <span className="text-muted-foreground">
                           {new Date(game.createdAt).getFullYear()}
@@ -230,7 +234,7 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
                       </div>
                     </div>
                     <Link href={`/${lang}/games/${game.id}`}>
-                      <Button>Play Now</Button>
+                      <Button>{dict.search.play_now}</Button>
                     </Link>
                   </div>
                 </Card>
@@ -255,16 +259,16 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg line-clamp-1">{game.title}</CardTitle>
                   <CardDescription className="line-clamp-2">
-                    {game.description || 'No description available'}
+                    {game.description || dict.search.no_description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="flex items-center justify-between">
                     <span className="text-sm bg-muted px-2 py-1 rounded-full">
-                      {category?.name || 'Unknown'}
+                      {category?.name || dict.search.unknown_category}
                     </span>
                     <Link href={`/${lang}/games/${game.id}`}>
-                      <Button size="sm">Play</Button>
+                      <Button size="sm">{dict.search.play}</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -275,17 +279,17 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
       ) : (
         <div className="text-center py-12">
           <Search className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <h3 className="text-xl font-semibold mb-2">No games found</h3>
+          <h3 className="text-xl font-semibold mb-2">{dict.search.no_games_found}</h3>
           <p className="text-muted-foreground mb-4">
             {query ? (
-              <>We couldn't find any games matching "{query}"</>
+              <>{dict.search.no_games_matching.replace('{query}', query)}</>
             ) : (
-              "No games match your current filters"
+              dict.search.no_games_filters
             )}
           </p>
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Link href={`/${lang}`}>
-              <Button variant="outline">Browse All Games</Button>
+              <Button variant="outline">{dict.search.browse_all_games}</Button>
             </Link>
             {(query || categoryFilter) && (
               <Button
@@ -294,7 +298,7 @@ function SearchResults({ searchParams, lang }: { searchParams: SearchPageProps["
                   window.location.href = `/${lang}/search`;
                 }}
               >
-                Clear Filters
+                {dict.search.clear_filters}
               </Button>
             )}
           </div>

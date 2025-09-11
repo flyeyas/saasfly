@@ -20,18 +20,16 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
   dict: Dictionary;
 }
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+const createLoginSchema = (dict: Dictionary) => z.object({
+  email: z.string().email(dict.login_form_email_validation),
   password: z.string().optional(),
   verificationCode: z.string().optional(),
 }).refine((data) => {
   return data.password || data.verificationCode;
 }, {
-  message: "Please enter password or verification code",
+  message: dict.login_form_password_validation,
   path: ["password"],
 });
-
-type FormData = z.infer<typeof loginSchema>;
 
 export function UserLoginForm({
   className,
@@ -39,6 +37,9 @@ export function UserLoginForm({
   dict,
   ...props
 }: UserLoginFormProps) {
+  const loginSchema = createLoginSchema(dict);
+  type FormData = z.infer<typeof loginSchema>;
+  
   const {
     register,
     handleSubmit,
@@ -71,8 +72,8 @@ export function UserLoginForm({
   const sendLoginCode = async () => {
     if (!watchedEmail || !z.string().email().safeParse(watchedEmail).success) {
       toast({
-        title: "Error",
-        description: "Please enter a valid email address first",
+        title: dict.login_form_error_title,
+        description: dict.login_form_email_required,
         variant: "destructive",
       });
       return;
@@ -91,21 +92,21 @@ export function UserLoginForm({
         setCodeSent(true);
         setCountdown(60);
         toast({
-          title: "Verification code sent",
-        description: "Please check your email for the verification code",
+          title: dict.login_form_code_sent_title,
+        description: dict.login_form_code_sent_desc,
         });
       } else {
         toast({
-          title: "Send failed",
-        description: data.error || "Failed to send verification code, please try again later",
+          title: dict.login_form_send_failed_title,
+        description: data.error || dict.login_form_send_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send login code error:", error);
       toast({
-        title: "Send failed",
-      description: "Network error, please try again later",
+        title: dict.login_form_send_failed_title,
+      description: dict.login_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -130,24 +131,24 @@ export function UserLoginForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "Login successful",
-        description: "Welcome back! Redirecting...",
+          title: dict.login_form_login_success_title,
+        description: dict.login_form_login_success_desc,
         });
         setTimeout(() => {
           router.push(`/${lang}/dashboard`);
         }, 1500);
       } else {
         toast({
-          title: "Login failed",
-        description: result.error || "Login failed, please check your email and password",
+          title: dict.login_form_login_failed_title,
+        description: result.error || dict.login_form_login_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: "Login failed",
-      description: "Network error, please try again later",
+        title: dict.login_form_login_failed_title,
+      description: dict.login_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -161,10 +162,10 @@ export function UserLoginForm({
         <div className="grid gap-4">
           {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{dict.login_form_email}</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder={dict.login_form_email_placeholder}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -186,7 +187,7 @@ export function UserLoginForm({
               onClick={() => setLoginMode('password')}
               disabled={isLoading}
             >
-              Password Login
+              {dict.login_form_password_login}
             </Button>
             <Button
               type="button"
@@ -195,7 +196,7 @@ export function UserLoginForm({
               onClick={() => setLoginMode('code')}
               disabled={isLoading}
             >
-              Code Login
+              {dict.login_form_code_login}
             </Button>
           </div>
 
@@ -203,17 +204,17 @@ export function UserLoginForm({
           {loginMode === 'password' && (
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{dict.login_form_password}</Label>
                 <a
                   href={`/${lang}/password-reset`}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  Forgot password?
+                  {dict.login_form_forgot_password}
                 </a>
               </div>
               <Input
                 id="password"
-                placeholder="Enter password"
+                placeholder={dict.login_form_password_placeholder}
                 type="password"
                 autoComplete="current-password"
                 disabled={isLoading}
@@ -228,11 +229,11 @@ export function UserLoginForm({
           {/* Verification code login */}
           {loginMode === 'code' && (
             <div className="grid gap-2">
-              <Label htmlFor="verificationCode">Verification Code</Label>
+              <Label htmlFor="verificationCode">{dict.login_form_verification_code}</Label>
               <div className="flex space-x-2">
                 <Input
                   id="verificationCode"
-                  placeholder="Enter verification code"
+                  placeholder={dict.login_form_verification_code_placeholder}
                   disabled={isLoading}
                   {...register("verificationCode")}
                 />
@@ -245,7 +246,7 @@ export function UserLoginForm({
                   {isCodeSending && (
                     <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {countdown > 0 ? `${countdown}s` : codeSent ? "Resend" : "Send Code"}
+                  {countdown > 0 ? `${countdown}s` : codeSent ? dict.login_form_resend : dict.login_form_send_code}
                 </Button>
               </div>
               {errors?.verificationCode && (
@@ -258,7 +259,7 @@ export function UserLoginForm({
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Login
+            {dict.login_form_login}
           </Button>
         </div>
       </form>

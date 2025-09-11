@@ -16,9 +16,12 @@ import * as Icons from "@saasfly/ui/icons";
 
 import { env } from "~/env.mjs";
 import { absoluteUrl, formatDate } from "~/lib/utils";
+import type { Locale } from "~/config/i18n-config";
+import { getDictionary } from "~/lib/get-dictionary";
 
 interface PostPageProps {
   params: {
+    lang: Locale;
     slug: string[];
   };
 }
@@ -82,7 +85,8 @@ export function generateStaticParams(): PostPageProps["params"][] {
   }));
 }
 
-export default function PostPage({ params }: PostPageProps) {
+export default async function PostPage({ params }: PostPageProps) {
+  const dict = await getDictionary(params.lang);
   const post = getPostFromParams(params);
 
   if (!post) {
@@ -96,14 +100,14 @@ export default function PostPage({ params }: PostPageProps) {
   return (
     <article className="container relative max-w-3xl py-6 lg:py-10">
       <Link
-        href="/blog"
+        href={`/${params.lang}/blog`}
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "absolute left-[-200px] top-14 hidden xl:inline-flex",
         )}
       >
         <Icons.ChevronLeft className="mr-2 h-4 w-4" />
-        See all posts
+        {dict.blog_see_all_posts}
       </Link>
       <div>
         {post.date && (
@@ -111,7 +115,7 @@ export default function PostPage({ params }: PostPageProps) {
             dateTime={post.date}
             className="block text-sm text-muted-foreground"
           >
-            Published on {formatDate(post.date)}
+            {dict.blog_published_on} {formatDate(post.date)}
           </time>
         )}
         <h1 className="font-heading mt-2 inline-block text-4xl leading-tight lg:text-5xl">
@@ -158,9 +162,9 @@ export default function PostPage({ params }: PostPageProps) {
       <Mdx code={post.body.code} />
       <hr className="mt-12" />
       <div className="flex justify-center py-6 lg:py-10">
-        <Link href="/blog" className={cn(buttonVariants({ variant: "ghost" }))}>
+        <Link href={`/${params.lang}/blog`} className={cn(buttonVariants({ variant: "ghost" }))}>
           <Icons.ChevronLeft className="mr-2 h-4 w-4" />
-          See all posts
+          {dict.blog_see_all_posts}
         </Link>
       </div>
     </article>

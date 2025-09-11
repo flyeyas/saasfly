@@ -8,15 +8,16 @@ import { toast } from "@saasfly/ui/use-toast";
 
 interface DocsSearchProps extends React.HTMLAttributes<HTMLFormElement> {
   lang: string;
+  dict: any;
 }
 
-export function DocsSearch({ className, ...props }: DocsSearchProps) {
+export function DocsSearch({ className, dict, ...props }: DocsSearchProps) {
   function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
 
     return toast({
-      title: "Not implemented",
-      description: "We're still working on the search.",
+      title: dict.docs_search_not_implemented,
+      description: dict.docs_search_working_on_it,
     });
   }
 
@@ -28,7 +29,7 @@ export function DocsSearch({ className, ...props }: DocsSearchProps) {
     >
       <Input
         type="search"
-        placeholder="Search documentation..."
+        placeholder={dict.docs_search_placeholder}
         className="h-8 w-full sm:w-64 sm:pr-12"
       />
       <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 sm:flex">

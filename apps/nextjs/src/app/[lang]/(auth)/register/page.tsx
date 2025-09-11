@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { cn } from "@saasfly/ui";
 import { buttonVariants } from "@saasfly/ui/button";
@@ -7,10 +8,18 @@ import { UserRegisterForm } from "~/components/user-register-form";
 import type { Locale } from "~/config/i18n-config";
 import { getDictionary } from "~/lib/get-dictionary";
 
-export const metadata = {
-  title: "Create an account",
-  description: "Create an account to get started.",
-};
+export async function generateMetadata({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(lang);
+  
+  return {
+    title: dict.login.register_meta_title,
+    description: dict.login.register_meta_description,
+  };
+}
 
 export default async function RegisterPage({
   params: { lang },
@@ -38,27 +47,27 @@ export default async function RegisterPage({
           <div className="flex flex-col space-y-2 text-center">
             {/*<Icons.Logo className="mx-auto h-6 w-6" />*/}
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
+              {dict.login.create_account_title}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to create your account
+              {dict.login.create_account_description}
             </p>
           </div>
           <UserRegisterForm lang={lang} dict={dict.login} />
           <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
+            {dict.login.agree_terms}{" "}
             <Link
               href={`/${lang}/terms`}
               className="hover:text-brand underline underline-offset-4"
             >
-              Terms of Service
+              {dict.login.terms_service}
             </Link>{" "}
-            and{" "}
+            {dict.login.and}{" "}
             <Link
               href={`/${lang}/privacy`}
               className="hover:text-brand underline underline-offset-4"
             >
-              Privacy Policy
+              {dict.login.privacy_policy}
             </Link>
             .
           </p>

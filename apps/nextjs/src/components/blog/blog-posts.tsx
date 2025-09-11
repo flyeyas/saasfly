@@ -17,13 +17,14 @@ interface Post {
 
 interface BlogPostsProps {
   posts: Post[];
+  dict: any;
 }
 
-export function BlogPosts({ posts }: BlogPostsProps) {
+export function BlogPosts({ posts, dict }: BlogPostsProps) {
   return (
     <div className="container space-y-10 py-6 md:py-10">
       <section>
-        <h2 className="font-heading mb-4 text-3xl">Last Post</h2>
+        <h2 className="font-heading mb-4 text-3xl">{dict.blog_last_post}</h2>
         <article className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             {posts[0]?.image && (
@@ -46,14 +47,14 @@ export function BlogPosts({ posts }: BlogPostsProps) {
               </p>
             )}
             <Link href={posts[0]?.slug ?? "/#"} className="absolute inset-0">
-              <span className="sr-only">View Article</span>
+              <span className="sr-only">{dict.blog_view_article}</span>
             </Link>
           </div>
         </article>
       </section>
 
       <section>
-        <h2 className="font-heading mb-4 text-3xl">Blog Posts</h2>
+        <h2 className="font-heading mb-4 text-3xl">{dict.blog_posts}</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.slice(1).map((post) => (
             <article
@@ -83,7 +84,7 @@ export function BlogPosts({ posts }: BlogPostsProps) {
                 </p>
               )}
               <Link href={post.slug} className="absolute inset-0">
-                <span className="sr-only">View Article</span>
+                <span className="sr-only">{dict.blog_view_article}</span>
               </Link>
             </article>
           ))}

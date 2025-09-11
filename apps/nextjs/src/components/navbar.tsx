@@ -29,6 +29,7 @@ interface NavBarProps {
   };
   marketing: Record<string, string | object>;
   dropdown: Record<string, string>;
+  games: Record<string, string>;
 }
 
 export function NavBar({
@@ -40,6 +41,7 @@ export function NavBar({
   params: { lang },
   marketing,
   dropdown,
+  games,
 }: NavBarProps) {
   const scrolled = useScroll(50);
   const signInModal = useSigninModal();
@@ -81,7 +83,7 @@ export function NavBar({
 
           {/* Search Component */}
           <div className="hidden md:block w-64">
-            <GameSearch lang={lang} placeholder="Search games..." className="w-full" />
+            <GameSearch lang={lang} placeholder={games.search_placeholder} className="w-full" />
           </div>
 
           {rightElements}

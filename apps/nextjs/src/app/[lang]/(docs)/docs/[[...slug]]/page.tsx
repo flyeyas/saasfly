@@ -15,9 +15,12 @@ import type { Metadata } from "next";
 
 import { env } from "~/env.mjs";
 import { absoluteUrl } from "~/lib/utils";
+import type { Locale } from "~/config/i18n-config";
+import { getDictionary } from "~/lib/get-dictionary";
 
 interface DocPageProps {
   params: {
+    lang: Locale;
     slug: string[];
   };
 }
@@ -81,6 +84,7 @@ export function generateStaticParams(): {
 }
 
 export default async function DocPage({ params }: DocPageProps) {
+  const dict = await getDictionary(params.lang);
   const doc = getDocFromParams(params);
 
   if (!doc) {

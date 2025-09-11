@@ -21,17 +21,15 @@ interface UserRegisterFormProps extends React.HTMLAttributes<HTMLDivElement> {
   dict: Dictionary;
 }
 
-const registerSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+const createRegisterSchema = (dict: Dictionary) => z.object({
+  email: z.string().email(dict.register_form_email_validation),
+  password: z.string().min(8, dict.register_form_password_validation),
   confirmPassword: z.string(),
-  verificationCode: z.string().min(6, "Verification code must be at least 6 characters"),
+  verificationCode: z.string().min(6, dict.register_form_verification_code_validation),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
+  message: dict.register_form_password_match_validation,
   path: ["confirmPassword"],
 });
-
-type FormData = z.infer<typeof registerSchema>;
 
 interface PasswordStrength {
   score: number;
@@ -45,6 +43,9 @@ export function UserRegisterForm({
   dict,
   ...props
 }: UserRegisterFormProps) {
+  const registerSchema = createRegisterSchema(dict);
+  type FormData = z.infer<typeof registerSchema>;
+  
   const {
     register,
     handleSubmit,
@@ -130,8 +131,8 @@ export function UserRegisterForm({
   const sendVerificationCode = async () => {
     if (!watchedEmail || !emailAvailable) {
       toast({
-        title: "Error",
-        description: "Please enter a valid and available email address first",
+        title: dict.register_form_error_title,
+        description: dict.register_form_email_required,
         variant: "destructive",
       });
       return;
@@ -150,21 +151,21 @@ export function UserRegisterForm({
         setCodeSent(true);
         setCountdown(60);
         toast({
-          title: "Verification code sent",
-        description: "Please check your email for the verification code",
+          title: dict.register_form_code_sent_title,
+        description: dict.register_form_code_sent_desc,
         });
       } else {
         toast({
-          title: "Send failed",
-        description: data.error || "Failed to send verification code, please try again later",
+          title: dict.register_form_send_failed_title,
+        description: data.error || dict.register_form_send_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send code error:", error);
       toast({
-        title: "Send failed",
-        description: "Network error, please try again later",
+        title: dict.register_form_send_failed_title,
+        description: dict.register_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -176,8 +177,8 @@ export function UserRegisterForm({
   async function onSubmit(data: FormData) {
     if (!emailAvailable) {
       toast({
-        title: "Registration failed",
-        description: "Email is not available, please use a different email",
+        title: dict.register_form_registration_failed_title,
+        description: dict.register_form_email_unavailable,
         variant: "destructive",
       });
       return;
@@ -185,8 +186,8 @@ export function UserRegisterForm({
 
     if (passwordStrength && passwordStrength.score < 3) {
       toast({
-        title: "Password strength insufficient",
-        description: "Please set a stronger password",
+        title: dict.register_form_password_weak_title,
+        description: dict.register_form_password_weak_desc,
         variant: "destructive",
       });
       return;
@@ -207,24 +208,24 @@ export function UserRegisterForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "Registration successful",
-        description: "Account created successfully, redirecting to login page",
+          title: dict.register_form_registration_success_title,
+        description: dict.register_form_registration_success_desc,
         });
         setTimeout(() => {
           router.push(`/${lang}/login`);
         }, 1500);
       } else {
         toast({
-          title: "Registration failed",
-        description: result.error || "Registration failed, please try again later",
+          title: dict.register_form_registration_failed_title,
+        description: result.error || dict.register_form_registration_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Register error:", error);
       toast({
-        title: "Registration failed",
-        description: "Network error, please try again later",
+        title: dict.register_form_registration_failed_title,
+        description: dict.register_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -240,10 +241,10 @@ export function UserRegisterForm({
   };
 
   const getPasswordStrengthText = (score: number) => {
-    if (score < 2) return "Weak";
-    if (score < 3) return "Fair";
-    if (score < 4) return "Good";
-    return "Strong";
+    if (score < 2) return dict.register_form_password_weak;
+    if (score < 3) return dict.register_form_password_fair;
+    if (score < 4) return dict.register_form_password_good;
+    return dict.register_form_password_strong;
   };
 
   return (
@@ -252,11 +253,11 @@ export function UserRegisterForm({
         <div className="grid gap-4">
           {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">{dict.register_form_email_address}</Label>
             <div className="relative">
               <Input
                 id="email"
-                placeholder="name@example.com"
+                placeholder={dict.register_form_email_placeholder}
                 type="email"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -278,16 +279,16 @@ export function UserRegisterForm({
               <p className="text-xs text-red-600">{errors.email.message}</p>
             )}
             {emailAvailable === false && (
-              <p className="text-xs text-red-600">This email is already registered</p>
+              <p className="text-xs text-red-600">{dict.register_form_email_already_registered}</p>
             )}
           </div>
 
           {/* Password input */}
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{dict.register_form_password}</Label>
             <Input
               id="password"
-              placeholder="Enter password"
+              placeholder={dict.register_form_password_placeholder}
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -301,7 +302,7 @@ export function UserRegisterForm({
             {passwordStrength && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Password Strength</span>
+                  <span className="text-xs text-muted-foreground">{dict.register_form_password_strength}</span>
                   <span className={cn(
                     "text-xs font-medium",
                     passwordStrength.score < 2 ? "text-red-500" :
@@ -342,10 +343,10 @@ export function UserRegisterForm({
 
           {/* Confirm password */}
           <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{dict.register_form_confirm_password}</Label>
             <Input
               id="confirmPassword"
-              placeholder="Enter password again"
+              placeholder={dict.register_form_confirm_password_placeholder}
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -358,11 +359,11 @@ export function UserRegisterForm({
 
           {/* Verification code */}
           <div className="grid gap-2">
-            <Label htmlFor="verificationCode">Email Verification Code</Label>
+            <Label htmlFor="verificationCode">{dict.register_form_verification_code}</Label>
             <div className="flex gap-2">
               <Input
                 id="verificationCode"
-                placeholder="Enter verification code"
+                placeholder={dict.register_form_verification_code_placeholder}
                 disabled={isLoading}
                 {...register("verificationCode")}
               />
@@ -376,7 +377,7 @@ export function UserRegisterForm({
                 {isCodeSending && (
                   <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {countdown > 0 ? `${countdown}s` : codeSent ? "Resend" : "Send Code"}
+                {countdown > 0 ? `${countdown}s` : codeSent ? dict.register_form_resend : dict.register_form_send_code}
               </Button>
             </div>
             {errors?.verificationCode && (
@@ -393,7 +394,7 @@ export function UserRegisterForm({
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Create Account
+            {dict.register_form_create_account}
           </Button>
         </div>
       </form>

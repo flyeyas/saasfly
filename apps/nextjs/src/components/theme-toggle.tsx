@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@saasfly/ui/button";
@@ -10,12 +11,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@saasfly/ui/dropdown-menu";
+
 import * as Icons from "@saasfly/ui/icons";
 
-export default function ThemeToggle(props: {
+interface ThemeToggleProps {
+  dict?: any;
   align?: "center" | "start" | "end";
+}
+
+export default function ThemeToggle(props: ThemeToggleProps & {
   side?: "top" | "bottom";
 }) {
+  const { dict, align = "end", side } = props;
   const { setTheme, theme } = useTheme();
 
   const triggerIcon = {
@@ -40,15 +47,15 @@ export default function ThemeToggle(props: {
       <DropdownMenuContent align={props.align} side={props.side}>
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Icons.Sun className="mr-2 h-4 w-4" />
-          <span>Light</span>
+          <span>{dict?.theme?.light || "Light"}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           <Icons.Moon className="mr-2 h-4 w-4" />
-          <span>Dark</span>
+          <span>{dict?.theme?.dark || "Dark"}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Icons.System className="mr-2 h-4 w-4" />
-          <span>System</span>
+          <Icons.Laptop className="mr-2 h-4 w-4" />
+          <span>{dict?.theme?.system || "System"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

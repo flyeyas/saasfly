@@ -20,17 +20,15 @@ interface PasswordResetFormProps extends React.HTMLAttributes<HTMLDivElement> {
   dict: Dictionary;
 }
 
-const resetSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  verificationCode: z.string().min(6, "Verification code must be 6 characters"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+const createResetSchema = (dict: Dictionary) => z.object({
+  email: z.string().email(dict.password_reset_form_email_validation),
+  verificationCode: z.string().min(6, dict.password_reset_form_verification_code_validation),
+  newPassword: z.string().min(8, dict.password_reset_form_new_password_validation),
   confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords do not match",
+  message: dict.password_reset_form_confirm_password_validation,
   path: ["confirmPassword"],
 });
-
-type FormData = z.infer<typeof resetSchema>;
 
 interface PasswordStrength {
   score: number;
@@ -44,6 +42,9 @@ export function PasswordResetForm({
   dict,
   ...props
 }: PasswordResetFormProps) {
+  const resetSchema = createResetSchema(dict);
+  type FormData = z.infer<typeof resetSchema>;
+  
   const {
     register,
     handleSubmit,
@@ -105,8 +106,8 @@ export function PasswordResetForm({
   const sendResetCode = async () => {
     if (!watchedEmail || !z.string().email().safeParse(watchedEmail).success) {
       toast({
-        title: "Error",
-      description: "Please enter a valid email address first",
+        title: dict.password_reset_form_error,
+        description: dict.password_reset_form_email_required,
         variant: "destructive",
       });
       return;
@@ -126,21 +127,21 @@ export function PasswordResetForm({
         setCountdown(60);
         setStep('reset');
         toast({
-          title: "Verification code sent",
-        description: "Please check your email for the reset verification code",
+          title: dict.password_reset_form_code_sent,
+          description: dict.password_reset_form_code_sent_desc,
         });
       } else {
         toast({
-          title: "Send failed",
-        description: data.error || "Failed to send verification code, please try again later",
+          title: dict.password_reset_form_send_failed,
+          description: data.error || dict.password_reset_form_send_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Send reset code error:", error);
       toast({
-        title: "Send failed",
-      description: "Network error, please try again later",
+        title: dict.password_reset_form_send_failed,
+        description: dict.password_reset_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -170,24 +171,24 @@ export function PasswordResetForm({
       const result = await response.json();
       if (response.ok) {
         toast({
-          title: "Password reset successful",
-        description: "Password has been reset, please login with your new password",
+          title: dict.password_reset_form_reset_success,
+          description: dict.password_reset_form_reset_success_desc,
         });
         setTimeout(() => {
           router.push(`/${lang}/login`);
         }, 1500);
       } else {
         toast({
-          title: "Reset failed",
-        description: result.error || "Password reset failed, please check verification code",
+          title: dict.password_reset_form_reset_failed,
+          description: result.error || dict.password_reset_form_reset_failed_desc,
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Password reset error:", error);
       toast({
-        title: "Reset failed",
-      description: "Network error, please try again later",
+        title: dict.password_reset_form_reset_failed,
+        description: dict.password_reset_form_network_error,
         variant: "destructive",
       });
     } finally {
@@ -215,13 +216,13 @@ export function PasswordResetForm({
     switch (score) {
       case 0:
       case 1:
-        return "Weak";
+        return dict.password_reset_form_password_weak;
       case 2:
-        return "Fair";
+        return dict.password_reset_form_password_fair;
       case 3:
-        return "Strong";
+        return dict.password_reset_form_password_strong;
       case 4:
-        return "Very Strong";
+        return dict.password_reset_form_password_very_strong;
       default:
         return "";
     }
@@ -233,10 +234,10 @@ export function PasswordResetForm({
         <div className="grid gap-4">
           {/* Email input */}
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{dict.password_reset_form_email}</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder={dict.password_reset_form_email_placeholder}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -254,7 +255,7 @@ export function PasswordResetForm({
               {isCodeSending && (
                 <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Send Reset Code
+              {dict.password_reset_form_send_code}
             </Button>
           )}
 
@@ -262,11 +263,11 @@ export function PasswordResetForm({
             <>
               {/* Verification code input */}
               <div className="grid gap-2">
-                <Label htmlFor="verificationCode">Verification Code</Label>
+                <Label htmlFor="verificationCode">{dict.password_reset_form_verification_code}</Label>
                 <div className="flex space-x-2">
                   <Input
                     id="verificationCode"
-                    placeholder="Enter 6-digit verification code"
+                    placeholder={dict.password_reset_form_verification_code_placeholder}
                     disabled={isLoading}
                     {...register("verificationCode")}
                   />
@@ -279,7 +280,7 @@ export function PasswordResetForm({
                     {isCodeSending && (
                       <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    {countdown > 0 ? `${countdown}s` : "Resend"}
+                    {countdown > 0 ? `${countdown}s` : dict.password_reset_form_resend}
                   </Button>
                 </div>
                 {errors?.verificationCode && (
@@ -289,10 +290,10 @@ export function PasswordResetForm({
 
               {/* New password input */}
               <div className="grid gap-2">
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword">{dict.password_reset_form_new_password}</Label>
                 <Input
                   id="newPassword"
-                  placeholder="Enter new password"
+                  placeholder={dict.password_reset_form_new_password_placeholder}
                   type="password"
                   disabled={isLoading}
                   {...register("newPassword")}
@@ -314,7 +315,7 @@ export function PasswordResetForm({
                         />
                       </div>
                       <span className="text-sm text-gray-600">
-                        Password strength: {getPasswordStrengthText(passwordStrength.score)}
+                        {dict.password_reset_form_password_strength}: {getPasswordStrengthText(passwordStrength.score)}
                       </span>
                     </div>
                     {passwordStrength.errors.length > 0 && (
@@ -328,10 +329,10 @@ export function PasswordResetForm({
 
               {/* Confirm password input */}
               <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmPassword">{dict.password_reset_form_confirm_password}</Label>
                 <Input
                   id="confirmPassword"
-                  placeholder="Enter new password again"
+                  placeholder={dict.password_reset_form_confirm_password_placeholder}
                   type="password"
                   disabled={isLoading}
                   {...register("confirmPassword")}
@@ -345,7 +346,7 @@ export function PasswordResetForm({
                 {isLoading && (
                   <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Reset Password
+                {dict.password_reset_form_reset_password}
               </Button>
             </>
           )}

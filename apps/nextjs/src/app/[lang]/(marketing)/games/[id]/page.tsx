@@ -6,14 +6,16 @@ import { Star, Play, Heart, Share2, ArrowLeft, Gamepad2, Rocket, Calendar, Users
 
 import type { Locale } from "~/config/i18n-config";
 
-export default async function GameDetailPage({
-  params: { lang, id },
-}: {
+interface GameDetailPageProps {
   params: {
     lang: Locale;
     id: string;
   };
-}) {
+}
+
+export default async function GameDetailPage({
+  params: { lang, id },
+}: GameDetailPageProps) {
   const dict = await getDictionary(lang);
   
   // Use slug as id for mock data
@@ -32,7 +34,7 @@ export default async function GameDetailPage({
     "name": game.title,
     "description": game.description,
     "image": game.coverImage,
-    "url": `https://yourdomain.com/${params.lang}/games/${game.slug}`,
+    "url": `https://yourdomain.com/${lang}/games/${game.slug}`,
     "genre": getCategoryById(game.categoryId)?.name || "Game",
     "gamePlatform": "Web Browser",
     "operatingSystem": "Any",
@@ -77,9 +79,9 @@ export default async function GameDetailPage({
       {/* Navigation */}
       <nav className="game-nav bg-white border-b">
         <div className="container mx-auto px-4 py-3 md:py-4">
-          <Link href={`/${params.lang}/games`} className="inline-flex items-center text-gray-600 hover:text-gray-900 text-sm md:text-base">
+          <Link href={`/${lang}/games`} className="inline-flex items-center text-gray-600 hover:text-gray-900 text-sm md:text-base">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Games
+            {dict.game_detail.back_to_games}
           </Link>
         </div>
       </nav>
@@ -104,7 +106,7 @@ export default async function GameDetailPage({
             <div className="game-meta flex-wrap gap-3 md:gap-6">
               <div className="meta-item">
                  <Tag className="meta-icon" />
-                 <span className="text-sm md:text-base">{getCategoryById(game.categoryId)?.name || 'Unknown'}</span>
+                 <span className="text-sm md:text-base">{getCategoryById(game.categoryId)?.name || dict.game_detail.unknown_category}</span>
                </div>
               <div className="meta-item hidden sm:flex">
                 <Calendar className="meta-icon" />
@@ -112,11 +114,11 @@ export default async function GameDetailPage({
               </div>
               <div className="meta-item hidden md:flex">
                 <Users className="meta-icon" />
-                <span className="text-sm md:text-base">Single Player</span>
+                <span className="text-sm md:text-base">{dict.game_detail.single_player}</span>
               </div>
               <div className="meta-item">
                 <Star className="meta-icon" />
-                <span className="text-sm md:text-base">{game.rating} Rating</span>
+                <span className="text-sm md:text-base">{game.rating} {dict.game_detail.rating}</span>
               </div>
             </div>
             
@@ -134,17 +136,17 @@ export default async function GameDetailPage({
           <div className="game-actions">
             <button className="play-btn">
               <Play className="w-5 h-5" />
-              <span>Start Game</span>
+              <span>{dict.game_detail.start_game}</span>
             </button>
             
             <div className="action-buttons">
-              <button className="action-btn" title="Favorite Game">
+              <button className="action-btn" title={dict.game_detail.favorite_game}>
                 <Heart className="w-5 h-5" />
               </button>
-              <button className="action-btn" title="Share Game">
+              <button className="action-btn" title={dict.game_detail.share_game}>
                 <Share2 className="w-5 h-5" />
               </button>
-              <button className="action-btn" title="Report Game">
+              <button className="action-btn" title={dict.game_detail.report_game}>
                 <Flag className="w-5 h-5" />
               </button>
             </div>
@@ -187,23 +189,23 @@ export default async function GameDetailPage({
 
               {/* Game Description */}
               <div className="game-description bg-white rounded-xl p-4 md:p-6 shadow-lg mb-6">
-                <h2 className="text-xl md:text-2xl font-bold mb-4">About This Game</h2>
-                <p className="text-gray-700 mb-6 text-sm md:text-base leading-relaxed">{game.description || 'No description available for this game.'}</p>
+                <h2 className="text-xl md:text-2xl font-bold mb-4">{dict.game_detail.about_this_game}</h2>
+                <p className="text-gray-700 mb-6 text-sm md:text-base leading-relaxed">{game.description || dict.game_detail.no_description_available}</p>
                 
                 <div className="game-features">
-                  <h3 className="text-lg md:text-xl font-semibold mb-3">Game Features</h3>
+                  <h3 className="text-lg md:text-xl font-semibold mb-3">{dict.game_detail.game_features}</h3>
                   <ul className="space-y-2 text-sm md:text-base">
-                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>High-quality HTML5 gameplay</li>
-                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>Cross-platform compatibility</li>
-                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>Engaging storyline and mechanics</li>
-                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>Regular updates and improvements</li>
+                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>{dict.game_detail.feature_free_to_play}</li>
+                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>{dict.game_detail.feature_no_download}</li>
+                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>{dict.game_detail.feature_instant_play}</li>
+                    <li className="flex items-center"><span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>{dict.game_detail.feature_mobile_friendly}</li>
                   </ul>
                 </div>
               </div>
 
               {/* Rating and Reviews */}
               <div className="rating-section bg-white rounded-xl p-4 md:p-6 shadow-lg mb-6">
-                <h2 className="text-xl md:text-2xl font-bold mb-4">Rating & Reviews</h2>
+                <h2 className="text-xl md:text-2xl font-bold mb-4">{dict.game_detail.ratings_reviews}</h2>
                 <div className="rating-overview flex flex-col lg:flex-row gap-6">
                   <div className="rating-score text-center lg:text-left">
                     <span className="score text-4xl md:text-5xl font-bold text-blue-600">{game.rating}</span>
@@ -241,33 +243,33 @@ export default async function GameDetailPage({
 
             <div className="right-sidebar lg:col-span-1 space-y-6">
               <div className="game-stats bg-white rounded-xl p-4 md:p-6 shadow-lg">
-                <h3 className="text-lg md:text-xl font-bold mb-4">Game Statistics</h3>
+                <h3 className="text-lg md:text-xl font-bold mb-4">{dict.game_statistics}</h3>
                 <div className="space-y-4">
                   <div className="stat-item flex items-center gap-3">
                     <Trophy className="stat-icon w-5 h-5 text-yellow-500" />
                     <div className="stat-content flex-1">
-                      <span className="stat-label block text-xs text-gray-600">Total Plays</span>
+                      <span className="stat-label block text-xs text-gray-600">{dict.game_detail.total_plays}</span>
                       <span className="stat-value text-lg font-semibold">{game.playCount.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="stat-item flex items-center gap-3">
                     <Star className="stat-icon w-5 h-5 text-yellow-400" />
                     <div className="stat-content flex-1">
-                      <span className="stat-label block text-xs text-gray-600">Rating</span>
+                      <span className="stat-label block text-xs text-gray-600">{dict.game_detail.rating}</span>
                       <span className="stat-value text-lg font-semibold">{game.rating}/5</span>
                     </div>
                   </div>
                   <div className="stat-item flex items-center gap-3">
                     <Tag className="stat-icon w-5 h-5 text-blue-500" />
                     <div className="stat-content flex-1">
-                      <span className="stat-label block text-xs text-gray-600">Category</span>
+                      <span className="stat-label block text-xs text-gray-600">{dict.game_detail.category}</span>
                       <span className="stat-value text-sm font-medium">{getCategoryById(game.categoryId)?.name ?? 'Unknown'}</span>
                     </div>
                   </div>
                   <div className="stat-item flex items-start gap-3">
                     <Gem className="stat-icon w-5 h-5 text-purple-500 mt-1" />
                     <div className="stat-content flex-1">
-                      <span className="stat-label block text-xs text-gray-600">Tags</span>
+                      <span className="stat-label block text-xs text-gray-600">{dict.game_detail.tags}</span>
                       <span className="stat-value text-sm font-medium">{game.tags?.join(", ") || "HTML5, Adventure, Fun"}</span>
                     </div>
                   </div>
@@ -275,19 +277,19 @@ export default async function GameDetailPage({
               </div>
 
               <div className="game-controls bg-white rounded-xl p-4 md:p-6 shadow-lg">
-                <h3 className="text-lg md:text-xl font-bold mb-4">Game Controls</h3>
+                <h3 className="text-lg md:text-xl font-bold mb-4">{dict.game_detail.game_controls}</h3>
                 <div className="controls-list space-y-3">
                   <div className="control-item flex items-center justify-between">
                     <span className="control-key bg-gray-100 px-3 py-1 rounded text-sm font-mono">WASD</span>
-                    <span className="control-desc text-sm text-gray-600">Move</span>
+                    <span className="control-desc text-sm text-gray-600">{dict.game_detail.control_move}</span>
                   </div>
                   <div className="control-item flex items-center justify-between">
                     <span className="control-key bg-gray-100 px-3 py-1 rounded text-sm font-mono">SPACE</span>
-                    <span className="control-desc text-sm text-gray-600">Action</span>
+                    <span className="control-desc text-sm text-gray-600">{dict.game_detail.control_action}</span>
                   </div>
                   <div className="control-item flex items-center justify-between">
                     <span className="control-key bg-gray-100 px-3 py-1 rounded text-sm font-mono">ESC</span>
-                    <span className="control-desc text-sm text-gray-600">Pause</span>
+                    <span className="control-desc text-sm text-gray-600">{dict.game_detail.control_pause}</span>
                   </div>
                 </div>
               </div>
@@ -300,12 +302,12 @@ export default async function GameDetailPage({
       {relatedGames.length > 0 && (
         <section className="related-games-section bg-gray-50 py-8 lg:py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center lg:text-left">Related Games</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center lg:text-left">{dict.game_detail.related_games}</h2>
             <div className="games-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
               {relatedGames.map((relatedGame) => (
                 <Link key={relatedGame.id} href={`/${lang}/games/${relatedGame.slug}`} className="game-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <div className="game-image relative aspect-square overflow-hidden">
-                    <img src={relatedGame.coverImage} alt={relatedGame.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    <img src={relatedGame.coverImage || ''} alt={relatedGame.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                     <div className="game-overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
                       <Gamepad2 className="play-icon w-8 h-8 md:w-10 md:h-10 text-white opacity-0 hover:opacity-100 transition-opacity duration-300" />
                     </div>
@@ -331,20 +333,23 @@ export default async function GameDetailPage({
   );
 }
 
-export async function generateMetadata({
-  params: { id, lang },
-}: {
+interface GenerateMetadataProps {
   params: {
     id: string;
     lang: Locale;
   };
-}) {
+}
+
+export async function generateMetadata({
+  params: { id, lang },
+}: GenerateMetadataProps) {
+  const dict = await getDictionary(lang);
   const game = getGameBySlug(id);
   
   if (!game) {
     return {
-      title: "Game Not Found | HTML5 Games",
-      description: "The requested game could not be found. Browse our collection of free HTML5 games.",
+      title: dict.game_not_found_title,
+      description: dict.game_not_found_description,
     };
   }
 
@@ -352,19 +357,21 @@ export async function generateMetadata({
   const gameUrl = `https://yourdomain.com/${lang}/games/${game.slug}`;
   
   return {
-    title: `${game.title} - Free HTML5 Game | Play Online`,
-    description: `Play ${game.title} for free! ${game.description} Rating: ${game.rating}/5 stars with ${game.playCount.toLocaleString()} plays.`,
+    title: dict.game_meta_title.replace('{title}', game.title),
+    description: dict.game_meta_description
+      .replace('{title}', game.title)
+      .replace('{description}', game.description || '')
+      .replace('{rating}', game.rating.toString())
+      .replace('{playCount}', game.playCount.toLocaleString()),
     keywords: [
       game.title,
-      'HTML5 game',
-      'free online game',
-      'browser game',
+      dict.game_meta_keywords_base,
       category?.name || 'game',
       ...(game.tags || []),
     ].join(', '),
-    authors: [{ name: 'HTML5 Games Platform' }],
-    creator: 'HTML5 Games Platform',
-    publisher: 'HTML5 Games Platform',
+    authors: [{ name: dict.game_meta_authors }],
+    creator: dict.game_meta_authors,
+    publisher: dict.game_meta_authors,
     formatDetection: {
       telephone: false,
     },
@@ -377,16 +384,18 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: `${game.title} - Free HTML5 Game`,
-      description: `Play ${game.title} for free! ${game.description}`,
+      title: dict.game_meta_og_title.replace('{title}', game.title),
+      description: dict.game_meta_og_description
+        .replace('{title}', game.title)
+        .replace('{description}', game.description || ''),
       url: gameUrl,
-      siteName: 'HTML5 Games Platform',
+      siteName: dict.game_meta_og_sitename,
       images: [
         {
           url: game.coverImage,
           width: 1200,
           height: 630,
-          alt: `${game.title} - Game Screenshot`,
+          alt: dict.game_meta_og_image_alt.replace('{title}', game.title),
         },
       ],
       locale: lang,
@@ -394,11 +403,13 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${game.title} - Free HTML5 Game`,
-      description: `Play ${game.title} for free! Rating: ${game.rating}/5 stars`,
+      title: dict.game_meta_twitter_title.replace('{title}', game.title),
+      description: dict.game_meta_twitter_description
+        .replace('{title}', game.title)
+        .replace('{rating}', game.rating.toString()),
       images: [game.coverImage],
-      creator: '@html5games',
-      site: '@html5games',
+      creator: dict.game_meta_twitter_creator,
+      site: dict.game_meta_twitter_site,
     },
     robots: {
       index: true,

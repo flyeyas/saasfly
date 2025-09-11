@@ -36,7 +36,7 @@ export default async function IndexPage({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "HTML5 Games Platform",
-    "description": "Play thousands of free HTML5 games online. No downloads required - play instantly in your browser!",
+    "description": dict.home.meta_description,
     "url": `https://yourdomain.com/${lang}`,
     "potentialAction": {
       "@type": "SearchAction",
@@ -102,17 +102,17 @@ export default async function IndexPage({
         <div className="container">
           <div className="hero-content">
             <h1 className="hero-title">
-              Play Amazing HTML5 Games
-              <span className="hero-subtitle">Free Online Games Collection</span>
+              {dict.home.hero_title}
+              <span className="hero-subtitle">{dict.home.hero_subtitle}</span>
             </h1>
             <p className="hero-description">
-              Discover thousands of free HTML5 games. Play instantly in your browser - no downloads required!
+              {dict.home.hero_description}
             </p>
             
             {/* Search Bar */}
             <div className="search-container">
               <div className="max-w-md mx-auto w-full px-4">
-                <GameSearch lang={lang} placeholder="Search for games..." />
+                <GameSearch lang={lang} placeholder={dict.home.search_placeholder} />
               </div>
             </div>
           </div>
@@ -124,19 +124,19 @@ export default async function IndexPage({
         <div className="stats-grid">
           <div className="stat-item">
             <span className="stat-number">{gameStats.totalGames}</span>
-            <span className="stat-label">Games Available</span>
+            <span className="stat-label">{dict.home.stats_games_available}</span>
           </div>
           <div className="stat-item">
             <span className="stat-number">{gameStats.categories}</span>
-            <span className="stat-label">Game Categories</span>
+            <span className="stat-label">{dict.home.stats_game_categories}</span>
           </div>
           <div className="stat-item">
             <span className="stat-number">{gameStats.playersOnline}</span>
-            <span className="stat-label">Active Players</span>
+            <span className="stat-label">{dict.home.stats_active_players}</span>
           </div>
           <div className="stat-item">
             <span className="stat-number">{gameStats.onlineService}</span>
-            <span className="stat-label">Online Service</span>
+            <span className="stat-label">{dict.home.stats_online_service}</span>
           </div>
         </div>
       </section>
@@ -144,9 +144,9 @@ export default async function IndexPage({
       {/* Categories Section */}
       <section className="categories-section">
         <div className="section-header">
-          <h2 className="section-title">Popular Game Categories</h2>
+          <h2 className="section-title">{dict.home.categories_title}</h2>
           <p className="section-subtitle">
-            Explore various exciting game types and find the perfect entertainment for you
+            {dict.home.categories_subtitle}
           </p>
         </div>
         
@@ -162,7 +162,7 @@ export default async function IndexPage({
                 <h3 className="category-title">{category.name}</h3>
                 <p className="category-description">{category.description}</p>
                 <div className="category-stats">
-                  <span className="game-count">{category.gameCount}+ games</span>
+                  <span className="game-count">{category.gameCount}+ {dict.home.games_count}</span>
                   <ArrowRight className="category-arrow" />
                 </div>
               </div>
@@ -174,9 +174,9 @@ export default async function IndexPage({
       {/* Featured Games */}
       <section className="featured-games">
         <div className="section-header">
-          <h2 className="section-title">Featured Games</h2>
+          <h2 className="section-title">{dict.home.featured_games_title}</h2>
           <p className="section-subtitle">
-            Editor's carefully selected quality games for the best gaming experience
+            {dict.home.featured_games_subtitle}
           </p>
         </div>
         
@@ -213,9 +213,9 @@ export default async function IndexPage({
       {/* Hot Games */}
       <section className="featured-games bg-gray-50">
         <div className="section-header">
-          <h2 className="section-title">🔥 Hot Games</h2>
+          <h2 className="section-title">{dict.home.hot_games_title}</h2>
           <p className="section-subtitle">
-            Most popular games trending right now
+            {dict.home.hot_games_subtitle}
           </p>
         </div>
         
@@ -252,9 +252,9 @@ export default async function IndexPage({
       {/* Latest Games */}
       <section className="featured-games">
         <div className="section-header">
-          <h2 className="section-title">🆕 Latest Games</h2>
+          <h2 className="section-title">{dict.home.latest_games_title}</h2>
           <p className="section-subtitle">
-            Newest additions to our game collection
+            {dict.home.latest_games_subtitle}
           </p>
         </div>
         
@@ -291,19 +291,19 @@ export default async function IndexPage({
       {/* CTA Section */}
       <section className="cta-section">
         <div className="cta-content">
-          <h2 className="cta-title">Ready to Start Playing?</h2>
+          <h2 className="cta-title">{dict.home.cta_title}</h2>
           <p className="cta-description">
-            Join millions of players worldwide and discover your next favorite game today!
+            {dict.home.cta_description}
           </p>
           <div className="cta-buttons">
             <Link href={`/${lang}/games`}>
               <Button className="btn btn-primary btn-lg">
-                Browse All Games
+                {dict.home.browse_all_games}
               </Button>
             </Link>
             <Link href={`/${lang}/games/category/action`}>
               <Button className="btn btn-secondary btn-lg">
-                Popular Categories
+                {dict.home.popular_categories}
               </Button>
             </Link>
           </div>
@@ -320,11 +320,12 @@ export async function generateMetadata({
     lang: Locale;
   };
 }) {
+  const dict = await getDictionary(lang);
   const homeUrl = `https://yourdomain.com/${lang}`;
   
   return {
-    title: "Free HTML5 Games - Play Online Games Instantly | HTML5 Games Platform",
-    description: "Play thousands of free HTML5 games online! No downloads required. Enjoy action, puzzle, adventure, and more games directly in your browser. Updated daily with new games.",
+    title: dict.home.meta_title,
+    description: dict.home.meta_description,
     keywords: [
       'HTML5 games',
       'free online games',
@@ -352,8 +353,8 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: 'Free HTML5 Games - Play Online Games Instantly',
-      description: 'Play thousands of free HTML5 games online! No downloads required. Action, puzzle, adventure games and more.',
+      title: dict.home.meta_title,
+      description: dict.home.meta_description,
       url: homeUrl,
       siteName: 'HTML5 Games Platform',
       images: [
@@ -369,8 +370,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Free HTML5 Games - Play Online Games Instantly',
-      description: 'Play thousands of free HTML5 games online! No downloads required.',
+      title: dict.home.meta_title,
+      description: dict.home.meta_description,
       images: ['/og-image.jpg'],
       creator: '@html5games',
       site: '@html5games',

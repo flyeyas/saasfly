@@ -11,10 +11,18 @@ import { PasswordResetForm } from "~/components/password-reset-form";
 import type { Locale } from "~/config/i18n-config";
 import { getDictionary } from "~/lib/get-dictionary";
 
-export const metadata: Metadata = {
-  title: "Password Reset",
-  description: "Reset your password",
-};
+export async function generateMetadata({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(lang);
+  
+  return {
+    title: dict.login.password_reset_meta_title,
+    description: dict.login.password_reset_meta_description,
+  };
+}
 
 export default async function PasswordResetPage({
   params: { lang },
@@ -35,7 +43,7 @@ export default async function PasswordResetPage({
       >
         <>
           <Icons.ChevronLeft className="mr-2 h-4 w-4" />
-          返回登录
+          {dict.login.back}
         </>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -48,20 +56,20 @@ export default async function PasswordResetPage({
             alt=""
           />
           <h1 className="text-2xl font-semibold tracking-tight">
-            重置密码
+            {dict.login.reset_password_title}
           </h1>
           <p className="text-sm text-muted-foreground">
-            输入您的邮箱地址，我们将发送重置验证码
+            {dict.login.reset_password_description}
           </p>
         </div>
         <PasswordResetForm lang={lang} dict={dict.login} />
         <p className="px-8 text-center text-sm text-muted-foreground">
-          记起密码了？{" "}
+          {dict.login.remember_password}{" "}
           <Link
             href={`/${lang}/login`}
             className="hover:text-brand underline underline-offset-4"
           >
-            返回登录
+            {dict.login.back_to_login_link}
           </Link>
         </p>
       </div>

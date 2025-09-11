@@ -11,10 +11,18 @@ import { UserLoginForm } from "~/components/user-login-form";
 import type { Locale } from "~/config/i18n-config";
 import { getDictionary } from "~/lib/get-dictionary";
 
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Login to your account",
-};
+export async function generateMetadata({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(lang);
+  
+  return {
+    title: dict.login.meta_title,
+    description: dict.login.meta_description,
+  };
+}
 
 export default async function LoginPage({
   params: { lang },

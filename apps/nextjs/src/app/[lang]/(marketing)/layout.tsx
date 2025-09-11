@@ -32,6 +32,7 @@ export default async function MarketingLayout({
           user={user}
           marketing={dict.marketing}
           dropdown={dict.dropdown}
+          games={dict.games}
         />
       </Suspense>
       <ModalProvider dict={dict.login} />

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Locale } from "~/config/i18n-config";
+import type { Dictionary } from "~/types/dictionary";
 
 // We enumerate all dictionaries here for better linting and typescript support
 // We also get the default import for cleaner types
@@ -15,7 +16,7 @@ const dictionaries = {
     import("~/config/dictionaries/ja.json").then((module) => module.default),
 };
 
-export const getDictionary = async (locale: Locale) =>
+export const getDictionary = async (locale: Locale): Promise<any> =>
   dictionaries[locale]?.() ?? dictionaries.en();
 
 export const getDictionarySync = (locale: Locale) =>
