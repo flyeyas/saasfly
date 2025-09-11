@@ -71,7 +71,7 @@ export function AdminSidebarClient({ className, navigation }: SidebarProps) {
                     asChild
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start gap-3 px-6 py-3 h-auto text-sm font-medium [&_svg]:size-6",
+                      "w-full justify-start gap-3 px-6 py-3 h-auto text-base font-medium [&_svg]:size-6",
                       isActive
                         ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700 hover:bg-blue-50"
                         : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
