@@ -1,7 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { auth } from "@saasfly/auth";
+import { redirect } from "next/navigation";
 import { cn } from "@saasfly/ui";
 import { Button } from "@saasfly/ui/button";
 import {
@@ -15,6 +14,8 @@ import {
   Users,
   Folder,
 } from "lucide-react";
+import { getUserRole, UserRole } from "~/lib/permissions";
+import { AdminSidebarClient } from "./admin-sidebar-client";
 
 interface SidebarProps {
   className?: string;
@@ -83,54 +84,23 @@ const navigation = [
   },
 ];
 
-export function AdminSidebar({ className }: SidebarProps) {
-  const pathname = usePathname();
+export async function AdminSidebar({ className }: SidebarProps) {
+  // Server-side authentication check
+  const session = await auth();
+  
+  // Redirect to login if not authenticated
+  if (!session?.user?.email) {
+    redirect("/admin/login");
+  }
+  
+  // Check if user has admin privileges
+  const userRole = getUserRole(session.user.email);
+  if (userRole !== UserRole.ADMIN) {
+    redirect("/admin/login");
+  }
 
+  // Only render sidebar for authenticated admins
   return (
-    <div className={cn("flex h-full w-64 flex-col bg-white border-r border-gray-200", className)}>
-      {/* Brand */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b border-gray-200">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600">
-          <Gamepad2 className="h-4 w-4 text-white" />
-        </div>
-        <span className="text-lg font-semibold text-gray-900">GameHub Admin</span>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 py-6">
-        {navigation.map((section) => (
-          <div key={section.title} className="mb-8">
-            <h3 className="mb-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              {section.title}
-            </h3>
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Button
-                    key={item.href}
-                    asChild
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start gap-3 px-6 py-3 h-auto text-sm font-medium [&_svg]:size-6",
-                      isActive
-                        ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700 hover:bg-blue-50"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                    )}
-                  >
-                    <Link href={item.href}>
-                      <item.icon className={cn(
-                        isActive ? "text-blue-700" : "text-gray-500"
-                      )} />
-                      <span className="flex-1">{item.title}</span>
-                    </Link>
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
-    </div>
+    <AdminSidebarClient className={className} navigation={navigation} />
   );
 }

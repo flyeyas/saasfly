@@ -1,6 +1,5 @@
-"use client";
-
-import { signOut } from "next-auth/react";
+import { auth } from "@saasfly/auth";
+import { redirect } from "next/navigation";
 import { CircleUser } from "lucide-react";
 
 import { Button } from "@saasfly/ui/button";
@@ -12,47 +11,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@saasfly/ui/dropdown-menu";
+import { getUserRole, UserRole } from "~/lib/permissions";
+import { AdminAccountNavClient } from "./admin-account-nav-client";
 
 interface AdminAccountNavProps {
   className?: string;
 }
 
-export function AdminAccountNav({ className }: AdminAccountNavProps) {
-  const handleLogout = async () => {
-    try {
-      // Use signOut with callbackUrl to redirect to admin login
-      await signOut({
-        callbackUrl: "/admin/login",
-        redirect: true,
-      });
-    } catch (error) {
-      console.error("Error during admin logout:", error);
-      // Fallback redirect if signOut fails
-      window.location.href = "/admin/login";
-    }
-  };
+export async function AdminAccountNav({ className }: AdminAccountNavProps) {
+  // Server-side authentication check
+  const session = await auth();
+  
+  // Redirect to login if not authenticated
+  if (!session?.user?.email) {
+    redirect("/admin/login");
+  }
+  
+  // Check if user has admin privileges
+  const userRole = getUserRole(session.user.email);
+  if (userRole !== UserRole.ADMIN) {
+    redirect("/admin/login");
+  }
 
+  // Only render account nav for authenticated admins
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="secondary" className="rounded-full">
-          <CircleUser className="h-5 w-5" />
-          <span className="sr-only">Toggle user menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onSelect={handleLogout}
-        >
-          Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <AdminAccountNavClient className={className} userEmail={session.user.email} />
   );
 }
