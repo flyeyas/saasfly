@@ -12,7 +12,6 @@ import {
   Calendar,
   Package2,
   Menu,
-  CircleUser,
   Gamepad2,
   Grid3X3,
   BarChart3,
@@ -20,6 +19,8 @@ import {
   Flag,
   MessageSquare,
 } from "lucide-react";
+
+import { AdminAccountNav } from "~/components/admin-account-nav";
 
 import { Button } from "@saasfly/ui/button";
 import {
@@ -155,22 +156,7 @@ export default function GamesManagement() {
               />
             </div>
           </form>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AdminAccountNav />
         </div>
       </header>
 

@@ -13,13 +13,13 @@ import { GameAdminLoginForm } from "~/components/game-admin-login-form";
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       {/* Login card */}
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-300 overflow-hidden">
+        <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
           {/* Header */}
-          <div className="bg-gray-800 text-center py-8 px-8">
-            <div className="mx-auto w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-r from-gray-700 to-gray-800 text-center py-8 px-8">
+            <div className="mx-auto w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mb-4 shadow-lg">
               <Icons.ShieldCheck className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">
@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
           {/* Login form */}
           <div className="p-8">
             <div className="text-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Admin Login
               </h2>
               <p className="text-sm text-gray-600">
@@ -45,14 +45,14 @@ export default function AdminLoginPage() {
           </div>
 
           {/* Footer */}
-          <div className="px-8 pb-6 text-center border-t border-gray-100">
-             <p className="text-xs text-gray-400 mb-4">
+          <div className="px-8 pb-6 text-center border-t border-gray-200">
+             <p className="text-xs text-gray-500 mb-4">
                <Icons.ShieldCheck className="inline w-3 h-3 mr-1" />
                HTML5 Game Management System v2.0
              </p>
              <Link
                href="/"
-               className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
+               className="text-sm text-gray-600 hover:text-gray-800 hover:underline"
              >
                Return to Homepage
              </Link>

@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Activity,
   ArrowUpRight,
-  CircleUser,
   CreditCard,
   DollarSign,
   Menu,
@@ -10,6 +9,8 @@ import {
   Search,
   Users,
 } from "lucide-react";
+
+import { AdminAccountNav } from "~/components/admin-account-nav";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@saasfly/ui/avatar";
 import { Button } from "@saasfly/ui/button";
@@ -151,22 +152,7 @@ export default function Dashboard() {
               />
             </div>
           </form>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AdminAccountNav />
         </div>
       </header>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

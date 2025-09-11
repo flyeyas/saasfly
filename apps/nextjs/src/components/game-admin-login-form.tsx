@@ -104,7 +104,7 @@ export function GameAdminLoginForm({
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-slate-600">
+                  <FormLabel className="text-sm font-medium text-gray-700">
                     <Icons.User className="inline w-4 h-4 mr-1" />
                     Admin Username
                   </FormLabel>
@@ -116,7 +116,7 @@ export function GameAdminLoginForm({
                       autoComplete="username"
                       autoCorrect="off"
                       disabled={isLoading}
-                      className="mt-1 block w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300 bg-white"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
                       {...field}
                     />
                   </FormControl>
@@ -131,7 +131,7 @@ export function GameAdminLoginForm({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-slate-600">
+                  <FormLabel className="text-sm font-medium text-gray-700">
                     <Icons.Key className="inline w-4 h-4 mr-1" />
                     Admin Password
                   </FormLabel>
@@ -142,7 +142,7 @@ export function GameAdminLoginForm({
                         type={showPassword ? "text" : "password"}
                         autoComplete="current-password"
                         disabled={isLoading}
-                        className="mt-1 block w-full px-3 py-2 pr-10 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300 bg-white"
+                        className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
                         {...field}
                       />
                       <Button
@@ -154,9 +154,9 @@ export function GameAdminLoginForm({
                         disabled={isLoading}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-slate-400" />
+                          <EyeOff className="h-4 w-4 text-gray-500" />
                         ) : (
-                          <Eye className="h-4 w-4 text-slate-400" />
+                          <Eye className="h-4 w-4 text-gray-500" />
                         )}
                       </Button>
                     </div>
@@ -177,11 +177,11 @@ export function GameAdminLoginForm({
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className="rounded border-slate-300 data-[state=checked]:border-slate-500 data-[state=checked]:bg-slate-50 [&>span>svg]:h-3 [&>span>svg]:w-3 [&>span>svg]:text-slate-600"
+                        className="rounded border-gray-400 data-[state=checked]:border-gray-600 data-[state=checked]:bg-gray-100 [&>span>svg]:h-3 [&>span>svg]:w-3 [&>span>svg]:text-gray-700"
                         disabled={isLoading}
                       />
                     </FormControl>
-                    <FormLabel className="text-sm text-slate-500 cursor-pointer">
+                    <FormLabel className="text-sm text-gray-600 cursor-pointer">
                       Remember password
                     </FormLabel>
                   </FormItem>
@@ -190,7 +190,7 @@ export function GameAdminLoginForm({
               <Button
                 type="button"
                 variant="link"
-                className="text-sm text-slate-400 hover:text-slate-600 p-0 h-auto font-normal underline"
+                className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto font-normal underline"
                 onClick={() => {
                   toast({
                     title: "Forgot Password",
@@ -205,7 +205,7 @@ export function GameAdminLoginForm({
             <Button 
               disabled={isLoading} 
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isLoading && (
                 <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
