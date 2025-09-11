@@ -28,22 +28,22 @@ const navigation = [
       {
         title: "Dashboard",
         href: "/admin/dashboard",
-        icon: LayoutDashboard,
+        icon: "LayoutDashboard",
       },
       {
         title: "Game Management",
         href: "/admin/games",
-        icon: Gamepad2,
+        icon: "Gamepad2",
       },
       {
         title: "Category Management",
         href: "/admin/categories",
-        icon: Folder,
+        icon: "Folder",
       },
       {
         title: "User Management",
         href: "/admin/users",
-        icon: Users,
+        icon: "Users",
       },
     ],
   },
@@ -53,17 +53,17 @@ const navigation = [
       {
         title: "Review Management",
         href: "/admin/reviews",
-        icon: Star,
+        icon: "Star",
       },
       {
         title: "Comment Management",
         href: "/admin/comments",
-        icon: MessageCircle,
+        icon: "MessageCircle",
       },
       {
         title: "Report Management",
         href: "/admin/reports",
-        icon: Flag,
+        icon: "Flag",
       },
     ],
   },
@@ -73,12 +73,12 @@ const navigation = [
       {
         title: "Analytics",
         href: "/admin/analytics",
-        icon: BarChart3,
+        icon: "BarChart3",
       },
       {
         title: "System Settings",
         href: "/admin/settings",
-        icon: Settings,
+        icon: "Settings",
       },
     ],
   },

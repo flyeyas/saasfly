@@ -16,6 +16,19 @@ import {
   Folder,
 } from "lucide-react";
 
+// Icon mapping
+const iconMap = {
+  LayoutDashboard,
+  Gamepad2,
+  Folder,
+  Users,
+  Star,
+  MessageCircle,
+  Flag,
+  BarChart3,
+  Settings,
+};
+
 interface SidebarProps {
   className?: string;
   navigation: Array<{
@@ -23,7 +36,7 @@ interface SidebarProps {
     items: Array<{
       title: string;
       href: string;
-      icon: any;
+      icon: string;
     }>;
   }>;
 }
@@ -51,6 +64,7 @@ export function AdminSidebarClient({ className, navigation }: SidebarProps) {
             <div className="space-y-1">
               {section.items.map((item) => {
                 const isActive = pathname === item.href;
+                const IconComponent = iconMap[item.icon as keyof typeof iconMap];
                 return (
                   <Button
                     key={item.href}
@@ -64,9 +78,9 @@ export function AdminSidebarClient({ className, navigation }: SidebarProps) {
                     )}
                   >
                     <Link href={item.href}>
-                      <item.icon className={cn(
+                      {IconComponent && <IconComponent className={cn(
                         isActive ? "text-blue-700" : "text-gray-500"
-                      )} />
+                      )} />}
                       <span className="flex-1">{item.title}</span>
                     </Link>
                   </Button>
