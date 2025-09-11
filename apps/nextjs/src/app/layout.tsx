@@ -82,6 +82,7 @@ export default function RootLayout({
           fontSans.variable,
           fontHeading.variable,
         )}
+        suppressHydrationWarning
       >
         <SessionProvider>
           <ThemeProvider

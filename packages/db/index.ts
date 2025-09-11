@@ -15,7 +15,9 @@ export * from "./prisma/enums";
 // 创建 PostgreSQL 连接池
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    ssl: {
+        rejectUnauthorized: false
+    },
 });
 
 // 创建 Kysely 实例

@@ -1,18 +1,15 @@
+"use client";
+
 import React from "react";
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@saasfly/ui";
 import { buttonVariants } from "@saasfly/ui/button";
 import * as Icons from "@saasfly/ui/icons";
+import { Toaster } from "@saasfly/ui/toaster";
 
 import { GameAdminLoginForm } from "~/components/game-admin-login-form";
-
-export const metadata: Metadata = {
-  title: "Admin Login - HTML5 Games Portal",
-  description: "Login to the HTML5 Games Portal admin dashboard",
-};
 
 export default function AdminLoginPage() {
   return (
@@ -62,6 +59,7 @@ export default function AdminLoginPage() {
            </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export const fontSans = FontSans({
   variable: "--font-sans",
   fallback: ["system-ui", "arial", "sans-serif"],
   display: "swap",
-  preload: false,
+  preload: true,
   // Add adjustFontFallback to prevent layout shift
   adjustFontFallback: false,
 });

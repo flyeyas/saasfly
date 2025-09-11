@@ -191,6 +191,33 @@ export const middleware = withAuth(
 
     // Check if user is authenticated
     const token = req.nextauth.token;
+    
+    // Admin routes protection (handle before locale-based auth pages)
+    const isAdminRoute = /^\/admin/.test(req.nextUrl.pathname);
+    if (isAdminRoute) {
+      if (req.nextUrl.pathname === "/admin/login") {
+        // If already logged in as admin, redirect to admin dashboard
+        if (token) {
+          const adminEmails = process.env.ADMIN_EMAIL?.split(",") || [];
+          if (adminEmails.includes(token.email || "")) {
+            return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+          }
+        }
+        return NextResponse.next();
+      } else {
+        // Other admin routes require authentication
+        if (!token) {
+          return NextResponse.redirect(new URL("/admin/login", req.url));
+        }
+        
+        // Check if user is admin
+        const adminEmails = process.env.ADMIN_EMAIL?.split(",") || [];
+        if (!adminEmails.includes(token.email || "")) {
+          return NextResponse.redirect(new URL("/admin/login", req.url));
+        }
+      }
+    }
+    
     const isAuthPage = /^\/[a-zA-Z]{2,}\/(login|register)/.test(
       req.nextUrl.pathname,
     );
@@ -201,20 +228,6 @@ export const middleware = withAuth(
         return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
       }
       return NextResponse.next();
-    }
-
-    // Admin routes protection
-    const isAdminRoute = /^\/admin/.test(req.nextUrl.pathname);
-    if (isAdminRoute && req.nextUrl.pathname !== "/admin/login") {
-      if (!token) {
-        return NextResponse.redirect(new URL("/admin/login", req.url));
-      }
-      
-      // Check if user is admin
-      const adminEmails = process.env.ADMIN_EMAIL?.split(",") || [];
-      if (!adminEmails.includes(token.email || "")) {
-        return NextResponse.redirect(new URL("/admin/login", req.url));
-      }
     }
 
     // Protected routes

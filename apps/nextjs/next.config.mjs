@@ -25,6 +25,7 @@ const config = {
     mdxRs: true,
     // serverActions: true,
   },
+  optimizeFonts: true,
   images: {
     remotePatterns: [
       {
