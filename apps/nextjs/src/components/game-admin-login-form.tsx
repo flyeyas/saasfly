@@ -210,10 +210,8 @@ export function GameAdminLoginForm({
               {isLoading && (
                 <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {!isLoading && (
-                <Icons.ArrowRight className="mr-2 h-4 w-4" />
-              )}
-              Login to Admin Dashboard
+
+              Login
             </Button>
           </div>
         </form>
