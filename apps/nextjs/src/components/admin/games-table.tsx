@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@saasfly/ui/table";
-import { Badge } from "@saasfly/ui/badge";
 import { Button } from "@saasfly/ui/button";
 import { Eye, Edit, Trash2 } from "lucide-react";
 
@@ -30,9 +29,9 @@ const statusColors = {
 };
 
 const statusLabels = {
-  published: "已发布",
-  draft: "草稿",
-  archived: "已归档",
+  published: "Published",
+  draft: "Draft",
+  archived: "Archived",
 };
 
 export function GamesTable({ games }: GamesTableProps) {
@@ -41,12 +40,12 @@ export function GamesTable({ games }: GamesTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>游戏名称</TableHead>
-            <TableHead>分类</TableHead>
-            <TableHead>状态</TableHead>
-            <TableHead>访问量</TableHead>
-            <TableHead>创建时间</TableHead>
-            <TableHead className="text-right">操作</TableHead>
+            <TableHead>Game Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Views</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,12 +54,11 @@ export function GamesTable({ games }: GamesTableProps) {
               <TableCell className="font-medium">{game.title}</TableCell>
               <TableCell>{game.category}</TableCell>
               <TableCell>
-                <Badge
-                  variant="secondary"
-                  className={statusColors[game.status]}
+                <span
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusColors[game.status]}`}
                 >
                   {statusLabels[game.status]}
-                </Badge>
+                </span>
               </TableCell>
               <TableCell>{game.views.toLocaleString()}</TableCell>
               <TableCell>{game.createdAt}</TableCell>

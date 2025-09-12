@@ -28,49 +28,49 @@ export const getDashboardConfig = async ({
     sidebarNav: [
       {
         id: "dashboard",
-        title: "仪表盘",
+        title: "Dashboard",
         href: "/dashboard/",
         icon: Activity
       },
       {
         id: "games",
-        title: "游戏管理",
+        title: "Game Management",
         href: "/dashboard/games",
         icon: Gamepad2
       },
       {
         id: "categories",
-        title: "分类管理",
+        title: "Category Management",
         href: "/dashboard/categories",
         icon: Blocks
       },
       {
         id: "users",
-        title: "用户管理",
+        title: "User Management",
         href: "/dashboard/users",
         icon: User
       },
       {
         id: "reviews",
-        title: "评价管理",
+        title: "Review Management",
         href: "/dashboard/reviews",
         icon: Heart
       },
       {
         id: "comments",
-        title: "评论管理",
+        title: "Comment Management",
         href: "/dashboard/comments",
         icon: FileText
       },
       {
         id: "reports",
-        title: "举报管理",
+        title: "Report Management",
         href: "/dashboard/reports",
         icon: AlertTriangle
       },
       {
         id: "analytics",
-        title: "数据分析",
+        title: "Analytics",
         href: "/dashboard/analytics",
         icon: Activity
       },
