@@ -101,6 +101,12 @@ export async function AdminSidebar({ className }: SidebarProps) {
 
   // Only render sidebar for authenticated admins
   return (
-    <AdminSidebarClient className={className} navigation={navigation} />
+    <AdminSidebarClient 
+      className={className} 
+      navigation={navigation}
+      userEmail={session.user.email}
+      userName={session.user.name || undefined}
+      userImage={session.user.image || undefined}
+    />
   );
 }

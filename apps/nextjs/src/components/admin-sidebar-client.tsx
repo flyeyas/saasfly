@@ -15,6 +15,7 @@ import {
   Users,
   Folder,
 } from "lucide-react";
+import { AdminSidebarAccount } from "./admin-sidebar-account";
 
 // Icon mapping
 const iconMap = {
@@ -39,9 +40,18 @@ interface SidebarProps {
       icon: string;
     }>;
   }>;
+  userEmail?: string;
+  userName?: string;
+  userImage?: string;
 }
 
-export function AdminSidebarClient({ className, navigation }: SidebarProps) {
+export function AdminSidebarClient({ 
+  className, 
+  navigation, 
+  userEmail, 
+  userName, 
+  userImage 
+}: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -55,7 +65,7 @@ export function AdminSidebarClient({ className, navigation }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6">
+      <nav className="flex-1 overflow-y-auto py-6">
         {navigation.map((section) => (
           <div key={section.title} className="mb-8">
             <h3 className="mb-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -90,6 +100,15 @@ export function AdminSidebarClient({ className, navigation }: SidebarProps) {
           </div>
         ))}
       </nav>
+
+      {/* Admin Account Section */}
+      {userEmail && (
+        <AdminSidebarAccount 
+          userEmail={userEmail}
+          userName={userName}
+          userImage={userImage}
+        />
+      )}
     </div>
   );
 }
