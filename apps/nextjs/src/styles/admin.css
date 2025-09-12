@@ -1,5 +1,15 @@
 /* 后台管理界面样式 - 与原型保持一致 */
 
+/* 防止滚动边界黑色背景 */
+html, body {
+  overscroll-behavior: contain;
+}
+
+/* 滚动容器样式优化 */
+.overflow-auto, .overflow-y-auto, .overflow-x-auto {
+  overscroll-behavior: contain;
+}
+
 /* CSS变量定义 */
 :root {
   /* 主色调 - 游戏蓝 */

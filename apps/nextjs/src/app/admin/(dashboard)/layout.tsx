@@ -40,7 +40,7 @@ export default async function DashboardLayout({
         </header>
         
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto" style={{ overscrollBehavior: 'contain' }}>
           {children}
         </main>
       </div>

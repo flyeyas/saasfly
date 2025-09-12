@@ -65,7 +65,7 @@ export function AdminSidebarClient({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-6">
+      <nav className="flex-1 overflow-y-auto py-6" style={{ overscrollBehavior: 'contain' }}>
         {navigation.map((section) => (
           <div key={section.title} className="mb-8">
             <h3 className="mb-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
