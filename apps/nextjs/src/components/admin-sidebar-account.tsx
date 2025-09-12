@@ -26,13 +26,36 @@ export function AdminSidebarAccount({
 }: AdminSidebarAccountProps) {
   const handleLogout = async () => {
     try {
-      await signOut({
-        callbackUrl: "/admin/login",
-        redirect: true,
+      const response = await fetch('/api/auth/admin/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      if (response.ok) {
+        const data = await response.json();
+        window.location.href = data.redirectUrl || '/admin/login';
+      } else {
+        console.error('Logout failed:', response.statusText);
+        // Fallback to NextAuth signOut
+        await signOut({
+          callbackUrl: "/admin/login",
+          redirect: true,
+        });
+      }
     } catch (error) {
       console.error("Error during admin logout:", error);
-      window.location.href = "/admin/login";
+      // Fallback to NextAuth signOut
+      try {
+        await signOut({
+          callbackUrl: "/admin/login",
+          redirect: true,
+        });
+      } catch (fallbackError) {
+        console.error("Fallback logout also failed:", fallbackError);
+        window.location.href = "/admin/login";
+      }
     }
   };
 
