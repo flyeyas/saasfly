@@ -101,11 +101,11 @@ export function AdminSidebarAccount({
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="my-2" />
-          <DropdownMenuItem className="cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+          <DropdownMenuItem className="cursor-pointer p-3 rounded-lg hover:bg-blue-50 focus:bg-blue-50 hover:text-blue-700 focus:text-blue-700 transition-colors duration-150">
             <User className="mr-3 h-4 w-4 text-gray-500" />
             <span className="font-medium text-gray-700">Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+          <DropdownMenuItem className="cursor-pointer p-3 rounded-lg hover:bg-blue-50 focus:bg-blue-50 hover:text-blue-700 focus:text-blue-700 transition-colors duration-150">
             <Settings className="mr-3 h-4 w-4 text-gray-500" />
             <span className="font-medium text-gray-700">Settings</span>
           </DropdownMenuItem>
