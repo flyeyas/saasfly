@@ -57,7 +57,7 @@ export function AdminSidebarAccount({
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="w-full justify-start p-4 h-auto hover:bg-gray-50 rounded-none"
+            className="w-full justify-start p-4 h-auto hover:bg-gray-50 rounded-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <div className="flex items-center gap-3 w-full">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-sm">
