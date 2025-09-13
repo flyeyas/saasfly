@@ -212,9 +212,9 @@ export default function Dashboard() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                    <SelectItem value="last7days" className="text-gray-900 hover:bg-gray-50">Last 7 days</SelectItem>
-                    <SelectItem value="last30days" className="text-gray-900 hover:bg-gray-50">Last 30 days</SelectItem>
-                    <SelectItem value="last90days" className="text-gray-900 hover:bg-gray-50">Last 90 days</SelectItem>
+                    <SelectItem value="last7days" className="text-gray-900 hover:bg-gray-100 hover:text-gray-900 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-900 data-[state=checked]:bg-blue-50 data-[state=checked]:text-blue-900">Last 7 days</SelectItem>
+                    <SelectItem value="last30days" className="text-gray-900 hover:bg-gray-100 hover:text-gray-900 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-900 data-[state=checked]:bg-blue-50 data-[state=checked]:text-blue-900">Last 30 days</SelectItem>
+                    <SelectItem value="last90days" className="text-gray-900 hover:bg-gray-100 hover:text-gray-900 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-900 data-[state=checked]:bg-blue-50 data-[state=checked]:text-blue-900">Last 90 days</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -284,97 +284,107 @@ export default function Dashboard() {
             </Card>
           </div>
           
-      {/* Latest Games Table */}
+      {/* Latest Games */}
       <Card className="bg-white border border-gray-200 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg font-semibold text-gray-900">Latest Games</CardTitle>
-              <CardDescription className="text-sm text-gray-600 mt-1">
-                Recently added games to the platform
-              </CardDescription>
             </div>
-            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md">
               View All
-              <ArrowUpRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Game</TableHead>
-                      <TableHead className="hidden sm:table-cell">Category</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden md:table-cell">Views</TableHead>
-                      <TableHead className="hidden lg:table-cell">Rating</TableHead>
-                      <TableHead className="hidden lg:table-cell">Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                <TableBody>
-                  {recentGames.map((game) => (
-                    <TableRow key={game.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <Gamepad2 className="h-5 w-5 text-gray-500" />
-                          </div>
-                          <div>
-                            <div className="font-medium">{game.title}</div>
-                            <div className="text-sm text-gray-500">Game Title</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300">
-                          {game.category}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          game.status === "Published" 
-                            ? "bg-green-100 text-green-800" 
-                            : "bg-gray-100 text-gray-800"
-                        }`}>
-                          {game.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">{game.views}</TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span>{game.rating}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">{game.date}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+        <CardContent className="p-0">
+          {/* Table Header */}
+          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
+            <div className="col-span-3">Game</div>
+            <div className="col-span-2">Category</div>
+            <div className="col-span-1">Status</div>
+            <div className="col-span-1">Views</div>
+            <div className="col-span-2">Rating</div>
+            <div className="col-span-2">Date</div>
+            <div className="col-span-1">Actions</div>
+          </div>
+          
+          {/* Game List */}
+          <div className="divide-y divide-gray-200">
+            {recentGames.map((game) => (
+              <div key={game.id} className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
+                {/* Game Info */}
+                <div className="col-span-3 flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
+                    <Gamepad2 className="h-6 w-6 text-gray-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-medium text-gray-900 truncate">
+                      {game.title}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {game.category} Game
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Category */}
+                <div className="col-span-2 flex items-center">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {game.category}
+                  </span>
+                </div>
+                
+                {/* Status */}
+                <div className="col-span-1 flex items-center">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    game.status === "Published" 
+                      ? "bg-green-100 text-green-800" 
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}>
+                    {game.status}
+                  </span>
+                </div>
+                
+                {/* Views */}
+                <div className="col-span-1 flex items-center text-gray-900 font-medium">
+                  {game.views}
+                </div>
+                
+                {/* Rating */}
+                <div className="col-span-2 flex items-center">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`h-3 w-3 ${
+                        i < Math.floor(game.rating) 
+                          ? "fill-yellow-400 text-yellow-400" 
+                          : "text-gray-300"
+                      }`} />
+                    ))}
+                    <span className="ml-1 text-sm font-medium text-gray-900">{game.rating}</span>
+                  </div>
+                </div>
+                
+                {/* Date */}
+                <div className="col-span-2 flex items-center text-gray-600">
+                  {game.date}
+                </div>
+                
+                {/* Actions */}
+                <div className="col-span-1 flex items-center justify-end gap-2">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
+                    <Edit className="h-4 w-4 text-gray-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
+                    <Eye className="h-4 w-4 text-gray-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
+                    <Trash2 className="h-4 w-4 text-gray-600" />
+                  </Button>
+                </div>
               </div>
-            </CardContent>
+            ))}
+          </div>
+        </CardContent>
           </Card>
     </div>
   );
