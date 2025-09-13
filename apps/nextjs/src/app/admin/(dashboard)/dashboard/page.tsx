@@ -34,6 +34,13 @@ import {
   DropdownMenuTrigger,
 } from "@saasfly/ui/dropdown-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@saasfly/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -100,106 +107,176 @@ const recentGames = [
 
 export default function Dashboard() {
   return (
-    <div className="p-6">
-          {/* Statistics Cards */}
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 lg:mb-8">
-            <Card className="bg-blue-50 border-blue-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-blue-700">
-                  Total Games
-                </CardTitle>
-                <Gamepad2 className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-900">156</div>
-                <p className="text-xs text-blue-600">
+    <div className="p-6 space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Welcome to the game center admin panel</p>
+        </div>
+        <Button className="bg-orange-500 hover:bg-orange-600">
+          <Gamepad2 className="h-4 w-4 mr-2" />
+          Add Game
+        </Button>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">156</div>
+                <p className="text-sm text-gray-600 mb-2">Total Games</p>
+                <p className="text-xs text-green-600 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
                   +12 this month
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-green-50 border-green-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-green-700">
-                  Active Users
-                </CardTitle>
-                <Users className="h-5 w-5 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-900">2,847</div>
-                <p className="text-xs text-green-600">
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Gamepad2 className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">2,847</div>
+                <p className="text-sm text-gray-600 mb-2">Active Users</p>
+                <p className="text-xs text-green-600 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
                   +18% last week
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-yellow-50 border-yellow-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-yellow-700">
-                  Game Views
-                </CardTitle>
-                <Eye className="h-5 w-5 text-yellow-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-yellow-900">45.2K</div>
-                <p className="text-xs text-yellow-600">
+              </div>
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <Users className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">45.2K</div>
+                <p className="text-sm text-gray-600 mb-2">Game Plays</p>
+                <p className="text-xs text-green-600 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
                   +25% today
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-purple-50 border-purple-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-purple-700">
-                  Average Rating
-                </CardTitle>
-                <Star className="h-5 w-5 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-900">4.8</div>
-                <p className="text-xs text-purple-600">
+              </div>
+              <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                <Activity className="h-6 w-6 text-yellow-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">4.8</div>
+                <p className="text-sm text-gray-600 mb-2">Average Rating</p>
+                <p className="text-xs text-green-600 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
                   +0.2 this month
                 </p>
-              </CardContent>
-            </Card>
-          </div>
-          {/* Charts and Tables Section */}
-          <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2">
-            {/* Game Visit Trend Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Game Visit Trend
-                </CardTitle>
-                <CardDescription>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Star className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      {/* Charts and Tables Section */}
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        {/* Game Visit Trend Chart */}
+        <Card className="bg-white border border-gray-200 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold text-gray-900">Game Visit Trend</CardTitle>
+                <CardDescription className="text-sm text-gray-600 mt-1">
                   Last 7 days
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 lg:h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                  <div className="text-center text-gray-500">
-                    <TrendingUp className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p>Chart visualization would go here</p>
-                    <p className="text-sm">Integration with chart library needed</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Select defaultValue="last7days">
+                  <SelectTrigger className="w-32 h-8 text-xs bg-white border-gray-200 focus:border-gray-300 focus:ring-0 focus:ring-offset-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                    <SelectItem value="last7days" className="text-gray-900 hover:bg-gray-50">Last 7 days</SelectItem>
+                    <SelectItem value="last30days" className="text-gray-900 hover:bg-gray-50">Last 30 days</SelectItem>
+                    <SelectItem value="last90days" className="text-gray-900 hover:bg-gray-50">Last 90 days</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+              <div className="text-center text-gray-600">
+                <TrendingUp className="h-12 w-12 mx-auto mb-3 text-blue-500" />
+                <p className="font-medium mb-1">Game Visit Trend Chart</p>
+                <p className="text-sm text-gray-500">Chart visualization placeholder</p>
+                <div className="mt-4 flex justify-center space-x-4 text-xs">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                    <span>Visits</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                    <span>Unique Users</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-            
-            {/* Category Distribution */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Category Distribution</CardTitle>
-                <CardDescription>
-                  Games by category
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Category Distribution */}
+        <Card className="bg-white border border-gray-200 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold text-gray-900">Hot Categories</CardTitle>
+                <CardDescription className="text-sm text-gray-600 mt-1">
+                  Popular game categories
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 lg:h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                  <div className="text-center text-gray-500">
-                    <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p>Pie chart would go here</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+               <div className="text-center text-gray-600">
+                 <Activity className="h-12 w-12 mx-auto mb-3 text-purple-500" />
+                 <p className="font-medium mb-1">Category Distribution Chart</p>
+                 <p className="text-sm text-gray-500">Pie chart visualization placeholder</p>
+                 <div className="mt-4 space-y-2 text-xs">
+                   <div className="flex items-center justify-center">
+                     <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                     <span>Action (35%)</span>
+                   </div>
+                   <div className="flex items-center justify-center">
+                     <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                     <span>Puzzle (28%)</span>
+                   </div>
+                   <div className="flex items-center justify-center">
+                     <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                     <span>Adventure (22%)</span>
+                   </div>
+                   <div className="flex items-center justify-center">
+                     <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                     <span>Strategy (15%)</span>
+                   </div>
+                 </div>
                     <p className="text-sm">Category breakdown visualization</p>
                   </div>
                 </div>
@@ -207,20 +284,22 @@ export default function Dashboard() {
             </Card>
           </div>
           
-          {/* Latest Games Table */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Latest Games</CardTitle>
-                <CardDescription>
-                  Recently added games to the platform
-                </CardDescription>
-              </div>
-              <Button size="sm" className="gap-1">
-                Manage All
-                <ArrowUpRight className="h-4 w-4" />
-              </Button>
-            </CardHeader>
+      {/* Latest Games Table */}
+      <Card className="bg-white border border-gray-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold text-gray-900">Latest Games</CardTitle>
+              <CardDescription className="text-sm text-gray-600 mt-1">
+                Recently added games to the platform
+              </CardDescription>
+            </div>
+            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+              View All
+              <ArrowUpRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <Table>
