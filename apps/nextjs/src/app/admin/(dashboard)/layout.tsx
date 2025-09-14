@@ -34,7 +34,7 @@ export default async function DashboardLayout({
         {/* Header - only shown to authenticated admins */}
         <header className="bg-white shadow-sm border-b px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">Category Management</h1>
             <AdminAccountNav />
           </div>
         </header>
